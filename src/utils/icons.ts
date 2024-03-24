@@ -1,13 +1,8 @@
-export const iconsData = [
-  {
-    name: 'Natureza',
+export const iconsData = {
+  nature: {
+    label: 'Natureza',
     verseIcon: 'nature/verse.svg',
-    prevIcons: [
-      'cake/cake.svg',
-      'dragons/cake.svg',
-      'pause/cake.svg',
-      'shaving/cake.svg',
-    ],
+    prevIcons: ['cake/cake.svg', 'pause/cake.svg'],
     icons: [
       'nature/1.svg',
       'nature/2.svg',
@@ -18,7 +13,8 @@ export const iconsData = [
       'nature/20.svg',
       'nature/40.svg',
       'nature/100.svg',
+      'nature/infinite.svg',
     ],
-    latterIcons: ['nature/infinite.svg'],
+    latterIcons: ['dragons/cake.svg', 'shaving/cake.svg'],
   },
-];
+};
