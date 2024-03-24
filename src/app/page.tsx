@@ -1,6 +1,6 @@
 'use client';
 import { Children, useEffect, useState } from 'react';
-import { useWebsocket } from './websocket';
+import { useWebsocket } from '../hooks/useWebsocket';
 
 export default function Home() {
   const { socket } = useWebsocket();
