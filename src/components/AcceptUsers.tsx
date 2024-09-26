@@ -38,7 +38,7 @@ type SignOutEventProps = {
 export const AcceptUsers = () => {
   const { socket } = useWebsocket();
 
-  const { room, acceptUser } = useRoomStore();
+  const { room, acceptUser, refuseUser } = useRoomStore();
 
   const [users, setUser] = useState<UserProps[]>([]);
 
@@ -97,7 +97,7 @@ export const AcceptUsers = () => {
         >
           {user.name}
           <button onClick={() => acceptUser(user.id)}>aceitar</button>
-          <button>recusar</button>
+          <button onClick={() => refuseUser(user.id)}>recusar</button>
         </div>
       ))}
     </>

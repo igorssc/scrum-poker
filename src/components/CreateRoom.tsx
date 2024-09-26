@@ -1,6 +1,8 @@
 'use client';
 import { FormEvent, useRef } from 'react';
 import { useRoomStore } from '../hooks/useRoom';
+import { Input } from './Input';
+import { Button } from './Button';
 
 export const CreateRoom = () => {
   const roomName = useRef<HTMLInputElement>(null);
@@ -26,22 +28,22 @@ export const CreateRoom = () => {
   return (
     <>
       <div className="py-4 w-full flex justify-center items-center">
-        <form onSubmit={handleSubmit} className="flex gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <label htmlFor="">user</label>
-          <input
+          <Input
             type="text"
             className="border border-black mx-auto"
             ref={userName}
             required
           />
           <label htmlFor="">room</label>
-          <input
+          <Input
             type="text"
             className="border border-black mx-auto"
             ref={roomName}
             required
           />
-          <button type="submit">Criar sala</button>
+          <Button type="submit">Criar sala</Button>
         </form>
       </div>
     </>

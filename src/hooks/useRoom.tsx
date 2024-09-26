@@ -33,6 +33,8 @@ type RoomState = {
   createRoom: (props: CreateRoomProps) => Promise<void>;
   enterRoom: (props: EnterRoomProps) => Promise<void>;
   acceptUser: (userId: string) => Promise<void>;
+  refuseUser: (userId: string) => Promise<void>;
+  clear: () => void;
   logout: () => Promise<void>;
 };
 
@@ -65,6 +67,17 @@ export const useRoomStore = create(
           } as UserProps;
 
           set(() => ({ room, user }));
+        } catch {}
+      },
+
+      refuseUser: async (userId: string) => {
+        const { room, user } = get();
+        try {
+          await api.post(`rooms/${room.id}/sign-out`, {
+            user_action_id: user.id,
+            user_id: userId,
+            room_id: room.id,
+          });
         } catch {}
       },
 
@@ -101,6 +114,13 @@ export const useRoomStore = create(
           user_id: userId,
           access: room.access,
         });
+      },
+
+      clear: () => {
+        set(() => ({
+          room: {} as RoomProps,
+          user: {} as UserProps,
+        }));
       },
 
       logout: async () => {

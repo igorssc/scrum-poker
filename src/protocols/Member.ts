@@ -5,7 +5,7 @@ export type MemberProps = {
     created_at: string;
   };
   vote: any;
-  status: 'PENDING';
+  status: 'PENDING' | 'LOGGED';
   created_at: string;
   id: string;
 };

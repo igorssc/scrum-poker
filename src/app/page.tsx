@@ -6,6 +6,7 @@ import { AcceptUsers } from '../components/AcceptUsers';
 import { useQuery } from '@tanstack/react-query';
 import api from '../services/api';
 import { RoomProps } from '../protocols/Room';
+import { Glass } from '../components/Glass';
 
 export default function Home() {
   const { room, user, logout } = useRoomStore();
@@ -19,6 +20,7 @@ export default function Home() {
     <>
       <pre>{JSON.stringify(room, null, 4)}</pre>
       <pre>{JSON.stringify(user, null, 4)}</pre>
+
       {/* <pre>{JSON.stringify(data?.data, null, 4)}</pre> */}
       {room.id && (
         <>
@@ -27,7 +29,11 @@ export default function Home() {
           </header>
         </>
       )}
-      {!room.id && <CreateRoom />}
+      {!room.id && (
+        <Glass>
+          <CreateRoom />
+        </Glass>
+      )}
       {(!data?.data.private || room.owner_id === user.id) && <AcceptUsers />}
       <Cards />
     </>
