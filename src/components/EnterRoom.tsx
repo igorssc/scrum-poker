@@ -6,10 +6,11 @@ import { Input } from './Input';
 
 type EnterRoomProps = {
   roomId: string;
+  roomName?: string;
   access?: string;
 };
 
-export const EnterRoom = ({ roomId, access }: EnterRoomProps) => {
+export const EnterRoom = ({ roomId, roomName, access }: EnterRoomProps) => {
   const userName = useRef<HTMLInputElement>(null);
 
   const { createRoom, enterRoom, room } = useRoomStore();
@@ -25,17 +26,13 @@ export const EnterRoom = ({ roomId, access }: EnterRoomProps) => {
   };
 
   return (
-    <div className="py-4 w-full">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <label htmlFor="">user</label>
-        <Input
-          type="text"
-          className="border border-black mx-auto"
-          ref={userName}
-          required
-        />
-        <Button type="submit">Entrar</Button>
-      </form>
-    </div>
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-8 py-4 w-full justify-between items-stretch"
+    >
+      <Input type="text" value={roomName} label="Nome da sala" disabled />
+      <Input type="text" ref={userName} label="Nome de usuário" required />
+      <Button type="submit">Entrar</Button>
+    </form>
   );
 };

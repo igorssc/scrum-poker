@@ -27,25 +27,16 @@ export const CreateRoom = () => {
 
   return (
     <>
-      <div className="py-4 w-full flex justify-center items-center">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <label htmlFor="">user</label>
-          <Input
-            type="text"
-            className="border border-black mx-auto"
-            ref={userName}
-            required
-          />
-          <label htmlFor="">room</label>
-          <Input
-            type="text"
-            className="border border-black mx-auto"
-            ref={roomName}
-            required
-          />
-          <Button type="submit">Criar sala</Button>
-        </form>
-      </div>
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-8 py-4 w-full justify-between items-stretch"
+      >
+        <Input type="text" ref={roomName} label="Nome da sala" required />
+        <Input type="text" ref={userName} label="Nome de usuário" required />
+        <Button type="submit" className="mt-4">
+          Criar sala
+        </Button>
+      </form>
     </>
   );
 };

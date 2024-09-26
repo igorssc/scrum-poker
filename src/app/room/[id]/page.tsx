@@ -1,4 +1,5 @@
 'use client';
+import { Box } from '@/src/components/Box';
 import { EnterRoom } from '@/src/components/EnterRoom';
 import { Glass } from '@/src/components/Glass';
 import { useRoomStore } from '@/src/hooks/useRoom';
@@ -113,7 +114,13 @@ export default function Room({ params, searchParams }: RoomPageProps) {
   if (!(user && room?.id === roomId))
     return (
       <Glass>
-        <EnterRoom roomId={roomId} access={access} />
+        <Box>
+          <EnterRoom
+            roomId={roomId}
+            roomName={data?.data.name}
+            access={access}
+          />
+        </Box>
       </Glass>
     );
 

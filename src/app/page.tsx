@@ -8,6 +8,7 @@ import api from '../services/api';
 import { RoomProps } from '../protocols/Room';
 import { Glass } from '../components/Glass';
 import { useEffect, useState } from 'react';
+import { Box } from '../components/Box';
 
 export default function Home() {
   const { room, user, logout, isHydrated } = useRoomStore();
@@ -36,7 +37,9 @@ export default function Home() {
       )}
       {!room && (
         <Glass>
-          <CreateRoom />
+          <Box>
+            <CreateRoom />
+          </Box>
         </Glass>
       )}
       {(!data?.data.private || room?.owner_id === user?.id) && <AcceptUsers />}
