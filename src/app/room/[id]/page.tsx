@@ -38,7 +38,7 @@ type SignOutEventProps = {
 };
 
 export default function Room({ params, searchParams }: RoomPageProps) {
-  const { enterRoom, user, room, clear } = useRoomStore();
+  const { enterRoom, user, room, clear, isHydrated } = useRoomStore();
   const router = useRouter();
   const roomId = params.id;
   const { access } = searchParams;
@@ -56,27 +56,19 @@ export default function Room({ params, searchParams }: RoomPageProps) {
     refetch();
 
     const userIsLogged = data?.data.members.some(
-      (member) => member.member.id === user.id && member.status === 'LOGGED',
+      (member) => member.member.id === user?.id && member.status === 'LOGGED',
     );
 
     if (!userIsLogged) return;
 
     const userIsNotExists = data?.data.members.some(
-      (member) => member.member.id === user.id,
+      (member) => member.member.id === user?.id,
     );
 
     if (!userIsNotExists) return clear();
 
     router.replace('/');
   }, [user, data?.data]);
-
-  useEffect(() => {
-    if (!user && !room) return;
-
-    console.log(user, room);
-
-    //
-  }, [room]);
 
   useEffect(() => {
     if (!user || !user.id) return;
@@ -114,7 +106,11 @@ export default function Room({ params, searchParams }: RoomPageProps) {
     };
   }, [roomId, socket, user, router]);
 
-  if (!(user.id && room.id))
+  if (!isHydrated) {
+    return <></>;
+  }
+
+  if (!(user && room?.id === roomId))
     return (
       <Glass>
         <EnterRoom roomId={roomId} access={access} />

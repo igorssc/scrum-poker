@@ -43,7 +43,7 @@ export const AcceptUsers = () => {
   const [users, setUser] = useState<UserProps[]>([]);
 
   useEffect(() => {
-    socket.on(room.id, (event) => {
+    socket.on(room?.id!!, (event) => {
       console.log(event);
 
       if (event.type === 'sign-in') {
@@ -83,7 +83,7 @@ export const AcceptUsers = () => {
     });
 
     return () => {
-      socket.off(room.id);
+      socket.off(room?.id!!);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [room]);

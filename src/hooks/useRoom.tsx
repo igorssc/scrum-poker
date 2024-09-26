@@ -28,21 +28,30 @@ type UserProps = {
 };
 
 type RoomState = {
-  room: RoomProps;
-  user: UserProps;
+  room: RoomProps | null;
+  user: UserProps | null;
   createRoom: (props: CreateRoomProps) => Promise<void>;
   enterRoom: (props: EnterRoomProps) => Promise<void>;
   acceptUser: (userId: string) => Promise<void>;
   refuseUser: (userId: string) => Promise<void>;
   clear: () => void;
   logout: () => Promise<void>;
+  isHydrated: boolean;
+  setHasHydrated: (hydrated: boolean) => void;
 };
 
 export const useRoomStore = create(
   persist<RoomState>(
     (set, get) => ({
-      room: {} as RoomProps,
-      user: {} as UserProps,
+      room: null,
+      user: null,
+      isHydrated: false,
+
+      setHasHydrated: (hydrated: boolean) => {
+        set(() => ({
+          isHydrated: hydrated,
+        }));
+      },
 
       createRoom: async ({ roomName, userName, theme }: CreateRoomProps) => {
         const { latitude, longitude } = await getCoordinates();
@@ -72,13 +81,15 @@ export const useRoomStore = create(
 
       refuseUser: async (userId: string) => {
         const { room, user } = get();
-        try {
-          await api.post(`rooms/${room.id}/sign-out`, {
-            user_action_id: user.id,
-            user_id: userId,
-            room_id: room.id,
-          });
-        } catch {}
+        if (room && user) {
+          try {
+            await api.post(`rooms/${room.id}/sign-out`, {
+              user_action_id: user.id,
+              user_id: userId,
+              room_id: room.id,
+            });
+          } catch {}
+        }
       },
 
       enterRoom: async ({ roomId, userName, access }: EnterRoomProps) => {
@@ -108,39 +119,45 @@ export const useRoomStore = create(
 
       acceptUser: async (userId: string) => {
         const { room, user } = get();
-
-        await api.post(`rooms/${room.id}/sign-in/accept`, {
-          owner_id: user.id,
-          user_id: userId,
-          access: room.access,
-        });
+        if (room && user) {
+          await api.post(`rooms/${room.id}/sign-in/accept`, {
+            owner_id: user.id,
+            user_id: userId,
+            access: room.access,
+          });
+        }
       },
 
       clear: () => {
         set(() => ({
-          room: {} as RoomProps,
-          user: {} as UserProps,
+          room: null,
+          user: null,
         }));
       },
 
       logout: async () => {
         const { room, user } = get();
+        if (room && user) {
+          await api.post(`rooms/${room.id}/sign-out`, {
+            user_action_id: user.id,
+            user_id: user.id,
+            room_id: room.id,
+          });
 
-        await api.post(`rooms/${room.id}/sign-out`, {
-          user_action_id: user.id,
-          user_id: user.id,
-          room_id: room.id,
-        });
-
-        set(() => ({
-          room: {} as RoomProps,
-          user: {} as UserProps,
-        }));
+          set(() => ({
+            room: null,
+            user: null,
+          }));
+        }
       },
     }),
     {
       name: 'use-room-storage',
       storage: createJSONStorage(() => localStorage),
+
+      onRehydrateStorage: (state) => {
+        return () => state.setHasHydrated(true);
+      },
     },
   ),
 );
