@@ -9,6 +9,7 @@ import { RoomProps } from '../protocols/Room';
 import { Glass } from '../components/Glass';
 import { useEffect, useState } from 'react';
 import { Box } from '../components/Box';
+import { SampleCards } from '@/components/SampleCards';
 
 export default function Home() {
   const { room, user, logout, isHydrated } = useRoomStore();
@@ -24,8 +25,8 @@ export default function Home() {
 
   return (
     <>
-      <pre>{JSON.stringify(room, null, 4)}</pre>
-      <pre>{JSON.stringify(user, null, 4)}</pre>
+      {/* <pre>{JSON.stringify(room, null, 4)}</pre>
+      <pre>{JSON.stringify(user, null, 4)}</pre> */}
 
       {/* <pre>{JSON.stringify(data?.data, null, 4)}</pre> */}
       {room && (
@@ -43,7 +44,7 @@ export default function Home() {
         </Glass>
       )}
       {(!data?.data.private || room?.owner_id === user?.id) && <AcceptUsers />}
-      <Cards />
+      <SampleCards />
     </>
   );
 }

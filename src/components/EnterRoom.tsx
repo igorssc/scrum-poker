@@ -26,13 +26,16 @@ export const EnterRoom = ({ roomId, roomName, access }: EnterRoomProps) => {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col gap-8 py-4 w-full justify-between items-stretch"
-    >
-      <Input type="text" value={roomName} label="Nome da sala" disabled />
-      <Input type="text" ref={userName} label="Nome de usuário" required />
-      <Button type="submit">Entrar</Button>
-    </form>
+    <div className="flex flex-col gap-8">
+      <h1 className="font-sinera text-4xl text-center">Scrum poker</h1>
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-8 py-4 w-full justify-between items-stretch"
+      >
+        <Input type="text" value={roomName} label="Nome da sala" disabled />
+        <Input type="text" ref={userName} label="Nome de usuário" required />
+        <Button type="submit">Entrar</Button>
+      </form>
+    </div>
   );
 };
