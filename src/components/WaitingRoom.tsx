@@ -5,10 +5,9 @@ import { RoomContext } from '@/context/RoomContext';
 
 type WaitingRoomProps = {
   roomName?: string;
-  roomId: string;
 };
 
-export const WaitingRoom = ({ roomId, roomName }: WaitingRoomProps) => {
+export const WaitingRoom = ({ roomName }: WaitingRoomProps) => {
   const { logout } = useContextSelector(RoomContext, (context) => ({
     logout: context.logout,
   }));

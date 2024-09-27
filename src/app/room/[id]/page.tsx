@@ -11,7 +11,7 @@ import { RoomProps } from '@/protocols/Room';
 import api from '@/services/api';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useContextSelector } from 'use-context-selector';
 
 type RoomPageProps = {
@@ -154,7 +154,7 @@ export default function Room({ params, searchParams }: RoomPageProps) {
     <SampleCards>
       <Glass>
         <Box>
-          <WaitingRoom roomId={roomId} roomName={data?.data.name} />
+          <WaitingRoom roomName={data?.data.name} />
         </Box>
       </Glass>
     </SampleCards>

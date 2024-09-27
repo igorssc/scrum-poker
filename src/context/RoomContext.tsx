@@ -53,15 +53,8 @@ export const RoomContext = createContext<RoomContextProps>(
 );
 
 export const RoomProvider = ({ children }: { children: ReactNode }) => {
-  const [room, setRoom] = useState<RoomProps | null>(() => {
-    const savedRoom = localStorage.getItem('room');
-    return savedRoom ? JSON.parse(savedRoom) : null;
-  });
-
-  const [user, setUser] = useState<UserProps | null>(() => {
-    const savedUser = localStorage.getItem('user');
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
+  const [room, setRoom] = useState<RoomProps | null>(null);
+  const [user, setUser] = useState<UserProps | null>(null);
 
   const [waitingLogin, setWaitingLogin] = useState(false);
 
@@ -72,6 +65,17 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
   const [tabId] = useState(Math.random().toString(36).substr(2, 9));
 
   useEffect(() => {
+    const savedRoom = localStorage.getItem('room');
+    const savedUser = localStorage.getItem('user');
+
+    if (savedRoom) {
+      setRoom(JSON.parse(savedRoom));
+    }
+
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+
     setIsHydrated(true);
   }, []);
 

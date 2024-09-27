@@ -9,7 +9,6 @@ import { useEffect } from 'react';
 import { Box } from '../components/Box';
 import { SampleCards } from '@/components/SampleCards';
 import Head from 'next/head';
-import { useRouter } from 'next/navigation';
 import { useContextSelector } from 'use-context-selector';
 import { RoomContext } from '@/context/RoomContext';
 
@@ -24,8 +23,6 @@ export default function Home() {
       tabId: context.tabId,
     }),
   );
-
-  const router = useRouter();
 
   const channel = new BroadcastChannel('channel-scrum-poker');
 

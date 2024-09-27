@@ -9,7 +9,7 @@ module.exports = {
   extends: [
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
-    'next/core-web-vitals'
+    'next/core-web-vitals',
   ],
   root: true,
   env: {
@@ -22,5 +22,7 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
+    'react-hooks/exhaustive-deps': 'off',
+    '@typescript-eslint/no-unused-vars': 'off',
   },
 };
