@@ -54,6 +54,8 @@ export const useRoomStore = create(
       },
 
       createRoom: async ({ roomName, userName, theme }: CreateRoomProps) => {
+        const channel = new BroadcastChannel('channel-scrum-poker');
+
         const { latitude, longitude } = await getCoordinates();
 
         try {
@@ -76,6 +78,8 @@ export const useRoomStore = create(
           } as UserProps;
 
           set(() => ({ room, user }));
+
+          channel.postMessage({ type: 'login-scrum-poker' });
         } catch {}
       },
 
@@ -94,6 +98,13 @@ export const useRoomStore = create(
 
       enterRoom: async ({ roomId, userName, access }: EnterRoomProps) => {
         try {
+          const channel = new BroadcastChannel('channel-scrum-poker');
+
+          channel.postMessage({
+            type: 'waiting-login-scrum-poker',
+            roomId,
+          });
+
           const { data } = await api.post<{
             room: RoomProps;
             member: MemberProps;
@@ -137,6 +148,9 @@ export const useRoomStore = create(
 
       logout: async () => {
         const { room, user } = get();
+
+        const channel = new BroadcastChannel('channel-scrum-poker');
+
         if (room && user) {
           await api.post(`rooms/${room.id}/sign-out`, {
             user_action_id: user.id,
@@ -148,6 +162,8 @@ export const useRoomStore = create(
             room: null,
             user: null,
           }));
+
+          channel.postMessage({ type: 'logout-scrum-poker' });
         }
       },
     }),

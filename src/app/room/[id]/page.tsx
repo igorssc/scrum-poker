@@ -2,6 +2,8 @@
 import { Box } from '@/components/Box';
 import { EnterRoom } from '@/components/EnterRoom';
 import { Glass } from '@/components/Glass';
+import { SampleCards } from '@/components/SampleCards';
+import { WaitingRoom } from '@/components/WaitingRoom';
 import { useRoomStore } from '@/hooks/useRoom';
 import { useWebsocket } from '@/hooks/useWebsocket';
 import { MemberProps } from '@/protocols/Member';
@@ -9,7 +11,7 @@ import { RoomProps } from '@/protocols/Room';
 import api from '@/services/api';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 type RoomPageProps = {
   params: {
@@ -44,6 +46,9 @@ export default function Room({ params, searchParams }: RoomPageProps) {
   const roomId = params.id;
   const { access } = searchParams;
   const { socket } = useWebsocket();
+  const [waitingLogin, setWaitingLogin] = useState(false);
+
+  const channel = new BroadcastChannel('channel-scrum-poker');
 
   const { data, refetch } = useQuery<{
     data: { members: MemberProps[] } & RoomProps;
@@ -68,8 +73,24 @@ export default function Room({ params, searchParams }: RoomPageProps) {
 
     if (!userIsNotExists) return clear();
 
+    channel.postMessage({ type: 'login-scrum-poker' });
+
     router.replace('/');
   }, [user, data?.data]);
+
+  useEffect(() => {
+    channel.onmessage = (message) => {
+      console.log(message);
+      if (message.data.type === 'logout-scrum-poker') {
+        clear();
+        router.refresh();
+      }
+      if (message.data.type === 'waiting-login-scrum-poker') {
+        setWaitingLogin(true);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [channel]);
 
   useEffect(() => {
     if (!user || !user.id) return;
@@ -84,6 +105,8 @@ export default function Room({ params, searchParams }: RoomPageProps) {
 
         if (user_id !== user.id) return;
 
+        channel.postMessage({ type: 'login-scrum-poker' });
+
         router.replace('/');
       }
 
@@ -96,7 +119,7 @@ export default function Room({ params, searchParams }: RoomPageProps) {
 
         clear();
 
-        router.replace('/');
+        router.refresh();
       }
     };
 
@@ -111,18 +134,28 @@ export default function Room({ params, searchParams }: RoomPageProps) {
     return <></>;
   }
 
-  if (!(user && room?.id === roomId))
+  if (!(user && room?.id === roomId) && !waitingLogin)
     return (
-      <Glass>
-        <Box>
-          <EnterRoom
-            roomId={roomId}
-            roomName={data?.data.name}
-            access={access}
-          />
-        </Box>
-      </Glass>
+      <SampleCards>
+        <Glass>
+          <Box>
+            <EnterRoom
+              roomId={roomId}
+              roomName={data?.data.name}
+              access={access}
+            />
+          </Box>
+        </Glass>
+      </SampleCards>
     );
 
-  return <>esperando...</>;
+  return (
+    <SampleCards>
+      <Glass>
+        <Box>
+          <WaitingRoom roomId={roomId} roomName={data?.data.name} />
+        </Box>
+      </Glass>
+    </SampleCards>
+  );
 }

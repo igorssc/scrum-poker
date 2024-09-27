@@ -10,14 +10,42 @@ import { Glass } from '../components/Glass';
 import { useEffect, useState } from 'react';
 import { Box } from '../components/Box';
 import { SampleCards } from '@/components/SampleCards';
+import Head from 'next/head';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
-  const { room, user, logout, isHydrated } = useRoomStore();
+  const { room, user, logout, isHydrated, clear } = useRoomStore();
+
+  const router = useRouter();
+
+  const channel = new BroadcastChannel('channel-scrum-poker');
 
   const { data } = useQuery<{ data: RoomProps }>({
     queryKey: ['room', room?.id],
     queryFn: () => api.get(`rooms/${room?.id}`),
   });
+
+  useEffect(() => {
+    if (room) {
+      channel.postMessage('login-scrum-poker');
+    }
+  }, [room]);
+
+  useEffect(() => {
+    channel.onmessage = (message) => {
+      console.log(message);
+      if (message.data.type === 'logout-scrum-poker') {
+        clear();
+      }
+      if (message.data.type === 'login-scrum-poker') {
+        window.location.reload();
+      }
+      if (message.data.type === 'waiting-login-scrum-poker') {
+        window.location.replace(`room/${message.data?.roomId}`);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [channel]);
 
   if (!isHydrated) {
     return <></>;
@@ -25,6 +53,9 @@ export default function Home() {
 
   return (
     <>
+      <Head>
+        <title>Scrum poker</title>
+      </Head>
       {/* <pre>{JSON.stringify(room, null, 4)}</pre>
       <pre>{JSON.stringify(user, null, 4)}</pre> */}
 
@@ -37,14 +68,15 @@ export default function Home() {
         </>
       )}
       {!room && (
-        <Glass>
-          <Box>
-            <CreateRoom />
-          </Box>
-        </Glass>
+        <SampleCards>
+          <Glass>
+            <Box>
+              <CreateRoom />
+            </Box>
+          </Glass>
+        </SampleCards>
       )}
       {(!data?.data.private || room?.owner_id === user?.id) && <AcceptUsers />}
-      <SampleCards />
     </>
   );
 }
