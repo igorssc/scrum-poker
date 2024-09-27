@@ -4,7 +4,7 @@ import { EnterRoom } from '@/components/EnterRoom';
 import { Glass } from '@/components/Glass';
 import { SampleCards } from '@/components/SampleCards';
 import { WaitingRoom } from '@/components/WaitingRoom';
-import { useRoomStore } from '@/hooks/useRoom';
+import { RoomContext } from '@/context/RoomContext';
 import { useWebsocket } from '@/hooks/useWebsocket';
 import { MemberProps } from '@/protocols/Member';
 import { RoomProps } from '@/protocols/Room';
@@ -12,6 +12,7 @@ import api from '@/services/api';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useContextSelector } from 'use-context-selector';
 
 type RoomPageProps = {
   params: {
@@ -41,12 +42,28 @@ type SignOutEventProps = {
 };
 
 export default function Room({ params, searchParams }: RoomPageProps) {
-  const { enterRoom, user, room, clear, isHydrated } = useRoomStore();
+  const {
+    room,
+    user,
+    isHydrated,
+    clear,
+    waitingLogin,
+    setWaitingLogin,
+    tabId,
+  } = useContextSelector(RoomContext, (context) => ({
+    room: context.room,
+    user: context.user,
+    isHydrated: context.isHydrated,
+    clear: context.clear,
+    waitingLogin: context.waitingLogin,
+    setWaitingLogin: context.setWaitingLogin,
+    tabId: context.tabId,
+  }));
+
   const router = useRouter();
   const roomId = params.id;
   const { access } = searchParams;
   const { socket } = useWebsocket();
-  const [waitingLogin, setWaitingLogin] = useState(false);
 
   const channel = new BroadcastChannel('channel-scrum-poker');
 
@@ -73,47 +90,31 @@ export default function Room({ params, searchParams }: RoomPageProps) {
 
     if (!userIsNotExists) return clear();
 
-    channel.postMessage({ type: 'login-scrum-poker' });
+    channel.postMessage({ type: 'login-scrum-poker', tabId });
 
     router.replace('/');
   }, [user, data?.data]);
 
   useEffect(() => {
-    channel.onmessage = (message) => {
-      console.log(message);
-      if (message.data.type === 'logout-scrum-poker') {
-        clear();
-        router.refresh();
-      }
-      if (message.data.type === 'waiting-login-scrum-poker') {
-        setWaitingLogin(true);
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [channel]);
+    if (room) setWaitingLogin(true);
+  }, [room]);
 
   useEffect(() => {
     if (!user || !user.id) return;
 
     const handleEvent = (event: any) => {
-      console.log(event);
-
       if (event.type === 'sign-in-accept') {
         const { user_id } = (event as SignInAcceptEventProps).data.user;
 
-        console.log(user);
-
         if (user_id !== user.id) return;
 
-        channel.postMessage({ type: 'login-scrum-poker' });
+        channel.postMessage({ type: 'login-scrum-poker', tabId });
 
         router.replace('/');
       }
 
       if (event.type === 'sign-out') {
         const { id } = (event as SignOutEventProps).data.user;
-
-        console.log(user);
 
         if (id !== user.id) return;
 

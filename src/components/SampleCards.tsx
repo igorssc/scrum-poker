@@ -1,8 +1,4 @@
-import { Cards } from './Cards';
-import Image from 'next/image';
-import { iconsData } from '../utils/icons';
-import path from 'path';
-import { Children, ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 type SampleCardsProps = {
   children: ReactNode;

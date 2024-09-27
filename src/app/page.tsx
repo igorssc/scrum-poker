@@ -1,20 +1,29 @@
 'use client';
-import { Cards } from '../components/Cards';
 import { CreateRoom } from '../components/CreateRoom';
-import { useRoomStore } from '../hooks/useRoom';
 import { AcceptUsers } from '../components/AcceptUsers';
 import { useQuery } from '@tanstack/react-query';
 import api from '../services/api';
 import { RoomProps } from '../protocols/Room';
 import { Glass } from '../components/Glass';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Box } from '../components/Box';
 import { SampleCards } from '@/components/SampleCards';
 import Head from 'next/head';
 import { useRouter } from 'next/navigation';
+import { useContextSelector } from 'use-context-selector';
+import { RoomContext } from '@/context/RoomContext';
 
 export default function Home() {
-  const { room, user, logout, isHydrated, clear } = useRoomStore();
+  const { room, user, logout, isHydrated, tabId } = useContextSelector(
+    RoomContext,
+    (context) => ({
+      room: context.room,
+      user: context.user,
+      logout: context.logout,
+      isHydrated: context.isHydrated,
+      tabId: context.tabId,
+    }),
+  );
 
   const router = useRouter();
 
@@ -27,25 +36,9 @@ export default function Home() {
 
   useEffect(() => {
     if (room) {
-      channel.postMessage('login-scrum-poker');
+      channel.postMessage({ type: 'login-scrum-poker', tabId });
     }
   }, [room]);
-
-  useEffect(() => {
-    channel.onmessage = (message) => {
-      console.log(message);
-      if (message.data.type === 'logout-scrum-poker') {
-        clear();
-      }
-      if (message.data.type === 'login-scrum-poker') {
-        window.location.reload();
-      }
-      if (message.data.type === 'waiting-login-scrum-poker') {
-        window.location.replace(`room/${message.data?.roomId}`);
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [channel]);
 
   if (!isHydrated) {
     return <></>;

@@ -1,14 +1,17 @@
 'use client';
 import { FormEvent, useRef } from 'react';
-import { useRoomStore } from '../hooks/useRoom';
 import { Input } from './Input';
 import { Button } from './Button';
+import { useContextSelector } from 'use-context-selector';
+import { RoomContext } from '@/context/RoomContext';
 
 export const CreateRoom = () => {
   const roomName = useRef<HTMLInputElement>(null);
   const userName = useRef<HTMLInputElement>(null);
 
-  const { createRoom } = useRoomStore();
+  const { createRoom } = useContextSelector(RoomContext, (context) => ({
+    createRoom: context.createRoom,
+  }));
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

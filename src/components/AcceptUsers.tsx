@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useRoomStore } from '../hooks/useRoom';
 import { useWebsocket } from '../hooks/useWebsocket';
+import { useContextSelector } from 'use-context-selector';
+import { RoomContext } from '@/context/RoomContext';
 
 type UserProps = {
   id: string;
@@ -38,14 +39,19 @@ type SignOutEventProps = {
 export const AcceptUsers = () => {
   const { socket } = useWebsocket();
 
-  const { room, acceptUser, refuseUser } = useRoomStore();
+  const { room, acceptUser, refuseUser } = useContextSelector(
+    RoomContext,
+    (context) => ({
+      room: context.room,
+      acceptUser: context.acceptUser,
+      refuseUser: context.refuseUser,
+    }),
+  );
 
   const [users, setUser] = useState<UserProps[]>([]);
 
   useEffect(() => {
     socket.on(room?.id!!, (event) => {
-      console.log(event);
-
       if (event.type === 'sign-in') {
         return setUser((prev) => {
           if ((event as SignInEventProps).data.user.status === 'LOGGED')

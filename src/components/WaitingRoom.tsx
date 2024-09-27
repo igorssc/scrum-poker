@@ -1,7 +1,7 @@
-import { useRoomStore } from '@/hooks/useRoom';
 import { Button } from './Button';
 import { Loading } from './Loading';
-import { useRouter } from 'next/navigation';
+import { useContextSelector } from 'use-context-selector';
+import { RoomContext } from '@/context/RoomContext';
 
 type WaitingRoomProps = {
   roomName?: string;
@@ -9,14 +9,9 @@ type WaitingRoomProps = {
 };
 
 export const WaitingRoom = ({ roomId, roomName }: WaitingRoomProps) => {
-  const router = useRouter();
-  const { logout } = useRoomStore();
-
-  const handleLogout = () => {
-    logout();
-
-    window.location.replace(`/room/${roomId}`);
-  };
+  const { logout } = useContextSelector(RoomContext, (context) => ({
+    logout: context.logout,
+  }));
 
   return (
     <div className="flex flex-col gap-8">
@@ -25,7 +20,7 @@ export const WaitingRoom = ({ roomId, roomName }: WaitingRoomProps) => {
         Aguardando aprovação de entrada na sala: <b>{roomName}</b>.
       </p>
       <Loading />
-      <Button onClick={handleLogout}>Sair</Button>
+      <Button onClick={logout}>Sair</Button>
     </div>
   );
 };

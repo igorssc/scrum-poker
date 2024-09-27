@@ -1,9 +1,10 @@
 'use client';
 import { FormEvent, useRef } from 'react';
-import { useRoomStore } from '../hooks/useRoom';
 import { Button } from './Button';
 import { Input } from './Input';
 import { useRouter } from 'next/navigation';
+import { useContextSelector } from 'use-context-selector';
+import { RoomContext } from '@/context/RoomContext';
 
 type EnterRoomProps = {
   roomId: string;
@@ -16,7 +17,9 @@ export const EnterRoom = ({ roomId, roomName, access }: EnterRoomProps) => {
 
   const router = useRouter();
 
-  const { createRoom, enterRoom, room } = useRoomStore();
+  const { enterRoom } = useContextSelector(RoomContext, (context) => ({
+    enterRoom: context.enterRoom,
+  }));
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
