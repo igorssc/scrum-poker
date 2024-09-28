@@ -1,11 +1,15 @@
 'use client';
-import { FormEvent, useRef } from 'react';
+import { Dispatch, FormEvent, SetStateAction, useRef } from 'react';
 import { Input } from './Input';
 import { Button } from './Button';
 import { useContextSelector } from 'use-context-selector';
 import { RoomContext } from '@/context/RoomContext';
 
-export const CreateRoom = () => {
+type CreateRoomProps = {
+  setIsLookingForRoom: Dispatch<SetStateAction<boolean>>;
+};
+
+export const CreateRoom = ({ setIsLookingForRoom }: CreateRoomProps) => {
   const roomName = useRef<HTMLInputElement>(null);
   const userName = useRef<HTMLInputElement>(null);
 
@@ -40,6 +44,9 @@ export const CreateRoom = () => {
           <Input type="text" ref={userName} label="Nome de usuário" required />
           <Button type="submit" className="mt-4">
             Criar sala
+          </Button>
+          <Button onClick={() => setIsLookingForRoom(true)}>
+            Encontrar salas
           </Button>
         </form>
       </div>

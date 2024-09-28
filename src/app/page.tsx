@@ -5,15 +5,21 @@ import { useQuery } from '@tanstack/react-query';
 import api from '../services/api';
 import { RoomProps } from '../protocols/Room';
 import { Glass } from '../components/Glass';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Box } from '../components/Box';
 import { SampleCards } from '@/components/SampleCards';
-import Head from 'next/head';
 import { useContextSelector } from 'use-context-selector';
 import { RoomContext } from '@/context/RoomContext';
+import { Button } from '@/components/Button';
+import { MemberProps } from '@/protocols/Member';
+import { LoadingScreen } from '@/components/LoadingScreen';
+import { SearchRoom } from '@/components/SearchRoom';
+import { Flex } from '@/components/Flex';
 
 export default function Home() {
-  const { room, user, logout, isHydrated, tabId } = useContextSelector(
+  const [isLookingForRoom, setIsLookingForRoom] = useState(false);
+
+  const { room, user, logout, isHydrated } = useContextSelector(
     RoomContext,
     (context) => ({
       room: context.room,
@@ -24,49 +30,69 @@ export default function Home() {
     }),
   );
 
-  const channel = new BroadcastChannel('channel-scrum-poker');
-
-  const { data } = useQuery<{ data: RoomProps }>({
+  const { data } = useQuery<{ data: { members: MemberProps[] } & RoomProps }>({
     queryKey: ['room', room?.id],
     queryFn: () => api.get(`rooms/${room?.id}`),
+    enabled: !!room?.id,
+    refetchInterval: 5000,
   });
 
   useEffect(() => {
-    if (room) {
-      channel.postMessage({ type: 'login-scrum-poker', tabId });
-    }
-  }, [room]);
+    if (!(user && room)) return;
 
-  if (!isHydrated) {
-    return <></>;
+    const userFound = data?.data.members.find(
+      (member) => member.member.id === user.id,
+    );
+
+    if (!userFound) return;
+
+    const userIsLogged = userFound.status === 'LOGGED';
+
+    if (!userIsLogged) window.location.replace(`room/${room?.id}`);
+  }, [data?.data, room]);
+
+  if (!isHydrated || (user && room && !data?.data)) {
+    return <LoadingScreen />;
   }
 
-  return (
-    <>
-      <Head>
-        <title>Scrum poker</title>
-      </Head>
-      {/* <pre>{JSON.stringify(room, null, 4)}</pre>
-      <pre>{JSON.stringify(user, null, 4)}</pre> */}
+  {
+    /* <pre>{JSON.stringify(room, null, 4)}</pre>
+      <pre>{JSON.stringify(user, null, 4)}</pre> */
+  }
 
-      {/* <pre>{JSON.stringify(data?.data, null, 4)}</pre> */}
-      {room && (
-        <>
-          <header>
-            <button onClick={logout}>sair</button>
-          </header>
-        </>
-      )}
-      {!room && (
-        <SampleCards>
-          <Glass>
-            <Box>
-              <CreateRoom />
-            </Box>
-          </Glass>
-        </SampleCards>
-      )}
+  {
+    /* <pre>{JSON.stringify(data?.data, null, 4)}</pre> */
+  }
+  if (isLookingForRoom)
+    return (
+      <SampleCards>
+        <Glass>
+          <Box>
+            <Flex>
+              <SearchRoom />
+            </Flex>
+          </Box>
+        </Glass>
+      </SampleCards>
+    );
+
+  if (!room)
+    return (
+      <SampleCards>
+        <Glass>
+          <Box>
+            <Flex>
+              <CreateRoom setIsLookingForRoom={setIsLookingForRoom} />
+            </Flex>
+          </Box>
+        </Glass>
+      </SampleCards>
+    );
+
+  return (
+    <header>
+      <Button onClick={() => logout()}>sair</Button>
       {(!data?.data.private || room?.owner_id === user?.id) && <AcceptUsers />}
-    </>
+    </header>
   );
 }

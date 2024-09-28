@@ -4,10 +4,11 @@ import { useContextSelector } from 'use-context-selector';
 import { RoomContext } from '@/context/RoomContext';
 
 type WaitingRoomProps = {
+  roomId: string;
   roomName?: string;
 };
 
-export const WaitingRoom = ({ roomName }: WaitingRoomProps) => {
+export const WaitingRoom = ({ roomId, roomName }: WaitingRoomProps) => {
   const { logout } = useContextSelector(RoomContext, (context) => ({
     logout: context.logout,
   }));
@@ -19,7 +20,9 @@ export const WaitingRoom = ({ roomName }: WaitingRoomProps) => {
         Aguardando aprovação de entrada na sala: <b>{roomName}</b>.
       </p>
       <Loading />
-      <Button onClick={logout}>Sair</Button>
+      <Button onClick={() => logout({ redirect: `/room/${roomId}` })}>
+        Sair
+      </Button>
     </div>
   );
 };

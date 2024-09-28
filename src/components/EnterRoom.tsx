@@ -38,7 +38,12 @@ export const EnterRoom = ({ roomId, roomName, access }: EnterRoomProps) => {
         onSubmit={handleSubmit}
         className="flex flex-col gap-6 py-4 w-full justify-between items-stretch"
       >
-        <Input type="text" value={roomName} label="Nome da sala" disabled />
+        <Input
+          type="text"
+          value={roomName || ''}
+          label="Nome da sala"
+          disabled
+        />
         <Input type="text" ref={userName} label="Nome de usuário" required />
         <Button type="submit" className="mt-4">
           Entrar

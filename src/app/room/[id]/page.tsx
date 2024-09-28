@@ -1,7 +1,9 @@
 'use client';
 import { Box } from '@/components/Box';
 import { EnterRoom } from '@/components/EnterRoom';
+import { Flex } from '@/components/Flex';
 import { Glass } from '@/components/Glass';
+import { LoadingScreen } from '@/components/LoadingScreen';
 import { SampleCards } from '@/components/SampleCards';
 import { WaitingRoom } from '@/components/WaitingRoom';
 import { RoomContext } from '@/context/RoomContext';
@@ -78,17 +80,21 @@ export default function Room({ params, searchParams }: RoomPageProps) {
   useEffect(() => {
     refetch();
 
-    const userIsLogged = data?.data.members.some(
-      (member) => member.member.id === user?.id && member.status === 'LOGGED',
+    if (!data?.data || !user) return;
+
+    const userFound = data?.data.members.find(
+      (member) => member.member.id === user.id,
     );
+
+    if (!userFound) return;
+
+    const userIsRefused = userFound.status === 'REFUSED';
+
+    if (userIsRefused) return clear();
+
+    const userIsLogged = userFound.status === 'LOGGED';
 
     if (!userIsLogged) return;
-
-    const userIsNotExists = data?.data.members.some(
-      (member) => member.member.id === user?.id,
-    );
-
-    if (!userIsNotExists) return clear();
 
     channel.postMessage({ type: 'login-scrum-poker', tabId });
 
@@ -110,7 +116,7 @@ export default function Room({ params, searchParams }: RoomPageProps) {
 
         channel.postMessage({ type: 'login-scrum-poker', tabId });
 
-        router.replace('/');
+        window.location.replace('/');
       }
 
       if (event.type === 'sign-out') {
@@ -119,8 +125,18 @@ export default function Room({ params, searchParams }: RoomPageProps) {
         if (id !== user.id) return;
 
         clear();
+        setWaitingLogin(false);
+        window.location.reload();
+      }
 
-        router.refresh();
+      if (event.type === 'sign-in-refuse') {
+        const { id } = (event as SignOutEventProps).data.user;
+
+        if (id !== user.id) return;
+
+        clear();
+        setWaitingLogin(false);
+        window.location.reload();
       }
     };
 
@@ -131,8 +147,8 @@ export default function Room({ params, searchParams }: RoomPageProps) {
     };
   }, [roomId, socket, user, router]);
 
-  if (!isHydrated) {
-    return <></>;
+  if (!isHydrated || (user && room && !data?.data)) {
+    return <LoadingScreen />;
   }
 
   if (!(user && room?.id === roomId) && !waitingLogin)
@@ -140,11 +156,13 @@ export default function Room({ params, searchParams }: RoomPageProps) {
       <SampleCards>
         <Glass>
           <Box>
-            <EnterRoom
-              roomId={roomId}
-              roomName={data?.data.name}
-              access={access}
-            />
+            <Flex>
+              <EnterRoom
+                roomId={roomId}
+                roomName={data?.data.name}
+                access={access}
+              />
+            </Flex>
           </Box>
         </Glass>
       </SampleCards>
@@ -154,7 +172,9 @@ export default function Room({ params, searchParams }: RoomPageProps) {
     <SampleCards>
       <Glass>
         <Box>
-          <WaitingRoom roomName={data?.data.name} />
+          <Flex>
+            <WaitingRoom roomName={data?.data.name} roomId={roomId} />
+          </Flex>
         </Box>
       </Glass>
     </SampleCards>

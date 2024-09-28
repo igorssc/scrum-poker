@@ -1,4 +1,4 @@
-import React, {
+import {
   useState,
   useEffect,
   ReactNode,
@@ -10,6 +10,8 @@ import api from '../services/api';
 import { RoomProps as RoomPropsProtocols } from '../protocols/Room';
 import { MemberProps } from '../protocols/Member';
 import { createContext } from 'use-context-selector';
+import { usePathname } from 'next/navigation';
+import { AxiosResponse } from 'axios';
 
 type CreateRoomProps = {
   roomName: string;
@@ -23,6 +25,12 @@ type EnterRoomProps = {
   access?: string;
 };
 
+type GetRoomsByLocationProps = {
+  lat: number;
+  lng: number;
+  distance: number;
+};
+
 type RoomProps = {
   id: string;
   owner_id: string;
@@ -33,6 +41,8 @@ type UserProps = {
   id: string;
 };
 
+type LogoutProps = { redirect?: string };
+
 type RoomContextProps = {
   room: RoomProps | null;
   user: UserProps | null;
@@ -42,8 +52,13 @@ type RoomContextProps = {
   enterRoom: (props: EnterRoomProps) => Promise<void>;
   acceptUser: (userId: string) => Promise<void>;
   refuseUser: (userId: string) => Promise<void>;
+  getRoomsByLocation: ({
+    distance,
+    lat,
+    lng,
+  }: GetRoomsByLocationProps) => Promise<AxiosResponse<any, any>>;
   clear: () => void;
-  logout: () => Promise<void>;
+  logout: (props?: LogoutProps) => Promise<void>;
   isHydrated: boolean;
   tabId: string;
 };
@@ -60,6 +75,8 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
 
   const [isHydrated, setIsHydrated] = useState(false);
 
+  const pathname = usePathname();
+
   const channel = new BroadcastChannel('channel-scrum-poker');
 
   const [tabId] = useState(Math.random().toString(36).substr(2, 9));
@@ -67,6 +84,7 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const savedRoom = localStorage.getItem('room');
     const savedUser = localStorage.getItem('user');
+    const savedWaitingLogin = localStorage.getItem('waitingLogin');
 
     if (savedRoom) {
       setRoom(JSON.parse(savedRoom));
@@ -74,6 +92,10 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
 
     if (savedUser) {
       setUser(JSON.parse(savedUser));
+    }
+
+    if (savedWaitingLogin) {
+      setWaitingLogin(JSON.parse(savedWaitingLogin));
     }
 
     setIsHydrated(true);
@@ -92,6 +114,13 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
   }, [user]);
 
   useEffect(() => {
+    if (waitingLogin)
+      return localStorage.setItem('waitingLogin', JSON.stringify(waitingLogin));
+
+    localStorage.removeItem('waitingLogin');
+  }, [waitingLogin]);
+
+  useEffect(() => {
     channel.onmessage = (message) => {
       if (message.data.tabId === tabId) return;
 
@@ -102,18 +131,17 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
         window.location.replace(`/room/${message.data?.roomId}`);
         // window.location.replace();
       }
+
+      if (message.data.type === 'logout-scrum-poker') {
+        clear();
+        setWaitingLogin(false);
+
+        window.location.replace(message.data.redirect);
+      }
     };
 
-    if (room) {
-      channel.onmessage = (message) => {
-        if (message.data.tabId === tabId) return;
-
-        if (message.data.type === 'logout-scrum-poker') {
-          waitingLogin
-            ? window.location.replace(`/room/${room.id}`)
-            : window.location.replace('/');
-        }
-      };
+    if (room && pathname === '') {
+      channel.postMessage({ type: 'login-scrum-poker', tabId });
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -178,6 +206,18 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const getRoomsByLocation = async ({
+    distance,
+    lat,
+    lng,
+  }: GetRoomsByLocationProps) => {
+    const rooms = await api.get(
+      `rooms/location?lat=${lat}&lng=${lng}&max_distance=${distance}`,
+    );
+
+    return rooms;
+  };
+
   const acceptUser = async (userId: string) => {
     if (room && user) {
       await api.post(`rooms/${room.id}/sign-in/accept`, {
@@ -191,10 +231,10 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
   const refuseUser = async (userId: string) => {
     if (room && user) {
       try {
-        await api.post(`rooms/${room.id}/sign-out`, {
-          user_action_id: user.id,
+        await api.post(`rooms/${room.id}/sign-in/refuse`, {
+          owner_id: user.id,
           user_id: userId,
-          room_id: room.id,
+          access: room.access,
         });
       } catch (error) {
         console.error(error);
@@ -205,22 +245,23 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
   const clear = () => {
     setRoom(null);
     setUser(null);
+    setWaitingLogin(false);
   };
 
-  const logout = async () => {
+  const logout = async ({ redirect = '/' } = {}) => {
     if (room && user) {
       await api.post(`rooms/${room.id}/sign-out`, {
         user_action_id: user.id,
         user_id: user.id,
         room_id: room.id,
       });
-
-      setRoom(null);
-      setUser(null);
-      setWaitingLogin(false);
-
-      channel.postMessage({ type: 'logout-scrum-poker', tabId });
     }
+
+    setRoom(null);
+    setUser(null);
+    setWaitingLogin(false);
+
+    channel.postMessage({ type: 'logout-scrum-poker', redirect, tabId });
   };
 
   return (
@@ -238,6 +279,7 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
         waitingLogin,
         tabId,
         setWaitingLogin,
+        getRoomsByLocation,
       }}
     >
       {children}

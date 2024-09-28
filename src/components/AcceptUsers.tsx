@@ -79,6 +79,16 @@ export const AcceptUsers = () => {
         });
       }
 
+      if (event.type === 'sign-in-refuse') {
+        return setUser((prev) => {
+          const { user_id } = (event as SignInAcceptEventProps).data.user;
+
+          const users = prev.filter((user) => user.id !== user_id);
+
+          return users;
+        });
+      }
+
       if (event.type === 'sign-out') {
         return setUser((prev) => {
           const { id } = (event as SignOutEventProps).data.user;
