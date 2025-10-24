@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useWebsocket } from '../hooks/useWebsocket';
 import { useContextSelector } from 'use-context-selector';
 import { RoomContext } from '@/context/RoomContext';
@@ -6,6 +6,7 @@ import { useRoomCache } from '@/hooks/useRoomCache';
 import { Box } from './Box';
 import { Flex } from './Flex';
 import { Button } from './Button';
+import { twMerge } from 'tailwind-merge';
 
 type UserProps = {
   id: string;
@@ -63,6 +64,11 @@ export const AcceptUsers = () => {
   );
 
   const [users, setUser] = useState<UserProps[]>([]);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [hasOverflow, setHasOverflow] = useState(false);
 
   // Função para extrair usuários PENDING da API REST (fallback)
   const getPendingUsersFromAPI = () => {
@@ -162,40 +168,178 @@ export const AcceptUsers = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [room]);
 
+  // Funções para drag scroll (mouse)
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!scrollContainerRef.current) return;
+    setIsDragging(true);
+    setStartX(e.pageX - scrollContainerRef.current.offsetLeft);
+    setScrollLeft(scrollContainerRef.current.scrollLeft);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !scrollContainerRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - scrollContainerRef.current.offsetLeft;
+    const walk = (x - startX) * 2; // Velocidade do scroll
+    scrollContainerRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+  };
+
+  // Funções para touch events (mobile)
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!scrollContainerRef.current) return;
+    setIsDragging(true);
+    setStartX(e.touches[0].pageX - scrollContainerRef.current.offsetLeft);
+    setScrollLeft(scrollContainerRef.current.scrollLeft);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging || !scrollContainerRef.current) return;
+    const x = e.touches[0].pageX - scrollContainerRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    scrollContainerRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+  };
+
+  // Função para verificar se há overflow no container
+  const checkOverflow = () => {
+    if (!scrollContainerRef.current) return;
+    
+    const container = scrollContainerRef.current;
+    const hasOverflowNow = container.scrollWidth > container.clientWidth && users.length > 1;
+    setHasOverflow(hasOverflowNow);
+  };
+
+  // Verificar overflow após renderização e mudanças de tamanho
+  useEffect(() => {
+    checkOverflow();
+    
+    const handleResize = () => {
+      checkOverflow();
+    };
+
+    window.addEventListener('resize', handleResize);
+    
+    // Observer para detectar mudanças no conteúdo do container
+    const resizeObserver = new ResizeObserver(() => {
+      checkOverflow();
+    });
+    
+    if (scrollContainerRef.current) {
+      resizeObserver.observe(scrollContainerRef.current);
+    }
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      resizeObserver.disconnect();
+    };
+  }, [users.length]); // Re-executar quando o número de usuários mudar
+
+  if (users.length === 0) {
+    return null;
+  }
+
+ 
+
   return (
-    <Flex className="gap-4">
-      {users.map((user) => (
-        <Box 
-          key={user.id} 
-          className="min-h-fit max-w-[300px] p-6"
+    <div className="w-full mb-4">
+      {/* Container do carousel */}
+      <div className="relative">
+        <div 
+          ref={scrollContainerRef}
+          className={twMerge("overflow-x-auto scrollbar-hide select-none",
+            !hasOverflow ? 'cursor-default' : isDragging ? 'cursor-grabbing' : 'cursor-grab'
+          )}
+          onMouseDown={hasOverflow ? handleMouseDown : undefined}
+          onMouseUp={hasOverflow ? handleMouseUp : undefined}
+          onMouseMove={hasOverflow ? handleMouseMove : undefined}
+          onMouseLeave={hasOverflow ? handleMouseLeave : undefined}
+          onTouchStart={hasOverflow ? handleTouchStart : undefined}
+          onTouchMove={hasOverflow ? handleTouchMove : undefined}
+          onTouchEnd={hasOverflow ? handleTouchEnd : undefined}
         >
-          <Flex className="gap-4">
-            <h3 className="text-lg font-semibold text-center">
-              {user.name}
-            </h3>
-            
-            <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
-              Aguardando aprovação
-            </p>
-            
-            <Flex className="flex-row gap-3 mt-4">
-              <Button 
-                onClick={() => acceptUser(user.id)}
-                className="bg-green-600 hover:bg-green-700 focus:ring-green-500"
+          <div 
+            className={`flex gap-3 pb-2 ${
+              hasOverflow ? '' : 'justify-center'
+            }`} 
+            style={hasOverflow ? { width: 'max-content' } : undefined}
+          >
+            {users.map((user) => (
+              <Box 
+                key={user.id} 
+                className="min-h-fit min-w-[260px] max-w-[260px] p-4 shrink-0 shadow-none"
               >
-                Aceitar
-              </Button>
-              
-              <Button 
-                onClick={() => refuseUser(user.id)}
-                className="bg-red-600 hover:bg-red-700 focus:ring-red-500"
-              >
-                Recusar
-              </Button>
-            </Flex>
-          </Flex>
-        </Box>
-      ))}
-    </Flex>
+                <Flex className="gap-3">
+                  <h3 className="text-base font-semibold text-center">
+                    {user.name}
+                  </h3>
+                  
+                  <p className="text-xs text-gray-600 dark:text-gray-400 text-center">
+                    Aguardando aprovação
+                  </p>
+                  
+                  <Flex className="flex-row gap-2 mt-2">
+                    <Button 
+                      onClick={(e) => {
+                        // Previne clique durante drag
+                        if (isDragging) {
+                          e.preventDefault();
+                          return;
+                        }
+                        acceptUser(user.id);
+                      }}
+                      onMouseDown={(e) => e.stopPropagation()}
+                      className="bg-green-600 hover:bg-green-700 focus:ring-green-500 text-sm py-1.5 px-3 flex-1"
+                    >
+                      Aceitar
+                    </Button>
+                    
+                    <Button 
+                      onClick={(e) => {
+                        // Previne clique durante drag
+                        if (isDragging) {
+                          e.preventDefault();
+                          return;
+                        }
+                        refuseUser(user.id);
+                      }}
+                      onMouseDown={(e) => e.stopPropagation()}
+                      className="bg-red-600 hover:bg-red-700 focus:ring-red-500 text-sm py-1.5 px-3 flex-1"
+                    >
+                      Recusar
+                    </Button>
+                  </Flex>
+                </Flex>
+              </Box>
+            ))}
+          </div>
+        </div>
+        
+        {/* Gradient fade nas bordas para indicar scroll */}
+        {hasOverflow && (
+          <>
+            <div className="absolute left-0 top-0 bottom-0 w-4 bg-linear-to-r from-gray-400/70 to-transparent pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-4 bg-linear-to-l from-gray-400/70 to-transparent pointer-events-none" />
+          </>
+        )}
+      </div>
+      
+      {/* Indicador de scroll */}
+      {hasOverflow && (
+        <p className="text-xs text-gray-500 dark:text-gray-800 text-center mt-2">
+          ← Deslize para ver mais usuários ({users.length}) →
+        </p>
+      )}
+    </div>
   );
 };

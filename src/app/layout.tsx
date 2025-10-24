@@ -5,6 +5,8 @@ import { Providers } from '../components/Providers';
 import { Theme } from '@/components/Theme';
 import { cookies } from 'next/headers';
 import { THEME } from '@/enums/theme';
+import { SampleCards } from '@/components/SampleCards';
+import { Glass } from '@/components/Glass';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -25,7 +27,11 @@ export default async function RootLayout({
       <body className={inter.className} style={{ visibility: 'hidden' }}>
         <Providers>
           <Theme defaultTheme={defaultTheme} />
-          {children}
+          <SampleCards>
+            <Glass>
+              {children}
+            </Glass>
+          </SampleCards>
         </Providers>
       </body>
     </html>

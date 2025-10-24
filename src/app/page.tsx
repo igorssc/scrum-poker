@@ -1,16 +1,12 @@
 'use client';
 import { CreateRoom } from '../components/CreateRoom';
-import { AcceptUsers } from '../components/AcceptUsers';
 import { useQuery } from '@tanstack/react-query';
 import api from '../services/api';
 import { RoomProps } from '../protocols/Room';
-import { Glass } from '../components/Glass';
 import { useEffect, useState } from 'react';
 import { Box } from '../components/Box';
-import { SampleCards } from '@/components/SampleCards';
 import { useContextSelector } from 'use-context-selector';
 import { RoomContext } from '@/context/RoomContext';
-import { Button } from '@/components/Button';
 import { MemberProps } from '@/protocols/Member';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { SearchRoom } from '@/components/SearchRoom';
@@ -57,28 +53,20 @@ export default function Home() {
 
   if (isLookingForRoom)
     return (
-      <SampleCards>
-        <Glass>
-          <Box>
-            <Flex>
-              <SearchRoom />
-            </Flex>
-          </Box>
-        </Glass>
-      </SampleCards>
+      <Box>
+        <Flex>
+          <SearchRoom />
+        </Flex>
+      </Box>
     );
 
   if (!room)
     return (
-      <SampleCards>
-        <Glass>
-          <Box>
-            <Flex>
-              <CreateRoom setIsLookingForRoom={setIsLookingForRoom} />
-            </Flex>
-          </Box>
-        </Glass>
-      </SampleCards>
+      <Box>
+        <Flex>
+          <CreateRoom setIsLookingForRoom={setIsLookingForRoom} />
+        </Flex>
+      </Box>
     );
 
   return (
