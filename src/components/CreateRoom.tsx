@@ -23,7 +23,7 @@ export const CreateRoom = ({ setIsLookingForRoom }: CreateRoomProps) => {
     const hasRoomName = !!roomName.current?.value;
     const hasUserName = !!userName.current?.value;
 
-    if (!hasRoomName || !hasUserName) return;
+    if (!hasRoomName || !hasUserName || !roomName.current || !userName.current) return;
 
     createRoom({
       roomName: roomName.current.value,
