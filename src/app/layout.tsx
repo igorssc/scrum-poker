@@ -12,12 +12,12 @@ export const metadata: Metadata = {
   title: 'Scrum poker',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const defaultTheme = cookieStore.get('scrum-poker-theme')?.value as THEME;
 
   return (

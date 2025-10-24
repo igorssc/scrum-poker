@@ -1,10 +1,10 @@
-@font-face {
-  font-family: 'sinera';
-  src: url('../assets/fonts/Sinera.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
+@import 'tailwindcss';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@layer base {
+  @font-face {
+    font-family: 'sinera';
+    src: url('../assets/fonts/Sinera.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+}
