@@ -8,3 +8,38 @@
     font-style: normal;
   }
 }
+
+@layer utilities {
+  /* Background Images */
+  .bg-cards {
+    background-image: url('/assets/background-cards.webp');
+  }
+  
+  .bg-gradient-radial {
+    background-image: radial-gradient(var(--tw-gradient-stops));
+  }
+  
+  .bg-gradient-conic {
+    background-image: conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops));
+  }
+  
+  /* Font Family */
+  .font-sinera {
+    font-family: sinera, sans-serif;
+  }
+  
+  /* Custom Animation */
+  .animate-custom-bounce {
+    animation: custom-bounce 1s ease-in-out infinite;
+  }
+  
+  /* Keyframes */
+  @keyframes custom-bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-30px);
+    }
+  }
+}
