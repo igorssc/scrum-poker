@@ -15,7 +15,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useContextSelector } from 'use-context-selector';
-import { RoomEnter } from './RoomEnter';
+import { RoomAccess } from './RoomAccess';
 
 type RoomClientProps = {
   roomId: string;
@@ -142,13 +142,26 @@ export function RoomClient({ roomId, access }: RoomClientProps) {
     };
   }, [roomId, socket, user, router, clear, setWaitingLogin, tabId]);
 
-  if (!isHydrated || (user && room && !data?.data)) {
+  const isLoading =
+    !isHydrated ||
+    (user && room && !data?.data);
+
+  const isUserNotInRoom =
+    !(user && room?.id === roomId);
+
+  const shouldShowLoadingScreen =
+    isLoading;
+
+  const shouldShowRoomAccess =
+    isUserNotInRoom && !waitingLogin;
+
+  if (shouldShowLoadingScreen) {
     return <LoadingScreen />;
   }
 
-  if (!(user && room?.id === roomId) && !waitingLogin) {
+  if (shouldShowRoomAccess) {
     return (
-      <RoomEnter
+      <RoomAccess
         roomId={roomId}
         roomName={data?.data.name}
         access={access}

@@ -6,13 +6,13 @@ import { Flex } from '@/components/Flex';
 import { Glass } from '@/components/Glass';
 import { SampleCards } from '@/components/SampleCards';
 
-type RoomEnterProps = {
+type RoomAccessProps = {
   roomId: string;
   roomName?: string;
   access?: string;
 };
 
-export function RoomEnter({ roomId, roomName, access }: RoomEnterProps) {
+export function RoomAccess({ roomId, roomName, access }: RoomAccessProps) {
   return (
     <SampleCards>
       <Glass>

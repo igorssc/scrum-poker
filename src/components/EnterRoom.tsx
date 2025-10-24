@@ -28,7 +28,9 @@ export const EnterRoom = ({ roomId, roomName, access }: EnterRoomProps) => {
 
     if (!hasUserName) return;
 
-    enterRoom({ roomId, userName: userName.current.value, access });
+    if (userName.current) {
+      enterRoom({ roomId, userName: userName.current.value, access });
+    }
   };
 
   return (

@@ -15,16 +15,16 @@ import { MemberProps } from '@/protocols/Member';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { SearchRoom } from '@/components/SearchRoom';
 import { Flex } from '@/components/Flex';
+import { Board } from '@/components/Board';
 
 export default function Home() {
   const [isLookingForRoom, setIsLookingForRoom] = useState(false);
 
-  const { room, user, logout, isHydrated } = useContextSelector(
+  const { room, user, isHydrated } = useContextSelector(
     RoomContext,
     (context) => ({
       room: context.room,
       user: context.user,
-      logout: context.logout,
       isHydrated: context.isHydrated,
       tabId: context.tabId,
     }),
@@ -55,14 +55,6 @@ export default function Home() {
     return <LoadingScreen />;
   }
 
-  {
-    /* <pre>{JSON.stringify(room, null, 4)}</pre>
-      <pre>{JSON.stringify(user, null, 4)}</pre> */
-  }
-
-  {
-    /* <pre>{JSON.stringify(data?.data, null, 4)}</pre> */
-  }
   if (isLookingForRoom)
     return (
       <SampleCards>
@@ -90,9 +82,6 @@ export default function Home() {
     );
 
   return (
-    <header>
-      <Button onClick={() => logout()}>sair</Button>
-      {(!data?.data.private || room?.owner_id === user?.id) && <AcceptUsers />}
-    </header>
+    <Board/>
   );
 }
