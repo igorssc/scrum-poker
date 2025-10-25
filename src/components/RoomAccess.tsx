@@ -14,7 +14,7 @@ type RoomAccessProps = {
 
 export function RoomAccess({ roomId, roomName, access }: RoomAccessProps) {
   return (
-    <Box className='w-[400px]'>
+    <Box className='w-160'>
       <Flex>
         <EnterRoom
           roomId={roomId}

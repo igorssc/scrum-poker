@@ -188,7 +188,7 @@ export const Select = ({
     }
 
     const baseClass =
-      'px-4 py-2 text-sm cursor-pointer text-gray-900 dark:text-gray-200';
+      'px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 text-[0.65rem] sm:text-xs cursor-pointer text-gray-900 dark:text-gray-200';
     const isSelected = option.value === value;
     const isHighlighted = highlightedIndex === index;
 
@@ -207,7 +207,7 @@ export const Select = ({
       {label && (
         <label
           className={twMerge(
-            'mb-2 text-sm font-medium',
+            'mb-1.5 sm:mb-2 text-[0.65rem] sm:text-xs font-medium',
             disabled
               ? 'text-gray-400 dark:text-gray-500'
               : 'text-gray-700 dark:text-gray-300',
@@ -228,7 +228,7 @@ export const Select = ({
         <div
           onClick={toggleOptions}
           className={twMerge(
-            'block w-full px-4 py-2 text-sm rounded-lg transition-colors border border-gray-300',
+            'block w-full px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 text-[0.65rem] sm:text-xs rounded-lg transition-colors border border-gray-300',
             'bg-white text-gray-900 placeholder-gray-500 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600',
             disabled
               ? 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-500'
@@ -240,11 +240,11 @@ export const Select = ({
             : placeholder}
           <span
             className={twMerge(
-              'absolute right-4 top-1/2 transform -translate-y-1/2 transition-transform duration-200',
+              'absolute right-2.5 sm:right-3 md:right-4 top-1/2 transform -translate-y-1/2 transition-transform duration-200',
               isOpen && 'rotate-180'
             )}
           >
-            <ChevronDown className="text-gray-400 dark:text-gray-500" />
+            <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 dark:text-gray-500" />
           </span>
         </div>
         {isOpen && !disabled && (

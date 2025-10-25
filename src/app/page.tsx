@@ -70,9 +70,9 @@ export default function Home() {
 
   if (isLookingForRoom)
     return (
-      <div className="relative min-h-screen flex items-center justify-center max-w-[90%]">
-        <ThemeToggle className="fixed top-4 right-4 z-50" />
-        <Box allowOverflow className='w-[400px] max-h-[800px]'>
+      <div className="relative min-h-screen flex items-center justify-center w-full px-4 sm:px-6 md:px-8">
+        <ThemeToggle className="fixed top-3 right-3 sm:top-4 sm:right-4 z-50" />
+        <Box allowOverflow className='w-full max-w-xs sm:max-w-sm md:max-w-md max-h-[80vh] sm:max-h-[800px]'>
           <Flex>
             <SearchRoom />
           </Flex>
@@ -82,9 +82,9 @@ export default function Home() {
 
   if (!room)
     return (
-      <div className="relative min-h-screen flex items-center justify-center max-w-[90%]">
-        <ThemeToggle className="fixed top-4 right-4 z-50" />
-        <Box allowOverflow className='w-[400px]'>
+      <div className="relative min-h-screen flex items-center justify-center w-full px-4 sm:px-6 md:px-8">
+        <ThemeToggle className="fixed top-3 right-3 sm:top-4 sm:right-4 z-50" />
+        <Box allowOverflow className='w-full max-w-xs sm:max-w-sm md:max-w-md'>
           <Flex>
             <CreateRoom setIsLookingForRoom={setIsLookingForRoom} />
           </Flex>

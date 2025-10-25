@@ -120,7 +120,7 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
 
 
   return (
-    <div className="grid grid-rows-[1fr_auto] h-full max-h-[80vh] w-full max-w-lg mx-auto">
+    <div className="grid grid-rows-[1fr_auto] h-full max-h-[80vh] w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg mx-auto">
       <form
         className="grid grid-rows-[1fr_auto] min-h-0"
         onSubmit={e => {
@@ -130,74 +130,74 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
       >
         {/* Conteúdo com scroll */}
         <div className="overflow-y-auto min-h-0">
-          <div className="px-6 pt-6 pb-2">
-            <div className="flex flex-col gap-6">
-            {/* Nome do usuário */}
-            <div className="flex flex-col gap-2">
-              <label className="text-gray-600 dark:text-gray-400">Seu nome:</label>
-              <input
-                type="text"
-                value={userName}
-                onChange={e => setUserName(e.target.value)}
-                className="px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-              />
-            </div>
-            {/* Nome da sala */}
-            <div className="flex flex-col gap-2">
-              <label className="text-gray-600 dark:text-gray-400">Nome da sala:</label>
-              <input
-                type="text"
-                value={roomName}
-                onChange={e => setRoomName(e.target.value)}
-                className={twMerge(
-                  'px-3 py-2 rounded-md border',
-                  canEditRoom ? 'border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100' : 'border-gray-200 dark:border-gray-800 bg-gray-100 dark:bg-gray-900 text-gray-400 dark:text-gray-500 opacity-70'
-                )}
-                disabled={!canEditRoom}
-              />
-            </div>
-            {/* Tema da sala */}
-            <div className="flex flex-col gap-2">
-              <label className="text-gray-600 dark:text-gray-400">Tema da sala:</label>
-              <select
-                value={theme}
-                onChange={e => setTheme(e.target.value)}
-                className={twMerge(
-                  'px-3 py-2 rounded-md border',
-                  canEditRoom ? 'border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100' : 'border-gray-200 dark:border-gray-800 bg-gray-100 dark:bg-gray-900 text-gray-400 dark:text-gray-500 opacity-70'
-                )}
-                disabled={!canEditRoom}
-              >
-                {themeOptions.map(opt => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
-                ))}
-              </select>
-            </div>
-            {/* Privacidade */}
-            <div className="flex items-center justify-between gap-3">
-              <label className="text-gray-600 dark:text-gray-400">Sala privada:</label>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
+          <div className="px-3 sm:px-4 md:px-5 lg:px-6 pt-3 sm:pt-4 md:pt-5 lg:pt-6 pb-1 sm:pb-1.5 md:pb-2">
+            <div className="flex flex-col gap-3 sm:gap-4 md:gap-5 lg:gap-6">
+              {/* Nome do usuário */}
+              <div className="flex flex-col gap-1 sm:gap-1.5 md:gap-2">
+                <label className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Seu nome:</label>
+                <input
+                  type="text"
+                  value={userName}
+                  onChange={e => setUserName(e.target.value)}
+                  className="px-2.5 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base rounded-md border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                />
+              </div>
+              {/* Nome da sala */}
+              <div className="flex flex-col gap-1 sm:gap-1.5 md:gap-2">
+                <label className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Nome da sala:</label>
+                <input
+                  type="text"
+                  value={roomName}
+                  onChange={e => setRoomName(e.target.value)}
                   className={twMerge(
-                    'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
-                    isPrivate ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-700',
-                    room?.owner_id !== user?.id ? 'opacity-60 cursor-not-allowed' : ''
+                    'px-2.5 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base rounded-md border',
+                    canEditRoom ? 'border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100' : 'border-gray-200 dark:border-gray-800 bg-gray-100 dark:bg-gray-900 text-gray-400 dark:text-gray-500 opacity-70'
                   )}
-                  onClick={() => room?.owner_id === user?.id && setIsPrivate(v => !v)}
-                  disabled={room?.owner_id !== user?.id}
-                  aria-pressed={isPrivate}
+                  disabled={!canEditRoom}
+                />
+              </div>
+              {/* Tema da sala */}
+              <div className="flex flex-col gap-1 sm:gap-1.5 md:gap-2">
+                <label className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Tema da sala:</label>
+                <select
+                  value={theme}
+                  onChange={e => setTheme(e.target.value)}
+                  className={twMerge(
+                    'px-2.5 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base rounded-md border',
+                    canEditRoom ? 'border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100' : 'border-gray-200 dark:border-gray-800 bg-gray-100 dark:bg-gray-900 text-gray-400 dark:text-gray-500 opacity-70'
+                  )}
+                  disabled={!canEditRoom}
                 >
-                  <span
+                  {themeOptions.map(opt => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+              </div>
+              {/* Privacidade */}
+              <div className="flex items-center justify-between gap-2 sm:gap-3">
+                <label className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Sala privada:</label>
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <button
+                    type="button"
                     className={twMerge(
-                      'inline-block h-5 w-5 transform rounded-full bg-white transition-transform',
-                      isPrivate ? 'translate-x-5' : 'translate-x-1'
+                      'relative inline-flex h-5 w-9 sm:h-6 sm:w-11 items-center rounded-full transition-colors',
+                      isPrivate ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-700',
+                      room?.owner_id !== user?.id ? 'opacity-60 cursor-not-allowed' : ''
                     )}
-                  />
-                </button>
-                <span className="text-xs text-gray-600 dark:text-gray-400">
-                  {isPrivate ? 'Privada' : 'Pública'}
-                </span>
+                    onClick={() => room?.owner_id === user?.id && setIsPrivate(v => !v)}
+                    disabled={room?.owner_id !== user?.id}
+                    aria-pressed={isPrivate}
+                  >
+                    <span
+                      className={twMerge(
+                        'inline-block h-4 w-4 sm:h-5 sm:w-5 transform rounded-full bg-white transition-transform',
+                        isPrivate ? 'translate-x-4 sm:translate-x-5' : 'translate-x-0.5 sm:translate-x-1'
+                      )}
+                    />
+                  </button>
+                  <span className="text-[0.65rem] sm:text-xs text-gray-600 dark:text-gray-400">
+                    {isPrivate ? 'Privada' : 'Pública'}
+                  </span>
               </div>
             </div>
               {/* Localização da sala */}
@@ -207,24 +207,24 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
         </div>
 
         {/* Erro e botões fixos no rodapé */}
-        <div className="px-6 pb-6 pt-2">
+        <div className="px-3 sm:px-4 md:px-5 lg:px-6 pb-3 sm:pb-4 md:pb-5 lg:pb-6 pt-2">
           {error && (
-            <div className="text-center text-sm text-red-600 dark:text-red-400 mb-4">
+            <div className="text-center text-[0.65rem] sm:text-xs text-red-600 dark:text-red-400 mb-2 sm:mb-3 md:mb-4">
               {error}
             </div>
           )}
-          <div className="flex gap-3 justify-end pt-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex gap-2 sm:gap-3 justify-end pt-2 sm:pt-3 md:pt-4 border-t border-gray-200 dark:border-gray-700">
             <Button
               type="button"
               variant="secondary"
               onClick={onClose}
-              className="px-6"
+              className="px-3 sm:px-4 md:px-5 lg:px-6 text-sm sm:text-base"
             >
               Fechar
             </Button>
             <Button
               type="submit"
-              className="bg-purple-600 hover:bg-purple-700 focus:ring-purple-500 px-6"
+              className="bg-purple-600 hover:bg-purple-700 focus:ring-purple-500 px-3 sm:px-4 md:px-5 lg:px-6 text-sm sm:text-base"
               disabled={saving}
             >
               {saving ? 'Salvando...' : 'Salvar alterações'}

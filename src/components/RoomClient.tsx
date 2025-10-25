@@ -170,7 +170,7 @@ export function RoomClient({ roomId, access }: RoomClientProps) {
   }
 
   return (
-    <Box>
+    <Box className='w-160'>
       <Flex>
         <WaitingRoom roomName={data?.data.name} roomId={roomId} />
       </Flex>

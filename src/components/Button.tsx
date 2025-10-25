@@ -6,7 +6,7 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 export const Button = ({ className, variant = 'primary', ...rest }: ButtonProps) => {
-  const baseClasses = 'px-4 py-2 text-sm font-medium rounded-lg transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-opacity-50';
+  const baseClasses = 'px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 text-[0.65rem] sm:text-xs font-medium rounded-lg transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-opacity-50';
   
   const variantClasses = {
     primary: 'bg-purple-600 text-white hover:bg-purple-700 focus:ring-purple-500 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600 dark:focus:ring-gray-400',

@@ -10,7 +10,7 @@ export const Loading = () => {
         <div
           key={index}
           className={twMerge(
-            'w-3 h-3 rounded-full animate-custom-bounce',
+            'w-2 h-2 md:w-3 md:h-3 rounded-full animate-custom-bounce',
             colors[index % colors.length],
           )}
           style={{
