@@ -223,7 +223,7 @@ export const Select = ({
           setHasFocus(false);
           closeDropdown();
         }}
-        className={`relative ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+        className={twMerge("relative", disabled ? "cursor-not-allowed" : "cursor-pointer")}
       >
         <div
           onClick={toggleOptions}
@@ -239,9 +239,10 @@ export const Select = ({
             ? options.find((option) => option.value === value)?.label
             : placeholder}
           <span
-            className={`absolute right-4 top-1/2 transform -translate-y-1/2 transition-transform duration-200 ${
-              isOpen ? 'rotate-180' : ''
-            }`}
+            className={twMerge(
+              'absolute right-4 top-1/2 transform -translate-y-1/2 transition-transform duration-200',
+              isOpen && 'rotate-180'
+            )}
           >
             <ChevronDown className="text-gray-400 dark:text-gray-500" />
           </span>

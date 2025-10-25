@@ -5,6 +5,7 @@ import { RoomContext } from '@/context/RoomContext';
 import { useRoomCache } from '@/hooks/useRoomCache';
 import { Button } from './Button';
 import { Flex } from './Flex';
+import { twMerge } from 'tailwind-merge';
 
 type SettingsModalContentProps = {
   onClose: () => void;
@@ -45,7 +46,7 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
           </div>
           <div className="flex justify-between">
             <span className="text-gray-600 dark:text-gray-400">Status:</span>
-            <span className={`font-medium ${room?.status === 'OPEN' ? 'text-green-600' : 'text-red-600'}`}>
+            <span className={twMerge("font-medium", room?.status === 'OPEN' ? "text-green-600" : "text-red-600")}>
               {room?.status === 'OPEN' ? 'Aberta' : 'Fechada'}
             </span>
           </div>

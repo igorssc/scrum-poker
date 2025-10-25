@@ -12,6 +12,7 @@ import { LoadingScreen } from '@/components/LoadingScreen';
 import { SearchRoom } from '@/components/SearchRoom';
 import { Flex } from '@/components/Flex';
 import { Board } from '@/components/Board';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function Home() {
   const [isLookingForRoom, setIsLookingForRoom] = useState(false);
@@ -53,20 +54,26 @@ export default function Home() {
 
   if (isLookingForRoom)
     return (
-      <Box>
-        <Flex>
-          <SearchRoom />
-        </Flex>
-      </Box>
+      <div className="relative min-h-screen">
+        <ThemeToggle className="fixed top-4 right-4 z-50" />
+        <Box>
+          <Flex>
+            <SearchRoom />
+          </Flex>
+        </Box>
+      </div>
     );
 
   if (!room)
     return (
-      <Box>
-        <Flex>
-          <CreateRoom setIsLookingForRoom={setIsLookingForRoom} />
-        </Flex>
-      </Box>
+      <div className="relative min-h-screen">
+        <ThemeToggle className="fixed top-4 right-4 z-50" />
+        <Box>
+          <Flex>
+            <CreateRoom setIsLookingForRoom={setIsLookingForRoom} />
+          </Flex>
+        </Box>
+      </div>
     );
 
   return (

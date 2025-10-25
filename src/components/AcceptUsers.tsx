@@ -269,9 +269,10 @@ export const AcceptUsers = () => {
           onTouchEnd={hasOverflow ? handleTouchEnd : undefined}
         >
           <div 
-            className={`flex gap-3 pb-2 ${
-              hasOverflow ? '' : 'justify-center'
-            }`} 
+            className={twMerge(
+              "flex gap-3 pb-2",
+              hasOverflow ? "" : "justify-center"
+            )} 
             style={hasOverflow ? { width: 'max-content' } : undefined}
           >
             {users.map((user) => (

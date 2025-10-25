@@ -1,8 +1,15 @@
 export const getCookie = (name: string) => {
   if (typeof document === 'undefined') return null;
-  const matches = `; ${document.cookie}`.match(`;\\s*${name}=([^;]+)`);
-
-  return matches ? matches[1] : null;
+  
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  
+  if (parts.length === 2) {
+    const cookieValue = parts.pop()?.split(';').shift();
+    return cookieValue;
+  }
+  
+  return null;
 };
 
 export const setCookie = (name: string, value: string, days = 100) => {
