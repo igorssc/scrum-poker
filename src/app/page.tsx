@@ -37,7 +37,7 @@ export default function Home() {
   useEffect(() => {
     if (!(user && room)) return;
 
-    const userFound = data?.data.members.find(
+    const userFound = data?.data?.members?.find(
       (member) => member.member.id === user.id,
     );
 
