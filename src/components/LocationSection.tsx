@@ -198,7 +198,7 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
 
   return (
     <div className="flex flex-col gap-2 sm:gap-2.5 md:gap-3">
-      <label className="text-sm sm:text-base text-gray-600 dark:text-gray-400 font-medium">Localização da sala</label>
+      <label className="text-[0.65rem] sm:text-xs text-gray-700 dark:text-gray-300 font-medium">Localização da sala</label>
       
       {/* Caixa elegante para localização */}
       <div className="bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg sm:rounded-xl p-2.5 sm:p-3 md:p-4 space-y-2 sm:space-y-2.5 md:space-y-3">
@@ -215,7 +215,16 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
                   stroke="currentColor"
                   className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 text-green-600 dark:text-green-400"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 17.642 4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
+                  />
                 </svg>
               </div>
               <div className="flex-1">

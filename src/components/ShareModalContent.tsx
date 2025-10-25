@@ -62,14 +62,8 @@ export const ShareModalContent = ({ roomId, roomName, onClose }: ShareModalConte
   return (
     <div className="grid grid-rows-[1fr_auto] h-full max-h-[80vh] w-full max-w-xs sm:max-w-sm md:max-w-md mx-auto">
       <div className="overflow-y-auto min-h-0">
-        <div className="px-3 sm:px-4 md:px-5 lg:px-6 pt-3 sm:pt-4 md:pt-5 lg:pt-6 pb-2">
-          <div className="flex flex-col items-center gap-3 sm:gap-4 md:gap-5 lg:gap-6">
-          {/* Título simplificado */}
-          {roomName && (
-            <p className="text-[0.65rem] sm:text-xs text-gray-600 dark:text-gray-400 text-center">
-              Compartilhar "{roomName}"
-            </p>
-          )}
+        <div className="py-4 sm:py-6 lg:py-8">
+          <div className="flex flex-col items-center gap-6 lg:gap-8">
 
           {/* QR Code */}
           <div className="bg-white p-2.5 sm:p-3 md:p-4 rounded-lg shadow-sm shadow-purple-300 dark:shadow-current">
@@ -99,7 +93,7 @@ export const ShareModalContent = ({ roomId, roomName, onClose }: ShareModalConte
                   </svg>
                 ) : (
                   <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                   </svg>
                 )}
               </Button>
@@ -115,27 +109,25 @@ export const ShareModalContent = ({ roomId, roomName, onClose }: ShareModalConte
       </div>
 
       {/* Botões fixos no rodapé */}
-      <div className="px-3 sm:px-4 md:px-5 lg:px-6 pb-3 sm:pb-4 md:pb-5 lg:pb-6 pt-2">
-        <div className="flex gap-2 sm:gap-3 w-full pt-2 sm:pt-3 md:pt-4 border-t border-gray-200 dark:border-gray-700">
-          {typeof navigator !== 'undefined' && 'share' in navigator && (
-            <Button
-              onClick={shareNative}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 text-[0.65rem] sm:text-xs md:text-base"
-            >
-              <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 mr-1.5 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
-              </svg>
-              Compartilhar
-            </Button>
-          )}
+      <div className="flex gap-2 sm:gap-3 w-full border-t border-gray-200 dark:border-gray-700 pt-4 sm:pt-6 lg:pt-8 sm:pb-4 md:pb-5 lg:pb-6">
+        {typeof navigator !== 'undefined' && 'share' in navigator && (
           <Button
-            variant="secondary"
-            onClick={onClose}
-            className="flex-1 text-[0.65rem] sm:text-xs md:text-base"
+            onClick={shareNative}
+            className="flex-1 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 text-[0.65rem] sm:text-xs md:text-base"
           >
-            Fechar
+            <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 mr-1.5 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
+            </svg>
+            Compartilhar
           </Button>
-        </div>
+        )}
+        <Button
+          variant="secondary"
+          onClick={onClose}
+          className="flex-1 text-[0.65rem] sm:text-xs md:text-base"
+        >
+          Fechar
+        </Button>
       </div>
     </div>
   );

@@ -4,6 +4,8 @@ import { useContextSelector } from 'use-context-selector';
 import { RoomContext } from '@/context/RoomContext';
 import { useRoomCache } from '@/hooks/useRoomCache';
 import { Button } from './Button';
+import { Input } from './Input';
+import { Select } from './Select';
 import { LocationSection } from './LocationSection';
 import { twMerge } from 'tailwind-merge';
 import { useState, useEffect } from 'react';
@@ -130,52 +132,38 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
       >
         {/* Conteúdo com scroll */}
         <div className="overflow-y-auto min-h-0">
-          <div className="px-3 sm:px-4 md:px-5 lg:px-6 pt-3 sm:pt-4 md:pt-5 lg:pt-6 pb-1 sm:pb-1.5 md:pb-2">
-            <div className="flex flex-col gap-3 sm:gap-4 md:gap-5 lg:gap-6">
+          <div className="pt-3 sm:pt-4 md:pt-5 lg:pt-6 pb-1 sm:pb-1.5 md:pb-2">
+            <div className="flex flex-col gap-4 lg:gap-6">
               {/* Nome do usuário */}
-              <div className="flex flex-col gap-1 sm:gap-1.5 md:gap-2">
-                <label className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Seu nome:</label>
-                <input
-                  type="text"
-                  value={userName}
-                  onChange={e => setUserName(e.target.value)}
-                  className="px-2.5 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base rounded-md border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-                />
-              </div>
+              <Input
+                label="Seu nome:"
+                type="text"
+                value={userName}
+                onChange={e => setUserName(e.target.value)}
+              />
+              
               {/* Nome da sala */}
-              <div className="flex flex-col gap-1 sm:gap-1.5 md:gap-2">
-                <label className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Nome da sala:</label>
-                <input
-                  type="text"
-                  value={roomName}
-                  onChange={e => setRoomName(e.target.value)}
-                  className={twMerge(
-                    'px-2.5 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base rounded-md border',
-                    canEditRoom ? 'border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100' : 'border-gray-200 dark:border-gray-800 bg-gray-100 dark:bg-gray-900 text-gray-400 dark:text-gray-500 opacity-70'
-                  )}
-                  disabled={!canEditRoom}
-                />
-              </div>
+              <Input
+                label="Nome da sala:"
+                type="text"
+                value={roomName}
+                onChange={e => setRoomName(e.target.value)}
+                disabled={!canEditRoom}
+              />
+              
               {/* Tema da sala */}
-              <div className="flex flex-col gap-1 sm:gap-1.5 md:gap-2">
-                <label className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Tema da sala:</label>
-                <select
-                  value={theme}
-                  onChange={e => setTheme(e.target.value)}
-                  className={twMerge(
-                    'px-2.5 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base rounded-md border',
-                    canEditRoom ? 'border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100' : 'border-gray-200 dark:border-gray-800 bg-gray-100 dark:bg-gray-900 text-gray-400 dark:text-gray-500 opacity-70'
-                  )}
-                  disabled={!canEditRoom}
-                >
-                  {themeOptions.map(opt => (
-                    <option key={opt.value} value={opt.value}>{opt.label}</option>
-                  ))}
-                </select>
-              </div>
+              <Select
+                label="Tema da sala:"
+                options={themeOptions}
+                value={theme}
+                onChange={setTheme}
+                disabled={!canEditRoom}
+              />
               {/* Privacidade */}
               <div className="flex items-center justify-between gap-2 sm:gap-3">
-                <label className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Sala privada:</label>
+                <label className={twMerge("text-[0.65rem] sm:text-xs text-gray-600 dark:text-gray-400", !canEditRoom
+                ? 'text-gray-400 dark:text-gray-500'
+                : 'text-gray-700 dark:text-gray-300')}>Sala privada:</label>
                 <div className="flex items-center gap-1.5 sm:gap-2">
                   <button
                     type="button"
@@ -207,24 +195,24 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
         </div>
 
         {/* Erro e botões fixos no rodapé */}
-        <div className="px-3 sm:px-4 md:px-5 lg:px-6 pb-3 sm:pb-4 md:pb-5 lg:pb-6 pt-2">
+        <div className="w-full pb-3 sm:pb-4 md:pb-5 lg:pb-6 pt-2">
           {error && (
             <div className="text-center text-[0.65rem] sm:text-xs text-red-600 dark:text-red-400 mb-2 sm:mb-3 md:mb-4">
               {error}
             </div>
           )}
-          <div className="flex gap-2 sm:gap-3 justify-end pt-2 sm:pt-3 md:pt-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="grid grid-cols-2 md:flex gap-2 sm:gap-3 justify-end pt-2 sm:pt-3 md:pt-4 border-t border-gray-200 dark:border-gray-700">
             <Button
               type="button"
               variant="secondary"
               onClick={onClose}
-              className="px-3 sm:px-4 md:px-5 lg:px-6 text-sm sm:text-base"
+              className="px-3 sm:px-4 md:px-5 lg:px-6"
             >
               Fechar
             </Button>
             <Button
               type="submit"
-              className="bg-purple-600 hover:bg-purple-700 focus:ring-purple-500 px-3 sm:px-4 md:px-5 lg:px-6 text-sm sm:text-base"
+              className="bg-purple-600 hover:bg-purple-700 focus:ring-purple-500 px-3 sm:px-4 md:px-5 lg:px-6"
               disabled={saving}
             >
               {saving ? 'Salvando...' : 'Salvar alterações'}

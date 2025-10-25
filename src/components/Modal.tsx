@@ -37,7 +37,7 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
       <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+          <h2 className="text-sm md:text-md xl:text-lg font-semibold text-gray-900 dark:text-gray-100">
             {title}
           </h2>
           <Button
@@ -51,7 +51,7 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
         </div>
         
         {/* Content */}
-        <div className="p-6 overflow-y-auto">
+        <div className="px-2 md:px-4 lg:px-6 py-4 md:pt-2  overflow-y-auto">
           {children}
         </div>
       </div>
