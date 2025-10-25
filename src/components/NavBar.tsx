@@ -93,7 +93,7 @@ export const NavBar = () => {
       <Modal
         isOpen={isShareOpen}
         onClose={() => setIsShareOpen(false)}
-        title=""
+        title={`Compartilhar "${cachedRoomData?.data?.name || ''}"`}
       >
         <ShareModalContent 
           roomId={room?.id || ''}
