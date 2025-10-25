@@ -34,7 +34,7 @@ export const EnterRoom = ({ roomId, roomName, access }: EnterRoomProps) => {
   };
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 w-full">
       <h1 className="font-sinera text-4xl text-center">Scrum poker</h1>
       <form
         onSubmit={handleSubmit}
@@ -47,10 +47,12 @@ export const EnterRoom = ({ roomId, roomName, access }: EnterRoomProps) => {
           disabled
         />
         <Input type="text" ref={userName} label="Nome de usuário" required />
-        <Button type="submit" className="mt-4">
-          Entrar
-        </Button>
-        <Button onClick={() => router.push('/')}>Voltar ao início</Button>
+        <div className="flex gap-4 w-full justify-center flex-col">
+          <Button type="submit" className="mt-4">
+            Entrar
+          </Button>
+          <Button variant="secondary" onClick={() => router.push('/')}>Voltar ao início</Button>
+        </div>
       </form>
     </div>
   );

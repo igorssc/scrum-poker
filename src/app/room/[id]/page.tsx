@@ -15,7 +15,7 @@ export default async function Room({ params, searchParams }: RoomPageProps) {
   const { access } = await searchParams;
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen flex content-center items-center max-w-[90%]">
       <ThemeToggle className="fixed top-4 right-4 z-50" />
       <RoomClient roomId={roomId} access={access} />
     </div>

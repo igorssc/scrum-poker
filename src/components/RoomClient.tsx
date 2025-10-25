@@ -170,14 +170,10 @@ export function RoomClient({ roomId, access }: RoomClientProps) {
   }
 
   return (
-    <SampleCards>
-      <Glass>
-        <Box>
-          <Flex>
-            <WaitingRoom roomName={data?.data.name} roomId={roomId} />
-          </Flex>
-        </Box>
-      </Glass>
-    </SampleCards>
+    <Box>
+      <Flex>
+        <WaitingRoom roomName={data?.data.name} roomId={roomId} />
+      </Flex>
+    </Box>
   );
 }

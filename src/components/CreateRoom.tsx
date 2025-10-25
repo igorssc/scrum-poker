@@ -34,7 +34,7 @@ export const CreateRoom = ({ setIsLookingForRoom }: CreateRoomProps) => {
 
   return (
     <>
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-8 w-full">
         <h1 className="font-sinera text-4xl text-center">Scrum poker</h1>
         <form
           onSubmit={handleSubmit}

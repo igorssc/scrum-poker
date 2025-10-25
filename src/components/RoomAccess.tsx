@@ -14,18 +14,14 @@ type RoomAccessProps = {
 
 export function RoomAccess({ roomId, roomName, access }: RoomAccessProps) {
   return (
-    <SampleCards>
-      <Glass>
-        <Box>
-          <Flex>
-            <EnterRoom
-              roomId={roomId}
-              roomName={roomName}
-              access={access}
-            />
-          </Flex>
-        </Box>
-      </Glass>
-    </SampleCards>
+    <Box className='w-[400px]'>
+      <Flex>
+        <EnterRoom
+          roomId={roomId}
+          roomName={roomName}
+          access={access}
+        />
+      </Flex>
+    </Box>
   );
 }
