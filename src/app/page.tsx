@@ -56,7 +56,7 @@ export default function Home() {
     return (
       <div className="relative min-h-screen flex items-center justify-center max-w-[90%]">
         <ThemeToggle className="fixed top-4 right-4 z-50" />
-        <Box className='w-[400px]'>
+        <Box allowOverflow className='w-[400px]'>
           <Flex>
             <SearchRoom />
           </Flex>
@@ -68,7 +68,7 @@ export default function Home() {
     return (
       <div className="relative min-h-screen flex items-center justify-center max-w-[90%]">
         <ThemeToggle className="fixed top-4 right-4 z-50" />
-        <Box className='w-[400px]'>
+        <Box allowOverflow className='w-[400px]'>
           <Flex>
             <CreateRoom setIsLookingForRoom={setIsLookingForRoom} />
           </Flex>

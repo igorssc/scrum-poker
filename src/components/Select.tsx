@@ -248,7 +248,7 @@ export const Select = ({
           </span>
         </div>
         {isOpen && !disabled && (
-          <ul className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-600">
+          <ul className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-600">
             {options.map((option, index) => (
               <li
                 key={option.value}
