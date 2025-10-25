@@ -42,12 +42,15 @@ export const CreateRoom = ({ setIsLookingForRoom }: CreateRoomProps) => {
         >
           <Input type="text" ref={roomName} label="Nome da sala" required />
           <Input type="text" ref={userName} label="Nome de usuário" required />
-          <Button type="submit" className="mt-4">
-            Criar sala
-          </Button>
-          <Button onClick={() => setIsLookingForRoom(true)}>
-            Encontrar salas
-          </Button>
+
+          <div className="flex gap-4 w-full justify-center flex-col">
+            <Button type="submit" className="mt-4">
+              Criar sala
+            </Button>
+            <Button variant="secondary" onClick={() => setIsLookingForRoom(true)}>
+              Encontrar salas
+            </Button>
+          </div>
         </form>
       </div>
     </>

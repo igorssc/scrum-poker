@@ -54,15 +54,18 @@ export const SearchRoom = () => {
     <>
       <div className="flex flex-col gap-8">
         <h1 className="font-sinera text-4xl text-center">Scrum poker</h1>
-        <h3 className="text-xl text-center">Buscar salas próximas a você</h3>
+        <h3 className="text-lg text-center">Buscar salas próximas a você</h3>
         <Select
           label="Distância"
           options={availableDistances}
           value={distance}
           onChange={setDistance}
         />
-        <Button onClick={handleSearchRooms}>Buscar</Button>
-        <Button onClick={() => window.location.reload()}>Voltar</Button>
+
+        <div className="flex gap-4 w-full justify-center flex-col">
+          <Button onClick={handleSearchRooms}>Buscar</Button>
+          <Button variant="secondary" onClick={() => window.location.reload()}>Voltar</Button>
+        </div>
 
         {availableRooms?.map((room) => (
           <List key={room.id} label={room.name} />
