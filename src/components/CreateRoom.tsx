@@ -38,7 +38,7 @@ export const CreateRoom = ({ setIsLookingForRoom }: CreateRoomProps) => {
         <h1 className="font-sinera text-2xl sm:text-3xl md:text-4xl text-center">Scrum poker</h1>
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col gap-5 sm:gap-6 md:gap-8 py-2 sm:py-3 md:py-4 w-full justify-between items-stretch"
+          className="flex flex-col gap-6 py-4 w-full justify-between items-stretch"
         >
           <Input type="text" ref={roomName} label="Nome da sala" required />
           <Input type="text" ref={userName} label="Nome de usuário" required />

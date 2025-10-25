@@ -1,4 +1,4 @@
-import React from 'react';
+import { Children } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 export const Loading = () => {
@@ -6,19 +6,21 @@ export const Loading = () => {
 
   return (
     <div className="flex justify-center items-center space-x-2">
-      {Array.from({ length: 8 }).map((_, index) => (
-        <div
-          key={index}
-          className={twMerge(
-            'w-2 h-2 md:w-3 md:h-3 rounded-full animate-custom-bounce',
-            colors[index % colors.length],
-          )}
-          style={{
-            animationDelay: `${index * 0.1}s`,
-            animationDuration: '0.6s',
-          }}
-        ></div>
-      ))}
+      {Children.toArray(
+        Array.from({ length: 8 }).map((_, index) => (
+          <div
+            key={index}
+            className={twMerge(
+              'w-2 h-2 md:w-3 md:h-3 rounded-full animate-custom-bounce',
+              colors[index % colors.length],
+            )}
+            style={{
+              animationDelay: `${index * 0.1}s`,
+              animationDuration: '0.6s',
+            }}
+          />
+        ))
+      )}
     </div>
   );
 };

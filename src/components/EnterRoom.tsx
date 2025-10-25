@@ -34,8 +34,8 @@ export const EnterRoom = ({ roomId, roomName, access }: EnterRoomProps) => {
   };
 
   return (
-    <div className="flex flex-col gap-8 w-full pt-4 pb-2">
-      <h1 className="font-sinera text-4xl text-center">Scrum poker</h1>
+    <div className="flex flex-col gap-5 sm:gap-6 md:gap-8 w-full pt-4 pb-2">
+      <h1 className="font-sinera text-2xl sm:text-3xl md:text-4xl text-center">Scrum poker</h1>
       <form
         onSubmit={handleSubmit}
         className="flex flex-col gap-6 py-4 w-full justify-between items-stretch"

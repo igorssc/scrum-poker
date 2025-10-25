@@ -161,7 +161,7 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
               />
               {/* Privacidade */}
               <div className="flex items-center justify-between gap-2 sm:gap-3">
-                <label className={twMerge("text-[0.65rem] sm:text-xs text-gray-600 dark:text-gray-400", !canEditRoom
+                <label className={twMerge("text-[0.65rem] sm:text-xs text-gray-600 dark:text-gray-400 font-medium", !canEditRoom
                 ? 'text-gray-400 dark:text-gray-500'
                 : 'text-gray-700 dark:text-gray-300')}>Sala privada:</label>
                 <div className="flex items-center gap-1.5 sm:gap-2">
