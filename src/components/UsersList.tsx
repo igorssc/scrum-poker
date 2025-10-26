@@ -73,8 +73,8 @@ export const UsersList = () => {
     <div>
       {/* Membros Logados */}
       {organizedMembers.length > 0 && (
-        <Box className="min-h-0! max-w-full p-6">
-          <Flex className="gap-4">
+        <Box className="min-h-0! max-w-full p-3 sm:p-4 md:p-6 lg:p-8">
+          <Flex className="gap-3 sm:gap-4 md:gap-6 lg:gap-8">
             <h3 className="text-xs md:text-sm xl:text-md font-bold text-center">
               Membros Ativos ({organizedMembers.length})
             </h3>
