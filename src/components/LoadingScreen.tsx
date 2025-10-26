@@ -21,7 +21,8 @@ export const LoadingScreen = () => {
           <div className="flex justify-center mt-2 sm:mt-3 md:mt-4 w-full">
             <Button 
               onClick={handleCancel}
-              className="bg-red-600 hover:bg-red-700 focus:ring-red-500 w-full"
+              className="w-full"
+              variant='secondary'
             >
               Cancelar
             </Button>
