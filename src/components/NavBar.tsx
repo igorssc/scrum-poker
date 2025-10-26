@@ -36,7 +36,7 @@ export const NavBar = () => {
         <div className="md:hidden">
           <div className="flex items-center justify-between">
             {/* Informações da sala e usuário */}
-            <div className="flex flex-col min-w-0 flex-1">
+            <div className="flex flex-col min-w-0 flex-1 gap-2 sm:gap-2">
               <h1 className="text-sm sm:text-base font-bold text-gray-900 dark:text-gray-100 truncate">
                 {cachedRoomData?.data?.name || 'Carregando...'}
               </h1>
@@ -151,7 +151,7 @@ export const NavBar = () => {
         {/* Layout Desktop: Horizontal Layout (md+) */}
         <div className="hidden md:flex md:items-center md:justify-between">
           {/* Informações do usuário e sala */}
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-2">
             <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">
               {cachedRoomData?.data?.name || 'Carregando...'}
             </h1>
