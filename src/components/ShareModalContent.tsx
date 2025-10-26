@@ -60,8 +60,8 @@ export const ShareModalContent = ({ roomId, roomName, onClose }: ShareModalConte
   };
 
   return (
-    <div className="grid grid-rows-[1fr_auto] h-full max-h-[80vh] w-full mx-auto">
-      <div className="overflow-y-auto min-h-0">
+    <div className="h-full max-h-[80vh] w-full mx-auto">
+      <div className="min-h-0">
         <div className="py-4 sm:py-6 lg:py-8">
           <div className="flex flex-col items-center gap-6 lg:gap-8">
 

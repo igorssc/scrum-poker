@@ -122,16 +122,15 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
 
 
   return (
-    <div className="grid grid-rows-[1fr_auto] h-full max-h-[80vh] w-full mx-auto">
+    <div className="h-full max-h-[80vh] w-full mx-auto">
       <form
-        className="grid grid-rows-[1fr_auto] min-h-0"
+        className="min-h-0"
         onSubmit={e => {
           e.preventDefault();
           handleSaveAll();
         }}
       >
-        {/* Conteúdo com scroll */}
-        <div className="overflow-y-auto min-h-0">
+        <div className="min-h-0">
           <div className="pt-3 sm:pt-4 md:pt-5 lg:pt-6 pb-1 sm:pb-1.5 md:pb-2">
             <div className="flex flex-col gap-4 lg:gap-6">
               {/* Nome do usuário */}
