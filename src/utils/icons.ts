@@ -13,7 +13,7 @@ export const iconsData = {
       'nature/20.svg',
       'nature/40.svg',
       'nature/100.svg',
-      'nature/infinite.svg',
+      'nature/∞.svg',
     ],
     latterIcons: ['dragons/cake.svg', 'shaving/cake.svg'],
   },

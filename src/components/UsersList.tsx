@@ -186,7 +186,7 @@ export const UsersList = () => {
                   <div key={member.id}>
                     {/* Separador de grupo de voto */}
                     {isNewVoteGroup && (
-                      <div className={`flex items-center gap-2 mb-2 ${index > 0 ? 'mt-4' : ''}`}>
+                      <div className={`flex items-center gap-2 mb-2 md:mb-4 ${index > 0 ? 'mt-2 md:mt-4' : ''}`}>
                         <div className="h-px bg-gray-300 dark:bg-gray-600 flex-1"></div>
                         <span className="text-xs font-medium text-gray-500 dark:text-gray-400 px-2">
                           {member.vote ? getCardValue(member.vote) : 'Não votaram'}
