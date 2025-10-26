@@ -38,7 +38,7 @@ export const UsersList = () => {
       <div>
         <Box className="min-h-fit max-w-full p-6">
           <Flex>
-            <p className="text-gray-600 dark:text-gray-400 text-center">
+            <p className="text-gray-600 dark:text-gray-400 text-center text-sm md:text-md xl:text-lg">
               Carregando membros da sala...
             </p>
           </Flex>
@@ -73,9 +73,9 @@ export const UsersList = () => {
     <div>
       {/* Membros Logados */}
       {organizedMembers.length > 0 && (
-        <Box className="min-h-fit max-w-full p-6">
+        <Box className="min-h-0! max-w-full p-6">
           <Flex className="gap-4">
-            <h3 className="text-xl font-bold text-center">
+            <h3 className="text-xs md:text-sm xl:text-md font-bold text-center">
               Membros Ativos ({organizedMembers.length})
             </h3>
             
@@ -167,12 +167,12 @@ export const UsersList = () => {
                       </div>
                     )}
                     
-                    <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
+                    <div className="flex items-center justify-between p-3 text-[0.65rem] md:text-xs lg:text-sm rounded-lg bg-gray-50 dark:bg-gray-700">
                       <div className="flex flex-col flex-1">
                         <span className="font-medium">
                           {member.member.name}
                         </span>
-                        <span className="text-sm text-gray-500 dark:text-gray-400">
+                        <span className="text-[80%] text-gray-500 dark:text-gray-400">
                           {statusText}
                         </span>
                       </div>

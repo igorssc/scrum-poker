@@ -44,6 +44,7 @@ export const Board = () => {
               className="flex-1" 
               onClick={clearVotes}
               isLoading={isClearingVotes}
+              variant="tertiary"
             >
               Limpar votos
             </Button>
@@ -51,6 +52,7 @@ export const Board = () => {
               className="flex-1" 
               onClick={revealCards}
               isLoading={isRevealingCards}
+              variant="tertiary"
             >
               Revelar cartas
             </Button>
