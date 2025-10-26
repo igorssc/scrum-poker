@@ -28,11 +28,13 @@ export const Board = () => {
   const isOwner = room?.owner_id === user?.id;
 
   return (
-    <div className="w-[1200px] flex flex-col gap-3 sm:gap-4 md:gap-6">
+    <div className="w-[1200px] max-w-full flex flex-col gap-3 sm:gap-4 md:gap-6">
       <NavBar />
 
       <main className="flex flex-col gap-3 sm:gap-4 md:gap-6">
+
         {(!data?.data.private || room?.owner_id === user?.id) && <AcceptUsers />}
+        
         <Box className="max-w-full min-h-0!">
           <Cards />
         </Box>

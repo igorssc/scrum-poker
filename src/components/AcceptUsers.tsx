@@ -279,11 +279,11 @@ export const AcceptUsers = () => {
                 className="min-h-0! min-w-[260px] max-w-[260px] p-4 shrink-0 shadow-none"
               >
                 <Flex className="gap-3">
-                  <h3 className="text-base font-semibold text-center">
+                  <h3 className="text-xs md:text-sm font-semibold text-center">
                     {user.name}
                   </h3>
                   
-                  <p className="text-xs text-gray-600 dark:text-gray-400 text-center">
+                  <p className="text-[0.65rem] md:text-xs text-gray-600 dark:text-gray-400 text-center">
                     Aguardando aprovação
                   </p>
                   
@@ -295,14 +295,14 @@ export const AcceptUsers = () => {
                           e.preventDefault();
                           return;
                         }
-                        acceptUser(user.id);
+                        refuseUser(user.id);
                       }}
                       onMouseDown={(e) => e.stopPropagation()}
-                      className="bg-green-600 hover:bg-green-700 focus:ring-green-500 text-sm py-1.5 px-3 flex-1"
+                      className="flex-1"
+                      variant="secondary"
                     >
-                      Aceitar
+                      Recusar
                     </Button>
-                    
                     <Button 
                       onClick={(e) => {
                         // Previne clique durante drag
@@ -310,12 +310,12 @@ export const AcceptUsers = () => {
                           e.preventDefault();
                           return;
                         }
-                        refuseUser(user.id);
+                        acceptUser(user.id);
                       }}
                       onMouseDown={(e) => e.stopPropagation()}
-                      className="bg-red-600 hover:bg-red-700 focus:ring-red-500 text-sm py-1.5 px-3 flex-1"
+                      className="flex-1"
                     >
-                      Recusar
+                      Aceitar
                     </Button>
                   </Flex>
                 </Flex>
@@ -327,15 +327,15 @@ export const AcceptUsers = () => {
         {/* Gradient fade nas bordas para indicar scroll */}
         {hasOverflow && (
           <>
-            <div className="absolute left-0 top-0 bottom-0 w-4 bg-linear-to-r from-gray-400/70 to-transparent pointer-events-none" />
-            <div className="absolute right-0 top-0 bottom-0 w-4 bg-linear-to-l from-gray-400/70 to-transparent pointer-events-none" />
+            <div className="absolute left-0 top-0 bottom-0 w-4 bg-linear-to-r from-gray-400/70 dark:from-gray-600/70 to-transparent pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-4 bg-linear-to-l from-gray-400/70 dark:from-gray-600/70 to-transparent pointer-events-none" />
           </>
         )}
       </div>
       
       {/* Indicador de scroll */}
       {hasOverflow && (
-        <p className="text-xs text-gray-500 dark:text-gray-800 text-center mt-2">
+        <p className="text-xs text-gray-100 dark:text-gray-800 text-center mt-2">
           ← Deslize para ver mais usuários ({users.length}) →
         </p>
       )}
