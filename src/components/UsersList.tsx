@@ -53,19 +53,41 @@ export const UsersList = () => {
   const pendingMembers = members.filter(member => member.status === 'PENDING');
   const cardsOpen = cachedRoomData?.data?.cards_open;
 
+  // Função para extrair o valor da carta
+  const getCardValue = (vote: string) => {
+    return vote.split('/').pop()?.split('.')[0] || vote;
+  };
+
   // Organizar membros baseado no estado das cartas
   const organizedMembers = cardsOpen 
-    ? // Cartas abertas: agrupar por voto
+    ? // Cartas abertas: agrupar por voto com ordenação sofisticada
       loggedMembers.sort((a, b) => {
-        // Primeiro: membros que votaram, agrupados por voto
-        if (a.vote && b.vote) {
-          return a.vote.localeCompare(b.vote);
-        }
-        // Segundo: membros que votaram vêm antes dos que não votaram
+        // Separar membros que votaram dos que não votaram
         if (a.vote && !b.vote) return -1;
         if (!a.vote && b.vote) return 1;
-        // Terceiro: entre os que não votaram, ordem alfabética
-        return a.member.name.localeCompare(b.member.name);
+        if (!a.vote && !b.vote) return a.member.name.localeCompare(b.member.name);
+        
+        // Ambos votaram - ordenar por tipo de voto
+        const valueA = getCardValue(a.vote!);
+        const valueB = getCardValue(b.vote!);
+        
+        const numA = parseFloat(valueA);
+        const numB = parseFloat(valueB);
+        
+        const isNumA = !isNaN(numA);
+        const isNumB = !isNaN(numB);
+        
+        // Números primeiro, ordenados do menor para o maior
+        if (isNumA && isNumB) {
+          return numA - numB;
+        }
+        
+        // Números vêm antes de strings
+        if (isNumA && !isNumB) return -1;
+        if (!isNumA && isNumB) return 1;
+        
+        // Ambos são strings - ordem alfabética
+        return valueA.localeCompare(valueB);
       })
     : // Cartas fechadas: ordem alfabética por nome
       loggedMembers.sort((a, b) => a.member.name.localeCompare(b.member.name));
@@ -86,9 +108,14 @@ export const UsersList = () => {
                 const isFlipping = flippingCards.has(member.id);
                 
                 // Verificar se é um novo grupo de voto (apenas quando cartas estão abertas)
-                const isNewVoteGroup = cardsOpen && member.vote && (
-                  index === 0 || // Primeiro item com voto
-                  (organizedMembers[index - 1].vote !== member.vote) // Mudança de voto
+                const isNewVoteGroup = cardsOpen && (
+                  // Primeiro membro com voto
+                  (member.vote && (index === 0 || !organizedMembers[index - 1].vote)) ||
+                  // Mudança de voto entre membros que votaram
+                  (member.vote && organizedMembers[index - 1].vote && 
+                   getCardValue(member.vote) !== getCardValue(organizedMembers[index - 1].vote!)) ||
+                  // Primeiro membro sem voto (após membros que votaram)
+                  (!member.vote && organizedMembers[index - 1].vote)
                 );
                 
                 // Determinar o que mostrar baseado no estado das cartas
@@ -162,7 +189,7 @@ export const UsersList = () => {
                       <div className={`flex items-center gap-2 mb-2 ${index > 0 ? 'mt-4' : ''}`}>
                         <div className="h-px bg-gray-300 dark:bg-gray-600 flex-1"></div>
                         <span className="text-xs font-medium text-gray-500 dark:text-gray-400 px-2">
-                          {member.vote.split('/').pop()?.split('.')[0] || member.vote}
+                          {member.vote ? getCardValue(member.vote) : 'Não votaram'}
                         </span>
                         <div className="h-px bg-gray-300 dark:bg-gray-600 flex-1"></div>
                       </div>
