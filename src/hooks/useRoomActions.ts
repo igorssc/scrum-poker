@@ -58,6 +58,22 @@ export const useRoomActions = () => {
     },
   });
 
+  // Mutation para votar
+  const voteMutation = useMutation({
+    mutationFn: async (vote: string) => {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rooms/${room?.id}/vote`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: user?.id, vote }),
+      });
+      if (!res.ok) throw new Error('Erro ao votar');
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['room', room?.id] });
+    },
+  });
+
   // Ação para revelar cartas
   const revealCards = async () => {
     try {
@@ -78,12 +94,24 @@ export const useRoomActions = () => {
     }
   };
 
+  // Ação para votar
+  const vote = async (cardName: string) => {
+    try {
+      await voteMutation.mutateAsync(cardName);
+    } catch (error) {
+      console.error('Erro ao votar:', error);
+      throw error;
+    }
+  };
+
   return {
     revealCards,
     clearVotes,
+    vote,
     updateRoom: updateRoomMutation.mutateAsync,
     isUpdatingRoom: updateRoomMutation.isPending,
     isRevealingCards: revealCardsMutation.isPending,
     isClearingVotes: clearVotesMutation.isPending,
+    isVoting: voteMutation.isPending,
   };
 };
