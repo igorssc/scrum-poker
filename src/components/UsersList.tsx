@@ -99,7 +99,7 @@ export const UsersList = () => {
                     // Cartas reveladas - mostrar a carta real ou animação de flip
                     voteDisplay = (
                       <div className="flex items-center gap-2">
-                        <div className={`relative w-8 h-12 ${isFlipping ? 'flip-container' : ''}`}>
+                        <div className={`relative w-6 h-8 sm:w-7 sm:h-10 md:w-8 md:h-12 ${isFlipping ? 'flip-container' : ''}`}>
                           {isFlipping ? (
                             <>
                               {/* Verso da carta - primeira metade da animação */}
@@ -109,7 +109,7 @@ export const UsersList = () => {
                                   src="/assets/cards/nature/verse.svg"
                                   width={32}
                                   height={48}
-                                  className="w-8 h-12 rounded"
+                                  className="w-6 h-8 sm:w-7 sm:h-10 md:w-8 md:h-12 rounded"
                                 />
                               </div>
                               {/* Carta real - segunda metade da animação */}
@@ -119,7 +119,7 @@ export const UsersList = () => {
                                   src={path.join('assets', 'cards', member.vote)}
                                   width={32}
                                   height={48}
-                                  className="w-8 h-12 rounded"
+                                  className="w-6 h-8 sm:w-7 sm:h-10 md:w-8 md:h-12 rounded"
                                 />
                               </div>
                             </>
@@ -130,7 +130,7 @@ export const UsersList = () => {
                               src={path.join('assets', 'cards', member.vote)}
                               width={32}
                               height={48}
-                              className="w-8 h-12 rounded"
+                              className="w-6 h-8 sm:w-7 sm:h-10 md:w-8 md:h-12 rounded"
                             />
                           )}
                         </div>
@@ -140,13 +140,13 @@ export const UsersList = () => {
                   } else {
                     // Cartas não reveladas - mostrar o verso
                     voteDisplay = (
-                      <div className="relative w-8 h-12">
+                      <div className="relative w-6 h-8 sm:w-7 sm:h-10 md:w-8 md:h-12">
                         <Image
                           alt="Card back"
                           src="/assets/cards/nature/verse.svg"
                           width={32}
                           height={48}
-                          className="w-8 h-12 rounded"
+                          className="w-6 h-8 sm:w-7 sm:h-10 md:w-8 md:h-12 rounded"
                         />
                       </div>
                     );
@@ -167,7 +167,7 @@ export const UsersList = () => {
                       </div>
                     )}
                     
-                    <div className="flex items-center justify-between p-3 text-[0.65rem] md:text-xs lg:text-sm rounded-lg bg-gray-50 dark:bg-gray-700">
+                    <div className="flex items-center justify-between p-2 sm:p-3 text-[0.65rem] md:text-xs lg:text-sm rounded-lg bg-gray-50 dark:bg-gray-700 min-h-8 sm:min-h-10 md:min-h-12">
                       <div className="flex flex-col flex-1">
                         <span className="font-medium">
                           {member.member.name}
@@ -177,8 +177,8 @@ export const UsersList = () => {
                         </span>
                       </div>
                       
-                      <div className="flex items-center gap-3">
-                        {voteDisplay}
+                      <div className="flex items-center gap-2 sm:gap-3 min-w-8 sm:min-w-10 md:min-w-12 justify-end">
+                        {voteDisplay || <div className="w-6 h-8 sm:w-7 sm:h-10 md:w-8 md:h-12"></div>}
                         <div className="w-3 h-3 bg-green-500 rounded-full" title="Online"></div>
                       </div>
                     </div>

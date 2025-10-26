@@ -119,9 +119,9 @@ export const Cards = () => {
               onClick={() => handleCardClick(icon)}
               disabled={isVoting}
               className={twMerge(
-                "relative transition-all duration-200 rounded-lg cursor-pointer h-fit",
-                isSelected && "ring-4 ring-purple-500 bg-purple-100 dark:bg-purple-900/30 scale-105",
-                !isSelected && "hover:scale-105 hover:shadow-lg",
+                "relative transition-all duration-200 rounded-lg cursor-pointer h-fit p-1",
+                isSelected && "ring-2 ring-purple-500 dark:ring-purple-700 bg-purple-100 dark:bg-purple-900/30 scale-105",
+                !isSelected && "hover:scale-105 hover:shadow-xs",
                 isVoting && "opacity-50 cursor-not-allowed"
               )}
               >

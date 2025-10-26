@@ -33,7 +33,7 @@ export const Board = () => {
 
       <main className="flex flex-col gap-3 sm:gap-4 md:gap-6">
         {(!data?.data.private || room?.owner_id === user?.id) && <AcceptUsers />}
-        <Box className="max-w-full min-h-0! bg-amber-200">
+        <Box className="max-w-full min-h-0!">
           <Cards />
         </Box>
         {isOwner && (
