@@ -35,7 +35,7 @@ export const ThemeButton = ({ defaultTheme }: ThemeButtonProps) => {
       <ThemeIcon 
         theme={theme!} 
         size="sm" 
-        className={isDark ? "text-yellow-400" : "text-white"} 
+        className="text-white" 
       />
     </Button>
   );

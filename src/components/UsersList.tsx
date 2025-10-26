@@ -9,15 +9,15 @@ export const UsersList = () => {
 
   if (!cachedRoomData?.data.members) {
     return (
-      <Flex className="gap-4">
-        <Box className="min-h-fit max-w-[400px] p-6">
+      <div>
+        <Box className="min-h-fit max-w-full p-6">
           <Flex>
             <p className="text-gray-600 dark:text-gray-400 text-center">
               Carregando membros da sala...
             </p>
           </Flex>
         </Box>
-      </Flex>
+      </div>
     );
   }
 
@@ -26,10 +26,10 @@ export const UsersList = () => {
   const pendingMembers = members.filter(member => member.status === 'PENDING');
 
   return (
-    <Flex className="gap-6">
+    <div>
       {/* Membros Logados */}
       {loggedMembers.length > 0 && (
-        <Box className="min-h-fit max-w-[400px] p-6">
+        <Box className="min-h-fit max-w-full p-6">
           <Flex className="gap-4">
             <h3 className="text-xl font-bold text-center">
               Membros Ativos ({loggedMembers.length})
@@ -73,6 +73,6 @@ export const UsersList = () => {
           </Flex>
         </Box>
       )}
-    </Flex>
+    </ div>
   );
 };

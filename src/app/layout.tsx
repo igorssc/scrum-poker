@@ -5,6 +5,7 @@ import { Providers } from '../components/Providers';
 import { SampleCards } from '@/components/SampleCards';
 import { Glass } from '@/components/Glass';
 import { GlobalTheme } from '@/components/GlobalTheme';
+import { twMerge } from 'tailwind-merge';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,7 +21,7 @@ export default async function RootLayout({
 
   return (
     <html lang="pt-BR">
-      <body className={inter.className} style={{ visibility: 'hidden' }}>
+      <body className={twMerge(inter.className)} style={{ visibility: 'hidden' }}>
         <GlobalTheme />
         <Providers>
           <SampleCards>

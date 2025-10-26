@@ -7,7 +7,7 @@ type GlassProps = {
 export const Glass = ({ children }: GlassProps) => {
   return (
     <>
-      <div className="fixed inset-0 backdrop-blur-md flex justify-center items-center bg-zinc-800/50">
+      <div className="w-full backdrop-blur-md flex justify-center bg-zinc-800/50 py-4">
         {children}
       </div>
     </>

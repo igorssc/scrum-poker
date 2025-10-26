@@ -6,6 +6,8 @@ import { MemberProps } from "@/protocols/Member";
 import { RoomProps } from "@/protocols/Room";
 import { UsersList } from "./UsersList";
 import { NavBar } from "./NavBar";
+import { Box } from "./Box";
+import { Cards } from "./Cards";
 
 export const Board = () => {
   const { room, user } = useContextSelector(
@@ -20,12 +22,15 @@ export const Board = () => {
   const data = queryClient.getQueryData<{ data: { members: MemberProps[] } & RoomProps }>(['room', room?.id]);
 
   return (
-    <div className="w-[1200px] max-w-[95%] p-4 sm:p-10 bg-gray-400/70">
+    <div className="w-[1200px] max-w-[95%] my-4 p-4 sm:p-10 bg-gray-400/70 flex flex-col gap-3 sm:gap-4 md:gap-6">
       <NavBar />
 
-      <main>
+      <main className="flex flex-col gap-3 sm:gap-4 md:gap-6">
         {(!data?.data.private || room?.owner_id === user?.id) && <AcceptUsers />}
-        <UsersList/>
+        <Box className="max-w-full">
+          <Cards />
+        </Box>
+        <UsersList />
       </main>
     </div>
   );

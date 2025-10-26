@@ -95,7 +95,7 @@ export const NavBar = () => {
 
   return (
     <>
-      <header className="relative mb-3 sm:mb-4 md:mb-6 p-2 sm:p-3 md:p-4 bg-white/80 dark:bg-gray-800/80 rounded-lg shadow-sm backdrop-blur-sm">
+      <header className="relative p-2 sm:p-3 md:p-4 bg-white/80 dark:bg-gray-800/80 rounded-lg shadow-sm backdrop-blur-sm">
         {/* Layout Mobile: Hamburger Menu */}
         <div className="md:hidden">
           <div className="flex items-center justify-between">
@@ -155,7 +155,7 @@ export const NavBar = () => {
             
             <Button
               onClick={() => setIsShareOpen(true)}
-              className="bg-blue-600 hover:bg-blue-700 focus:ring-blue-500"
+              className="bg-blue-800 hover:bg-blue-900 focus:ring-blue-500"
               title="Compartilhar sala"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -6,7 +6,7 @@ import { Children } from 'react';
 export const Cards = () => {
   return (
     <>
-      <div className="flex gap-4 flex-wrap justify-center">
+      <div className="flex gap-4 flex-wrap justify-center w-full">
         {Children.toArray(
           iconsData['nature'].icons.map((icon) => (
             <Image

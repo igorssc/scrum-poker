@@ -71,11 +71,11 @@ export const ShareModalContent = ({ roomId, roomName, onClose }: ShareModalConte
           </div>
 
           {/* URL */}
-          <div className="w-full">
+          <div className="w-full flex flex-col">
             <label className="block text-[0.65rem] sm:text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5 sm:mb-2">
               Link da sala:
             </label>
-            <div className="flex gap-1.5 sm:gap-2">
+            <div className="flex gap-1.5 sm:gap-2 w-[99%] self-center">
               <input
                 type="text"
                 value={shareUrl}
