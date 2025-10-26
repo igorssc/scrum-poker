@@ -187,18 +187,17 @@ export const NavBar = () => {
         </div>
       </header>
 
-      {/* Dropdown Menu Renderizado Fora do Header */}
+      {/* Dropdown Menu - Portal fixo para evitar empurrar conteúdo */}
       {isMenuOpen && (
-        <div className="md:hidden">
-          <div 
-            ref={menuRef}
-            className="fixed w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50"
-            style={{
-              top: `${dropdownPosition.top}px`,
-              right: `${dropdownPosition.right}px`
-            }}
-          >
-              <div className="py-2">
+        <div 
+          ref={menuRef}
+          className="md:hidden fixed w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50"
+          style={{
+            top: `${dropdownPosition.top}px`,
+            right: `${dropdownPosition.right}px`
+          }}
+        >
+          <div className="py-2">
                 {/* Tema - Fecha o menu primeiro, depois troca tema */}
                 <div className="px-3 py-2 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-700">
                   <span className="text-sm text-gray-700 dark:text-gray-300">Tema</span>
@@ -264,8 +263,7 @@ export const NavBar = () => {
                   </svg>
                   Sair da sala
                 </button>
-              </div>
-            </div>
+          </div>
         </div>
       )}
 
