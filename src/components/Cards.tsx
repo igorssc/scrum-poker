@@ -5,7 +5,7 @@ import { useRoomCache } from '@/hooks/useRoomCache';
 import { useContextSelector } from 'use-context-selector';
 import { RoomContext } from '@/context/RoomContext';
 import path from 'path';
-import { Children, useState, useEffect, useRef } from 'react';
+import { Children, useState, useEffect, useRef, useMemo } from 'react';
 import confetti from 'canvas-confetti';
 import { twMerge } from 'tailwind-merge';
 
@@ -17,12 +17,49 @@ export const Cards = () => {
   }));
   
   const [previousCardsOpen, setPreviousCardsOpen] = useState<boolean | undefined>(undefined);
+  const [cardGenerationKey, setCardGenerationKey] = useState(0);
+  const [previousVotesCount, setPreviousVotesCount] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Gerar lista de cartas com ícones sorteados (memoizada para manter consistência)
+  const allCards = useMemo(() => {
+    const natureData = iconsData['nature'];
+    const cards: string[] = [];
+    
+    // Adicionar prevIcon sorteado (se existir)
+    if (natureData.prevIcons && natureData.prevIcons.length > 0) {
+      const randomPrevIcon = natureData.prevIcons[Math.floor(Math.random() * natureData.prevIcons.length)];
+      cards.push(randomPrevIcon);
+    }
+    
+    // Adicionar ícones principais
+    cards.push(...natureData.icons);
+    
+    // Adicionar latterIcon sorteado (se existir)
+    if (natureData.latterIcons && natureData.latterIcons.length > 0) {
+      const randomLatterIcon = natureData.latterIcons[Math.floor(Math.random() * natureData.latterIcons.length)];
+      cards.push(randomLatterIcon);
+    }
+    
+    return cards;
+  }, [cardGenerationKey]); // Dependência que força regeneração quando alterada
 
   // Encontrar o voto do usuário atual
   const userVote = cachedRoomData?.data?.members?.find(member => member.member.id === user?.id);
   const selectedCard = userVote?.vote;
   const cardsOpen = cachedRoomData?.data?.cards_open;
+
+  // Detectar quando votos foram limpos para regenerar cards
+  useEffect(() => {
+    const currentVotesCount = cachedRoomData?.data?.members?.filter(member => member.vote)?.length || 0;
+    
+    // Se o número de votos caiu drasticamente (indica limpeza), regenerar cards
+    if (previousVotesCount > 0 && currentVotesCount === 0) {
+      setCardGenerationKey(prev => prev + 1); // Força regeneração dos cards
+    }
+    
+    setPreviousVotesCount(currentVotesCount);
+  }, [cachedRoomData?.data?.members, previousVotesCount]);
 
   // Calcular carta com maior votação
   const getWinningCard = () => {
@@ -109,7 +146,7 @@ export const Cards = () => {
     <div ref={containerRef} className="relative grid grid-cols-5 gap-x-2 gap-y-3 sm:gap-x-3 sm:gap-y-4 md:gap-x-4 md:gap-y-5 justify-items-center w-full h-fit">
       
       {Children.toArray(
-        iconsData['nature'].icons.map((icon) => {
+        allCards.map((icon) => {
           const isSelected = selectedCard === icon;
           const isWinning = winningCard === icon;
           

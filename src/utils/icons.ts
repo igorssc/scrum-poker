@@ -2,7 +2,7 @@ export const iconsData = {
   nature: {
     label: 'Natureza',
     verseIcon: 'nature/verse.svg',
-    prevIcons: ['cake/cake.svg', 'pause/cake.svg'],
+    prevIcons: ['nature/🎂.svg', 'nature/⏸.svg'],
     icons: [
       'nature/1.svg',
       'nature/2.svg',
@@ -15,6 +15,6 @@ export const iconsData = {
       'nature/100.svg',
       'nature/∞.svg',
     ],
-    latterIcons: ['dragons/cake.svg', 'shaving/cake.svg'],
+    latterIcons: ['nature/🐉.svg', 'nature/💈.svg'],
   },
 };
