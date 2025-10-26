@@ -24,6 +24,7 @@ export const SearchRoom = () => {
 
   const [availableRooms, setAvailableRooms] = useState([] as RoomProps[]);
   const [hasSearched, setHasSearched] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
 
   const [distance, setDistance] = useState(availableDistances[0].value);
 
@@ -32,25 +33,32 @@ export const SearchRoom = () => {
   }));
 
   const handleSearchRooms = async () => {
-    const permissionStatus = await navigator.permissions.query({
-      name: 'geolocation',
-    });
+    setIsSearching(true);
 
-    if (permissionStatus.state === 'granted') {
-      const { latitude, longitude } = await getCoordinates();
-
-      const rooms = await getRoomsByLocation({
-        distance: +distance,
-        lat: latitude,
-        lng: longitude,
+    try {
+      const permissionStatus = await navigator.permissions.query({
+        name: 'geolocation',
       });
 
-      setAvailableRooms(rooms.data as RoomProps[]);
-      setHasSearched(true);
-      return;
-    }
+      if (permissionStatus.state === 'granted') {
+        const { latitude, longitude } = await getCoordinates();
 
-    navigator.geolocation.getCurrentPosition(() => {});
+        const rooms = await getRoomsByLocation({
+          distance: +distance,
+          lat: latitude,
+          lng: longitude,
+        });
+
+        setAvailableRooms(rooms.data as RoomProps[]);
+        setHasSearched(true);
+      } else {
+        navigator.geolocation.getCurrentPosition(() => {});
+      }
+    } catch (error) {
+      console.error('Erro ao buscar salas:', error);
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   return (
@@ -66,8 +74,19 @@ export const SearchRoom = () => {
         />
 
         <div className="flex gap-3 sm:gap-4 w-full justify-center flex-col">
-          <Button onClick={handleSearchRooms}>Buscar</Button>
-          <Button variant="secondary" onClick={() => window.location.reload()}>Voltar</Button>
+          <Button 
+            onClick={handleSearchRooms}
+            isLoading={isSearching}
+          >
+            Buscar
+          </Button>
+          <Button 
+            variant="secondary" 
+            onClick={() => window.location.reload()}
+            disabled={isSearching}
+          >
+            Voltar
+          </Button>
         </div>
 
         {hasSearched && (

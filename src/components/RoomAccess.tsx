@@ -3,8 +3,6 @@
 import { Box } from '@/components/Box';
 import { EnterRoom } from '@/components/EnterRoom';
 import { Flex } from '@/components/Flex';
-import { Glass } from '@/components/Glass';
-import { SampleCards } from '@/components/SampleCards';
 
 type RoomAccessProps = {
   roomId: string;

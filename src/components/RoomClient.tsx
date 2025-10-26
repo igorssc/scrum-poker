@@ -121,7 +121,7 @@ export function RoomClient({ roomId, access }: RoomClientProps) {
 
         clear();
         setWaitingLogin(false);
-        window.location.reload();
+        // window.location.reload();
       }
 
       if (event.type === 'sign-in-refuse') {

@@ -1,5 +1,5 @@
 'use client';
-import { Dispatch, FormEvent, SetStateAction, useRef } from 'react';
+import { Dispatch, FormEvent, SetStateAction, useRef, useState } from 'react';
 import { Input } from './Input';
 import { Button } from './Button';
 import { useContextSelector } from 'use-context-selector';
@@ -12,12 +12,13 @@ type CreateRoomProps = {
 export const CreateRoom = ({ setIsLookingForRoom }: CreateRoomProps) => {
   const roomName = useRef<HTMLInputElement>(null);
   const userName = useRef<HTMLInputElement>(null);
+  const [isCreating, setIsCreating] = useState(false);
 
   const { createRoom } = useContextSelector(RoomContext, (context) => ({
     createRoom: context.createRoom,
   }));
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const hasRoomName = !!roomName.current?.value;
@@ -25,11 +26,19 @@ export const CreateRoom = ({ setIsLookingForRoom }: CreateRoomProps) => {
 
     if (!hasRoomName || !hasUserName || !roomName.current || !userName.current) return;
 
-    createRoom({
-      roomName: roomName.current.value,
-      userName: userName.current.value,
-      theme: 'primary',
-    });
+    setIsCreating(true);
+
+    try {
+      await createRoom({
+        roomName: roomName.current.value,
+        userName: userName.current.value,
+        theme: 'primary',
+      });
+    } catch (error) {
+      console.error('Erro ao criar sala:', error);
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   return (
@@ -44,10 +53,18 @@ export const CreateRoom = ({ setIsLookingForRoom }: CreateRoomProps) => {
           <Input type="text" ref={userName} label="Nome de usuário" required />
 
           <div className="flex gap-3 sm:gap-4 w-full justify-center flex-col">
-            <Button type="submit" className="mt-2 sm:mt-3 md:mt-4">
+            <Button 
+              type="submit" 
+              className="mt-2 sm:mt-3 md:mt-4"
+              isLoading={isCreating}
+            >
               Criar sala
             </Button>
-            <Button variant="secondary" onClick={() => setIsLookingForRoom(true)}>
+            <Button 
+              variant="secondary" 
+              onClick={() => setIsLookingForRoom(true)}
+              disabled={isCreating}
+            >
               Encontrar salas
             </Button>
           </div>

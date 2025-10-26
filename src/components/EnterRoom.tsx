@@ -1,5 +1,5 @@
 'use client';
-import { FormEvent, useRef } from 'react';
+import { FormEvent, useRef, useState } from 'react';
 import { Button } from './Button';
 import { Input } from './Input';
 import { useRouter } from 'next/navigation';
@@ -14,6 +14,7 @@ type EnterRoomProps = {
 
 export const EnterRoom = ({ roomId, roomName, access }: EnterRoomProps) => {
   const userName = useRef<HTMLInputElement>(null);
+  const [isEntering, setIsEntering] = useState(false);
 
   const router = useRouter();
 
@@ -21,7 +22,7 @@ export const EnterRoom = ({ roomId, roomName, access }: EnterRoomProps) => {
     enterRoom: context.enterRoom,
   }));
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const hasUserName = !!userName.current?.value;
@@ -29,7 +30,15 @@ export const EnterRoom = ({ roomId, roomName, access }: EnterRoomProps) => {
     if (!hasUserName) return;
 
     if (userName.current) {
-      enterRoom({ roomId, userName: userName.current.value, access });
+      setIsEntering(true);
+
+      try {
+        await enterRoom({ roomId, userName: userName.current.value, access });
+      } catch (error) {
+        console.error('Erro ao entrar na sala:', error);
+      } finally {
+        setIsEntering(false);
+      }
     }
   };
 
@@ -48,10 +57,20 @@ export const EnterRoom = ({ roomId, roomName, access }: EnterRoomProps) => {
         />
         <Input type="text" ref={userName} label="Nome de usuário" required />
         <div className="flex gap-4 w-full justify-center flex-col">
-          <Button type="submit" className="mt-4">
+          <Button 
+            type="submit" 
+            className="mt-4"
+            isLoading={isEntering}
+          >
             Entrar
           </Button>
-          <Button variant="secondary" onClick={() => router.push('/')}>Voltar ao início</Button>
+          <Button 
+            variant="secondary" 
+            onClick={() => router.push('/')}
+            disabled={isEntering}
+          >
+            Voltar ao início
+          </Button>
         </div>
       </form>
     </div>

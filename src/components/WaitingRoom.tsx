@@ -20,7 +20,7 @@ export const WaitingRoom = ({ roomId, roomName }: WaitingRoomProps) => {
         Aguardando aprovação de entrada na sala: <b>{roomName}</b>.
       </p>
       <Loading />
-      <Button onClick={() => logout({ redirect: `/room/${roomId}` })}>
+      <Button onClick={() => logout()}>
         Sair
       </Button>
     </div>

@@ -129,7 +129,6 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
       }
       if (message.data.type === 'waiting-login-scrum-poker') {
         window.location.replace(`/room/${message.data?.roomId}`);
-        // window.location.replace();
       }
 
       if (message.data.type === 'logout-scrum-poker') {
@@ -248,7 +247,9 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
     setWaitingLogin(false);
   };
 
-  const logout = async ({ redirect = '/' } = {}) => {
+  const logout = async (props?: LogoutProps) => {
+    const { redirect = '/' } = props || {};
+    
     if (room && user) {
       await api.post(`rooms/${room.id}/sign-out`, {
         user_action_id: user.id,
