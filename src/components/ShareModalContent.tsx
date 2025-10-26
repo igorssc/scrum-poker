@@ -7,17 +7,18 @@ import { Button } from './Button';
 type ShareModalContentProps = {
   roomId: string;
   roomName?: string;
+  access?: string;
   onClose: () => void;
 };
 
-export const ShareModalContent = ({ roomId, roomName, onClose }: ShareModalContentProps) => {
+export const ShareModalContent = ({ roomId, roomName, onClose, access }: ShareModalContentProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [shareUrl, setShareUrl] = useState('');
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     // Gerar a URL de compartilhamento
-    const url = `${window.location.origin}/room/${roomId}`;
+    const url = `${window.location.origin}/room/${roomId}${access ? `?access=${access}` : ''}`;
     setShareUrl(url);
 
     // Gerar o QR Code

@@ -223,6 +223,7 @@ export const NavBar = () => {
         <ShareModalContent 
           roomId={room?.id || ''}
           roomName={cachedRoomData?.data?.name}
+          access={cachedRoomData?.data?.access}
           onClose={() => setIsShareOpen(false)} 
         />
       </Modal>

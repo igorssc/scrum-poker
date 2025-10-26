@@ -179,7 +179,6 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
 
   const enterRoom = async ({ roomId, userName, access }: EnterRoomProps) => {
     try {
-      channel.postMessage({ type: 'waiting-login-scrum-poker', roomId, tabId });
       setWaitingLogin(true);
 
       const { data } = await api.post<{
@@ -200,8 +199,17 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
 
       setRoom(newRoom);
       setUser(newUser);
+
+      if(data.member.status === 'LOGGED') {
+        channel.postMessage({ type: 'login-scrum-poker', tabId });
+      }
+      if(data.member.status !== 'LOGGED') {
+        channel.postMessage({ type: 'waiting-login-scrum-poker', roomId, tabId });
+      }
     } catch (error) {
       console.error(error);
+    } finally {
+      setWaitingLogin(false);
     }
   };
 
