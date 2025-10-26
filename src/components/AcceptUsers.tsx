@@ -249,10 +249,8 @@ export const AcceptUsers = () => {
     return null;
   }
 
- 
-
   return (
-    <div className="w-full mb-4">
+    <div className="w-full">
       {/* Container do carousel */}
       <div className="relative">
         <div 
@@ -270,7 +268,7 @@ export const AcceptUsers = () => {
         >
           <div 
             className={twMerge(
-              "flex gap-3 pb-2",
+              "flex gap-3",
               hasOverflow ? "" : "justify-center"
             )} 
             style={hasOverflow ? { width: 'max-content' } : undefined}
@@ -278,7 +276,7 @@ export const AcceptUsers = () => {
             {users.map((user) => (
               <Box 
                 key={user.id} 
-                className="min-h-fit min-w-[260px] max-w-[260px] p-4 shrink-0 shadow-none"
+                className="min-h-0! min-w-[260px] max-w-[260px] p-4 shrink-0 shadow-none"
               >
                 <Flex className="gap-3">
                   <h3 className="text-base font-semibold text-center">
