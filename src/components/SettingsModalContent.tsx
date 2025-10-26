@@ -122,7 +122,7 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
 
 
   return (
-    <div className="grid grid-rows-[1fr_auto] h-full max-h-[80vh] w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg mx-auto">
+    <div className="grid grid-rows-[1fr_auto] h-full max-h-[80vh] w-full mx-auto">
       <form
         className="grid grid-rows-[1fr_auto] min-h-0"
         onSubmit={e => {

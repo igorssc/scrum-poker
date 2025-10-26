@@ -60,7 +60,7 @@ export const ShareModalContent = ({ roomId, roomName, onClose }: ShareModalConte
   };
 
   return (
-    <div className="grid grid-rows-[1fr_auto] h-full max-h-[80vh] w-full max-w-xs sm:max-w-sm md:max-w-md mx-auto">
+    <div className="grid grid-rows-[1fr_auto] h-full max-h-[80vh] w-full mx-auto">
       <div className="overflow-y-auto min-h-0">
         <div className="py-4 sm:py-6 lg:py-8">
           <div className="flex flex-col items-center gap-6 lg:gap-8">
@@ -113,18 +113,20 @@ export const ShareModalContent = ({ roomId, roomName, onClose }: ShareModalConte
         {typeof navigator !== 'undefined' && 'share' in navigator && (
           <Button
             onClick={shareNative}
-            className="flex-1 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 text-[0.65rem] sm:text-xs md:text-base"
+            className="flex-1 flex justify-center"
           >
-            <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 mr-1.5 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
-            </svg>
-            Compartilhar
+            <span className="flex items-center">
+              <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 mr-1.5 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
+              </svg>
+              Compartilhar
+            </span>
           </Button>
         )}
         <Button
           variant="secondary"
           onClick={onClose}
-          className="flex-1 text-[0.65rem] sm:text-xs md:text-base"
+          className="flex-1"
         >
           Fechar
         </Button>
