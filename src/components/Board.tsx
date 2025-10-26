@@ -28,7 +28,7 @@ export const Board = () => {
   const isOwner = room?.owner_id === user?.id;
 
   return (
-    <div className="w-[1200px] p-3 sm:p-4 md:p-6 lg:p-8 bg-gray-400/70 flex flex-col gap-3 sm:gap-4 md:gap-6">
+    <div className="w-[1200px] p-3 sm:p-4 md:p-6 lg:p-8 flex flex-col gap-3 sm:gap-4 md:gap-6">
       <NavBar />
 
       <main className="flex flex-col gap-3 sm:gap-4 md:gap-6">
