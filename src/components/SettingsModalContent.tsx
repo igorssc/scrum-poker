@@ -108,7 +108,7 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
   };
 
   return (
-    <div className="h-full max-h-[80vh] w-full mx-auto">
+    <div className="h-full max-h-[80dvh] w-full mx-auto">
       <form
         className="min-h-0"
         onSubmit={e => {

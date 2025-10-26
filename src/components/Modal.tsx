@@ -42,7 +42,7 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 h-screen">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 h-dvh">
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
@@ -50,7 +50,7 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
       />
       
       {/* Modal Content */}
-      <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-auto">
+      <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full max-h-[90dvh] overflow-auto">
         {/* Header */}
         <div className="flex items-center justify-between py-4 md:py-6 lg:py-8 px-2 md:px-4 lg:px-6 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-sm md:text-md xl:text-lg font-semibold text-gray-900 dark:text-gray-100">
