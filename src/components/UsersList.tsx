@@ -6,6 +6,7 @@ import { Flex } from './Flex';
 import Image from 'next/image';
 import path from 'path';
 import { useState, useEffect } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 export const UsersList = () => {
   const { cachedRoomData } = useRoomCache();
@@ -179,7 +180,27 @@ export const UsersList = () => {
                       
                       <div className="flex items-center gap-2 sm:gap-3 min-w-8 sm:min-w-10 md:min-w-12 justify-end">
                         {voteDisplay || <div className="w-6 h-8 sm:w-7 sm:h-10 md:w-8 md:h-12"></div>}
-                        <div className="w-3 h-3 bg-green-500 rounded-full" title="Online"></div>
+                        <div 
+                          className={twMerge(
+                            'w-3 h-3 rounded-full animate-glow-pulse',
+                            cardsOpen 
+                              ? hasVoted 
+                                ? 'bg-green-500' // Revelado e votou - verde
+                                : 'bg-gray-400' // Revelado e não votou - cinza
+                              : hasVoted 
+                                ? 'bg-green-500' // Não revelado mas votou - verde
+                                : 'bg-yellow-500' // Não revelado e não votou - amarelo (aguardando)
+                          )}
+                          title={
+                            cardsOpen 
+                              ? hasVoted 
+                                ? 'Votou' 
+                                : 'Não votou'
+                              : hasVoted 
+                                ? 'Já votou' 
+                                : 'Aguardando voto'
+                          }
+                        ></div>
                       </div>
                     </div>
                   </div>
