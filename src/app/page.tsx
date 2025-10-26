@@ -68,8 +68,6 @@ export default function Home() {
     return <LoadingScreen />;
   }
 
-  return <LoadingScreen />
-
   if (isLookingForRoom)
     return (
       <div className="relative min-h-screen flex content-center items-center max-w-[90%]">

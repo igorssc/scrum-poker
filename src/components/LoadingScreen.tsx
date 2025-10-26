@@ -16,12 +16,12 @@ export const LoadingScreen = () => {
   return (
     <div className="relative min-h-screen flex content-center items-center max-w-[90%]">
       <Box className='w-160 min-h-60! md:h-80'>
-        <Flex className='pt-[30px] flex-col gap-4 sm:gap-5 md:gap-6'>
+        <Flex className='pt-20 md:pt-[110px] flex-col gap-14 md:gap-20'>
           <Loading />
-          <div className="flex justify-center mt-2 sm:mt-3 md:mt-4">
+          <div className="flex justify-center mt-2 sm:mt-3 md:mt-4 w-full">
             <Button 
               onClick={handleCancel}
-              className="bg-red-600 hover:bg-red-700 focus:ring-red-500"
+              className="bg-red-600 hover:bg-red-700 focus:ring-red-500 w-full"
             >
               Cancelar
             </Button>

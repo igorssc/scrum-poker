@@ -14,8 +14,8 @@ export const WaitingRoom = ({ roomId, roomName }: WaitingRoomProps) => {
   }));
 
   return (
-    <div className="flex flex-col gap-10 sm:gap-12 md:gap-16">
-      <h1 className="font-sinera text-4xl text-center">Scrum poker</h1>
+    <div className="flex flex-col gap-10 sm:gap-12 md:gap-16 w-full">
+      <h1 className="font-sinera text-2xl sm:text-3xl md:text-4xl text-center">Scrum poker</h1>
       <p className="text-center mb-6 text-[0.65rem] sm:text-xs">
         Aguardando aprovação de entrada na sala: <b>{roomName}</b>.
       </p>
