@@ -9,4 +9,5 @@ export type RoomProps = {
   private: boolean;
   status: 'OPEN' | 'CLOSED';
   theme: string;
+  cards_open: boolean;
 };
