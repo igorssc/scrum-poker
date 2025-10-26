@@ -95,7 +95,7 @@ export const NavBar = () => {
 
   return (
     <>
-      <header className="relative p-2 sm:p-3 md:p-4 bg-white/80 dark:bg-gray-800/80 rounded-lg shadow-sm backdrop-blur-sm">
+      <header className="relative p-2 sm:p-3 md:p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-200 rounded-lg shadow-sm backdrop-blur-sm">
         {/* Layout Mobile: Hamburger Menu */}
         <div className="md:hidden">
           <div className="flex items-center justify-between">

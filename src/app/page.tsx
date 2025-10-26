@@ -70,7 +70,7 @@ export default function Home() {
 
   if (isLookingForRoom)
     return (
-      <div className="relative min-h-screen flex content-center items-center max-w-[90%]">
+      <div className="relative min-h-[calc(100vh-2rem)] flex content-center items-center max-w-[90%]">
         <ThemeToggle className="fixed top-3 right-3 sm:top-4 sm:right-4 z-50" />
         <Box allowOverflow className='w-160 max-h-[80vh] sm:max-h-[800px]'>
           <Flex>
@@ -82,7 +82,7 @@ export default function Home() {
 
   if (!room)
     return (
-      <div className="relative min-h-screen flex content-center items-center max-w-[90%]">
+      <div className="relative min-h-[calc(100vh-2rem)] flex content-center items-center max-w-[90%]">
         <ThemeToggle className="fixed top-3 right-3 sm:top-4 sm:right-4 z-50" />
         <Box allowOverflow className='w-160'>
           <Flex>
@@ -93,6 +93,8 @@ export default function Home() {
     );
 
   return (
-    <Board/>
+    <div className="relative min-h-[calc(100vh-2rem)] flex content-center items-center max-w-[90%]">
+      <Board/>
+    </div>
   );
 }
