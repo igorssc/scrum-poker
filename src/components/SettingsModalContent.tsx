@@ -3,6 +3,7 @@
 import { useContextSelector } from 'use-context-selector';
 import { RoomContext } from '@/context/RoomContext';
 import { useRoomCache } from '@/hooks/useRoomCache';
+import { useRoomActions } from '@/hooks/useRoomActions';
 import { Button } from './Button';
 import { Input } from './Input';
 import { Select } from './Select';
@@ -20,6 +21,7 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
     user: context.user,
   }));
   const { cachedRoomData } = useRoomCache();
+  const { updateRoom } = useRoomActions();
   const room = cachedRoomData?.data;
   const userMember = room?.members?.find(member => member.member.id === user?.id);
 
@@ -52,21 +54,7 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
     { value: 'retro', label: 'Retro' },
   ];
 
-  // PATCH sala
-  const patchRoomMutation = useMutation({
-    mutationFn: async (payload: any) => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rooms/${room?.id}?user_id=${user?.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) throw new Error('Erro ao salvar sala');
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['room', room?.id] });
-    },
-  });
+
 
   // PATCH usuário
   const patchUserMutation = useMutation({
@@ -96,14 +84,14 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
       // Permissões: se sala pública, qualquer usuário pode editar nome/tema; se privada, só owner
       const canEditRoom = !isPrivate || room?.owner_id === user?.id;
       if (canEditRoom && (roomName !== room?.name || theme !== room?.theme)) {
-        await patchRoomMutation.mutateAsync({
+        await updateRoom({
           name: roomName,
           theme,
         });
       }
       // Só owner pode mudar privacidade
       if (room?.owner_id === user?.id && isPrivate !== !!room?.private) {
-        await patchRoomMutation.mutateAsync({
+        await updateRoom({
           private: isPrivate,
         });
       }
@@ -118,8 +106,6 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
       setSaving(false);
     }
   };
-
-
 
   return (
     <div className="h-full max-h-[80vh] w-full mx-auto">
