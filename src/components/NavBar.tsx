@@ -29,7 +29,7 @@ export const NavBar = () => {
   const { cachedRoomData } = useRoomCache();
   const { toggleTheme } = useTheme();
   const { formattedTime, isRunning, toggle: toggleTimer, reset: resetTimer, seconds: secondsTimer } = useTimer();
-  
+
   // Encontrar os dados do usuário atual nos membros da sala
   const userMember = cachedRoomData?.data?.members?.find(member => member.member.id === user?.id);
 
@@ -55,12 +55,12 @@ export const NavBar = () => {
                 )}
               </div>
             </div>
-            
+
             {/* Menu Hamburger com Popover */}
             <Popover.Root open={isMenuOpen} onOpenChange={setIsMenuOpen}>
               <Popover.Trigger asChild>
                 <button
-                  className="p-2 rounded-lg bg-purple-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
+                  className="cursor-pointer p-2 rounded-lg bg-purple-100 hover:bg-purple-200 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
                   title="Menu"
                 >
                   <svg className="w-5 h-5 text-purple-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,7 +68,7 @@ export const NavBar = () => {
                   </svg>
                 </button>
               </Popover.Trigger>
-              
+
               <Popover.Portal>
                 <Popover.Content
                   className="md:hidden w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 overflow-visible"
@@ -89,6 +89,7 @@ export const NavBar = () => {
                           setIsMenuOpen(false);
                           setTimeout(() => toggleTheme(), 100);
                         }}
+                        className="cursor-pointer"
                       >
                         <ThemeButton />
                       </div>
@@ -96,7 +97,7 @@ export const NavBar = () => {
 
                     {/* Divisor */}
                     <div className="border-t border-gray-200 dark:border-gray-600 my-2"></div>
-                    
+
                     {/* Compartilhar */}
                     <button
                       onClick={(e) => {
@@ -104,14 +105,14 @@ export const NavBar = () => {
                         setIsShareOpen(true);
                         setIsMenuOpen(false);
                       }}
-                      className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3"
+                      className="cursor-pointer w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3"
                     >
                       <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
                       </svg>
                       Compartilhar sala
                     </button>
-                    
+
                     {/* Configurações */}
                     <button
                       onClick={(e) => {
@@ -119,7 +120,7 @@ export const NavBar = () => {
                         setIsSettingsOpen(true);
                         setIsMenuOpen(false);
                       }}
-                      className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3"
+                      className="cursor-pointer w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3"
                     >
                       <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -127,10 +128,10 @@ export const NavBar = () => {
                       </svg>
                       Configurações
                     </button>
-                    
+
                     {/* Divisor */}
                     <div className="border-t border-gray-200 dark:border-gray-600 my-2"></div>
-                    
+
                     {/* Sair */}
                     <button
                       onClick={(e) => {
@@ -138,7 +139,7 @@ export const NavBar = () => {
                         logout();
                         setIsMenuOpen(false);
                       }}
-                      className="w-full px-3 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-3"
+                      className="cursor-pointer w-full px-3 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-3"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -171,8 +172,7 @@ export const NavBar = () => {
 
           {/* Botões de ação */}
           <div className="flex gap-2">
-            
-            
+
             <div className="flex items-center gap-2">
               {/* Botão de Reset - aparece apenas quando timer está rodando */}
               {secondsTimer > 0 && (
@@ -190,9 +190,8 @@ export const NavBar = () => {
               {/* Botão do Timer com Tooltip */}
               <Button
                 onClick={toggleTimer}
-                className={`light:bg-linear-to-r from-purple-300 via-purple-400 to-purple-500 focus:ring-purple-600 focus:ring-1 ${
-                  isRunning ? 'animate-pulse' : ''
-                }`}
+                className={`light:bg-linear-to-r from-purple-300 via-purple-400 to-purple-500 focus:ring-purple-600 focus:ring-1 ${isRunning ? 'animate-pulse' : ''
+                  }`}
                 title={isRunning ? 'Clique para pausar' : 'Clique para iniciar'}
               >
                 <div className="flex items-center gap-2">
@@ -205,7 +204,7 @@ export const NavBar = () => {
             </div>
 
             <ThemeButton />
-            
+
             <Button
               onClick={() => setIsShareOpen(true)}
               className="light:bg-linear-to-r from-purple-300 via-purple-400 to-purple-500 focus:ring-purple-600 focus:ring-1"
@@ -215,7 +214,7 @@ export const NavBar = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
               </svg>
             </Button>
-            
+
             <Button
               onClick={() => setIsSettingsOpen(true)}
               className="light:bg-linear-to-r from-purple-300 via-purple-400 to-purple-500 focus:ring-purple-600 focus:ring-1"
@@ -226,8 +225,8 @@ export const NavBar = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </Button>
-            
-            <Button 
+
+            <Button
               onClick={() => logout()}
               className="light:bg-linear-to-r from-purple-300 via-purple-400 to-purple-500 focus:ring-purple-600 focus:ring-1"
               title="Sair da sala"
@@ -247,6 +246,7 @@ export const NavBar = () => {
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
         title="Configurações da Sala"
+        className="max-w-xl"
       >
         <SettingsModalContent onClose={() => setIsSettingsOpen(false)} />
       </Modal>
@@ -257,11 +257,11 @@ export const NavBar = () => {
         onClose={() => setIsShareOpen(false)}
         title={`Compartilhar "${cachedRoomData?.data?.name || ''}"`}
       >
-        <ShareModalContent 
+        <ShareModalContent
           roomId={room?.id || ''}
           roomName={cachedRoomData?.data?.name}
           access={cachedRoomData?.data?.access}
-          onClose={() => setIsShareOpen(false)} 
+          onClose={() => setIsShareOpen(false)}
         />
       </Modal>
 

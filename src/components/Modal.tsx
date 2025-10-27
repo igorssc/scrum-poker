@@ -2,15 +2,17 @@
 
 import { ReactNode, useEffect } from 'react';
 import { Button } from './Button';
+import { twMerge } from 'tailwind-merge';
 
 type ModalProps = {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   children: ReactNode;
+  className?: string;
 };
 
-export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
+export const Modal = ({ isOpen, onClose, title, children, className }: ModalProps) => {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -50,7 +52,7 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
       />
       
       {/* Modal Content */}
-      <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full max-h-[90dvh] overflow-auto">
+      <div className={twMerge("relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full max-h-[90dvh] overflow-auto", className)}>
         {/* Header */}
         <div className="flex items-center justify-between py-4 md:py-6 lg:py-8 px-2 md:px-4 lg:px-6 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-sm md:text-md xl:text-lg font-semibold text-gray-900 dark:text-gray-100">

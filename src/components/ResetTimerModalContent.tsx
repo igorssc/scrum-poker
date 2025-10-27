@@ -14,7 +14,7 @@ export const ResetTimerModalContent = ({
   return (
     <div className="py-4 sm:py-6 lg:py-8">
       <div className="flex flex-col gap-4 sm:gap-6 lg:gap-8">
-        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+        <p className="text-xs text-center sm:text-sm text-gray-600 dark:text-gray-400">
           Tem certeza que deseja resetar o timer? O tempo atual ({formattedTime}) será perdido.
         </p>
         
