@@ -1,19 +1,20 @@
 'use client';
 
-import { CreateRoom } from '@/components/CreateRoom';
-import { useQuery } from '@tanstack/react-query';
-import api from '@/services/api';
-import { RoomProps } from '@/protocols/Room';
-import { useEffect, useState } from 'react';
+import { Board } from '@/components/Board';
 import { Box } from '@/components/Box';
-import { useContextSelector } from 'use-context-selector';
-import { RoomContext } from '@/context/RoomContext';
-import { MemberProps } from '@/protocols/Member';
+import { CreateRoom } from '@/components/CreateRoom';
+import { Flex } from '@/components/Flex';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { SearchRoom } from '@/components/SearchRoom';
-import { Flex } from '@/components/Flex';
-import { Board } from '@/components/Board';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { RoomContext } from '@/context/RoomContext';
+import { MemberProps } from '@/protocols/Member';
+import { RoomProps } from '@/protocols/Room';
+import api from '@/services/api';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { useContextSelector } from 'use-context-selector';
+import { HomeButton } from '../../../components/HomeButton';
 
 export default function BoardPage() {
   const [isLookingForRoom, setIsLookingForRoom] = useState(false);
@@ -71,6 +72,7 @@ export default function BoardPage() {
     return (
       <div className="relative min-h-[calc(100dvh-2rem)] flex content-center items-center max-w-[90%]">
         <ThemeToggle className="fixed top-3 right-3 sm:top-4 sm:right-4 z-50" />
+        <HomeButton className="fixed top-4 left-4 z-50" />
         <Box allowOverflow className="w-160 max-h-[80dvh] sm:max-h-[800px]">
           <Flex>
             <SearchRoom />
@@ -83,6 +85,7 @@ export default function BoardPage() {
     return (
       <div className="relative min-h-[calc(100dvh-2rem)] flex content-center items-center max-w-[90%]">
         <ThemeToggle className="fixed top-3 right-3 sm:top-4 sm:right-4 z-50" />
+        <HomeButton className="fixed top-4 left-4 z-50" />
         <Box allowOverflow className="w-160">
           <Flex>
             <CreateRoom setIsLookingForRoom={setIsLookingForRoom} />
