@@ -13,7 +13,6 @@ import { ShareModalContent } from './ShareModalContent';
 import { ResetTimerModalContent } from './ResetTimerModalContent';
 import { ThemeButton } from './ThemeButton';
 import * as Popover from '@radix-ui/react-popover';
-import * as Tooltip from '@radix-ui/react-tooltip';
 
 export const NavBar = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);

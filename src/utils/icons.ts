@@ -1,3 +1,5 @@
+export type IconThemeData = keyof typeof iconsData;
+
 export const iconsData = {
   nature: {
     label: 'Natureza',

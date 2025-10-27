@@ -32,7 +32,7 @@ export const CreateRoom = ({ setIsLookingForRoom }: CreateRoomProps) => {
       await createRoom({
         roomName: roomName.current.value,
         userName: userName.current.value,
-        theme: 'primary',
+        theme: 'nature',
       });
     } catch (error) {
       console.error('Erro ao criar sala:', error);

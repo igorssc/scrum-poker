@@ -1,3 +1,5 @@
+import { IconThemeData } from "@/utils/icons";
+
 export type RoomProps = {
   access: string;
   created_at: string;
@@ -8,6 +10,6 @@ export type RoomProps = {
   owner_id: string;
   private: boolean;
   status: 'OPEN' | 'CLOSED';
-  theme: string;
+  theme: IconThemeData;
   cards_open: boolean;
 };

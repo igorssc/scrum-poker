@@ -44,17 +44,10 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
     setUserName(userMember?.member.name || '');
   }, [room?.name, room?.private, room?.theme, userMember?.member.name]);
 
-
-
   // Temas fake
   const themeOptions = [
-    { value: 'primary', label: 'Primary (Padrão)' },
-    { value: 'dark', label: 'Dark' },
-    { value: 'light', label: 'Light' },
-    { value: 'retro', label: 'Retro' },
+    { value: 'nature', label: 'Natureza (Padrão)' },
   ];
-
-
 
   // PATCH usuário
   const patchUserMutation = useMutation({
@@ -142,7 +135,7 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
                 options={themeOptions}
                 value={theme}
                 onChange={setTheme}
-                disabled={!canEditRoom}
+                disabled={!canEditRoom || themeOptions.length < 2}
               />
               {/* Privacidade */}
               <div className="flex items-center justify-between gap-2 sm:gap-3">

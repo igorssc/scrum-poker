@@ -15,7 +15,9 @@ export const Cards = () => {
   const { user } = useContextSelector(RoomContext, (context) => ({
     user: context.user,
   }));
-  
+
+  const theme = cachedRoomData?.data?.theme;
+
   const [previousCardsOpen, setPreviousCardsOpen] = useState<boolean | undefined>(undefined);
   const [cardGenerationKey, setCardGenerationKey] = useState(0);
   const [previousVotesCount, setPreviousVotesCount] = useState(0);
@@ -23,7 +25,10 @@ export const Cards = () => {
 
   // Gerar lista de cartas com ícones sorteados (memoizada para manter consistência)
   const allCards = useMemo(() => {
-    const natureData = iconsData['nature'];
+    // Validar se theme é um tipo válido de IconThemeData, caso contrário usar 'nature' como default
+    const validTheme = theme && theme in iconsData ? theme : 'nature';
+    
+    const natureData = iconsData[validTheme];
     const cards: string[] = [];
     
     // Adicionar prevIcon sorteado (se existir)
@@ -42,7 +47,7 @@ export const Cards = () => {
     }
     
     return cards;
-  }, [cardGenerationKey]); // Dependência que força regeneração quando alterada
+  }, [cardGenerationKey, theme]); // Dependência que força regeneração quando alterada
 
   // Encontrar o voto do usuário atual
   const userVote = cachedRoomData?.data?.members?.find(member => member.member.id === user?.id);
