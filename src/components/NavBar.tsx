@@ -5,12 +5,14 @@ import { useContextSelector } from 'use-context-selector';
 import { RoomContext } from '@/context/RoomContext';
 import { useRoomCache } from '@/hooks/useRoomCache';
 import { useTheme } from '@/hooks/useTheme';
+import { useTimer } from '@/hooks/useTimer';
 import { Button } from './Button';
 import { Modal } from './Modal';
 import { SettingsModalContent } from './SettingsModalContent';
 import { ShareModalContent } from './ShareModalContent';
 import { ThemeButton } from './ThemeButton';
 import * as Popover from '@radix-ui/react-popover';
+import * as Tooltip from '@radix-ui/react-tooltip';
 
 export const NavBar = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -25,6 +27,7 @@ export const NavBar = () => {
 
   const { cachedRoomData } = useRoomCache();
   const { toggleTheme } = useTheme();
+  const { formattedTime, isRunning, toggle: toggleTimer, reset: resetTimer, seconds: secondsTimer } = useTimer();
   
   // Encontrar os dados do usuário atual nos membros da sala
   const userMember = cachedRoomData?.data?.members?.find(member => member.member.id === user?.id);
@@ -167,6 +170,39 @@ export const NavBar = () => {
 
           {/* Botões de ação */}
           <div className="flex gap-2">
+            
+            
+            <div className="flex items-center gap-2">
+              {/* Botão de Reset - aparece apenas quando timer está rodando */}
+              {secondsTimer > 0 && (
+                <button
+                  onClick={resetTimer}
+                  className="p-2 rounded-lg cursor-pointer transition-colors"
+                  title="Resetar timer"
+                >
+                  <svg className="w-4 h-4 text-purple-500 hover:text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m-15.357-2A8.003 8.003 0 0019.417 15M15 15h-4" />
+                  </svg>
+                </button>
+              )}
+
+              {/* Botão do Timer com Tooltip */}
+              <Button
+                onClick={toggleTimer}
+                className={`light:bg-linear-to-r from-purple-300 via-purple-400 to-purple-500 focus:ring-purple-600 focus:ring-1 ${
+                  isRunning ? 'animate-pulse' : ''
+                }`}
+                title={isRunning ? 'Clique para pausar' : 'Clique para iniciar'}
+              >
+                <div className="flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="text-xs font-mono">{formattedTime}</span>
+                </div>
+              </Button>
+            </div>
+
             <ThemeButton />
             
             <Button
