@@ -1,4 +1,4 @@
-import { IconThemeData } from "@/utils/icons";
+import { IconThemeData } from '@/utils/icons';
 
 export type RoomProps = {
   access: string;

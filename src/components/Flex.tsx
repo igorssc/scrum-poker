@@ -11,7 +11,7 @@ export const Flex = ({ children, className, ...rest }: FlexProps) => {
     <div
       className={twMerge(
         'w-full h-full relative m-auto flex flex-col justify-center items-center',
-        className,
+        className
       )}
       {...rest}
     >

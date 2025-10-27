@@ -18,7 +18,7 @@ export const EnterRoom = ({ roomId, roomName, access }: EnterRoomProps) => {
 
   const router = useRouter();
 
-  const { enterRoom } = useContextSelector(RoomContext, (context) => ({
+  const { enterRoom } = useContextSelector(RoomContext, context => ({
     enterRoom: context.enterRoom,
   }));
 
@@ -49,26 +49,13 @@ export const EnterRoom = ({ roomId, roomName, access }: EnterRoomProps) => {
         onSubmit={handleSubmit}
         className="flex flex-col gap-6 py-4 w-full justify-between items-stretch"
       >
-        <Input
-          type="text"
-          value={roomName || ''}
-          label="Nome da sala"
-          disabled
-        />
+        <Input type="text" value={roomName || ''} label="Nome da sala" disabled />
         <Input type="text" ref={userName} label="Nome de usuário" required />
         <div className="flex gap-4 w-full justify-center flex-col">
-          <Button 
-            type="submit" 
-            className="mt-4"
-            isLoading={isEntering}
-          >
+          <Button type="submit" className="mt-4" isLoading={isEntering}>
             Entrar
           </Button>
-          <Button 
-            variant="secondary" 
-            onClick={() => router.push('/')}
-            disabled={isEntering}
-          >
+          <Button variant="secondary" onClick={() => router.push('/')} disabled={isEntering}>
             Voltar ao início
           </Button>
         </div>

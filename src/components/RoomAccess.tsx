@@ -12,13 +12,9 @@ type RoomAccessProps = {
 
 export function RoomAccess({ roomId, roomName, access }: RoomAccessProps) {
   return (
-    <Box className='w-160'>
+    <Box className="w-160">
       <Flex>
-        <EnterRoom
-          roomId={roomId}
-          roomName={roomName}
-          access={access}
-        />
+        <EnterRoom roomId={roomId} roomName={roomName} access={access} />
       </Flex>
     </Box>
   );

@@ -18,16 +18,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <html lang="pt-BR">
       <body className={twMerge(inter.className)} style={{ visibility: 'hidden' }}>
         <GlobalTheme />
         <Providers>
           <SampleCards>
-            <Glass>
-              {children}
-            </Glass>
+            <Glass>{children}</Glass>
           </SampleCards>
         </Providers>
       </body>

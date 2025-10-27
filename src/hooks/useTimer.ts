@@ -46,6 +46,6 @@ export const useTimer = () => {
     start,
     pause,
     reset,
-    toggle
+    toggle,
   };
 };

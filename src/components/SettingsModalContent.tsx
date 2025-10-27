@@ -17,7 +17,7 @@ type SettingsModalContentProps = {
 };
 
 export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => {
-  const { user } = useContextSelector(RoomContext, (context) => ({
+  const { user } = useContextSelector(RoomContext, context => ({
     user: context.user,
   }));
   const { cachedRoomData } = useRoomCache();
@@ -45,9 +45,7 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
   }, [room?.name, room?.private, room?.theme, userMember?.member.name]);
 
   // Temas fake
-  const themeOptions = [
-    { value: 'nature', label: 'Natureza (Padrão)' },
-  ];
+  const themeOptions = [{ value: 'nature', label: 'Natureza (Padrão)' }];
 
   // PATCH usuário
   const patchUserMutation = useMutation({
@@ -119,7 +117,7 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
                 value={userName}
                 onChange={e => setUserName(e.target.value)}
               />
-              
+
               {/* Nome da sala */}
               <Input
                 label="Nome da sala:"
@@ -128,7 +126,7 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
                 onChange={e => setRoomName(e.target.value)}
                 disabled={!canEditRoom}
               />
-              
+
               {/* Tema da sala */}
               <Select
                 label="Tema da sala:"
@@ -139,9 +137,16 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
               />
               {/* Privacidade */}
               <div className="flex items-center justify-between gap-2 sm:gap-3">
-                <label className={twMerge("text-[0.65rem] sm:text-xs text-gray-600 dark:text-gray-400 font-medium", !canEditRoom
-                ? 'text-gray-400 dark:text-gray-500'
-                : 'text-gray-700 dark:text-gray-300')}>Sala privada:</label>
+                <label
+                  className={twMerge(
+                    'text-[0.65rem] sm:text-xs text-gray-600 dark:text-gray-400 font-medium',
+                    !canEditRoom
+                      ? 'text-gray-400 dark:text-gray-500'
+                      : 'text-gray-700 dark:text-gray-300'
+                  )}
+                >
+                  Sala privada:
+                </label>
                 <div className="flex items-center gap-1.5 sm:gap-2">
                   <button
                     type="button"
@@ -157,25 +162,29 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
                     <span
                       className={twMerge(
                         'inline-block h-4 w-4 sm:h-5 sm:w-5 transform rounded-full bg-white transition-transform',
-                        isPrivate ? 'translate-x-4 sm:translate-x-5' : 'translate-x-0.5 sm:translate-x-1'
+                        isPrivate
+                          ? 'translate-x-4 sm:translate-x-5'
+                          : 'translate-x-0.5 sm:translate-x-1'
                       )}
                     />
                   </button>
                   <span className="text-[0.65rem] sm:text-xs text-gray-600 dark:text-gray-400">
                     {isPrivate ? 'Privada' : 'Pública'}
                   </span>
+                </div>
               </div>
-            </div>
 
-            <div className="text-[0.6rem] sm:text-[0.65rem] text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
-              <p>
-              <strong>Salas privadas</strong> requerem aprovação do proprietário para entrada e apenas ele pode modificar configurações; <strong>salas públicas</strong> permitem entrada livre via link e edição por qualquer membro, porém entrada via busca por distância ainda requer permissão.
-              </p>
-            </div>
+              <div className="text-[0.6rem] sm:text-[0.65rem] text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
+                <p>
+                  <strong>Salas privadas</strong> requerem aprovação do proprietário para entrada e
+                  apenas ele pode modificar configurações; <strong>salas públicas</strong> permitem
+                  entrada livre via link e edição por qualquer membro, porém entrada via busca por
+                  distância ainda requer permissão.
+                </p>
+              </div>
 
-            {/* Localização da sala */}
-            <LocationSection room={room} user={user} />
-            
+              {/* Localização da sala */}
+              <LocationSection room={room} user={user} />
             </div>
           </div>
         </div>

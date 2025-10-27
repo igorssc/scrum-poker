@@ -9,7 +9,7 @@ export const useWebsocket = () => {
         reconnection: true,
         autoConnect: false,
       }),
-    [],
+    []
   );
 
   useEffect(() => {

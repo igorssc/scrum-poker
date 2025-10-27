@@ -8,14 +8,14 @@ import { RoomProps } from '@/protocols/Room';
 
 export function RoomInfo() {
   const queryClient = useQueryClient();
-  
-  const { room } = useContextSelector(RoomContext, (context) => ({
+
+  const { room } = useContextSelector(RoomContext, context => ({
     room: context.room,
   }));
 
   // Acessar o cache da query que está rodando na página principal
-  const cachedRoomData = queryClient.getQueryData<{ 
-    data: { members: MemberProps[] } & RoomProps 
+  const cachedRoomData = queryClient.getQueryData<{
+    data: { members: MemberProps[] } & RoomProps;
   }>(['room', room?.id]);
 
   if (!cachedRoomData) {
@@ -29,7 +29,7 @@ export function RoomInfo() {
       <h3>{roomData.name}</h3>
       <p>Members: {roomData.members.length}</p>
       <ul>
-        {roomData.members.map((member) => (
+        {roomData.members.map(member => (
           <li key={member.member.id}>
             {member.member.name} - {member.status}
           </li>

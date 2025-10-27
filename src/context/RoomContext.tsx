@@ -1,10 +1,4 @@
-import {
-  useState,
-  useEffect,
-  ReactNode,
-  Dispatch,
-  SetStateAction,
-} from 'react';
+import { useState, useEffect, ReactNode, Dispatch, SetStateAction } from 'react';
 import { getCoordinates } from '../utils/getCoordinates';
 import api from '../services/api';
 import { RoomProps as RoomPropsProtocols } from '../protocols/Room';
@@ -63,9 +57,7 @@ type RoomContextProps = {
   tabId: string;
 };
 
-export const RoomContext = createContext<RoomContextProps>(
-  {} as RoomContextProps,
-);
+export const RoomContext = createContext<RoomContextProps>({} as RoomContextProps);
 
 export const RoomProvider = ({ children }: { children: ReactNode }) => {
   const [room, setRoom] = useState<RoomProps | null>(null);
@@ -114,14 +106,13 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
   }, [user]);
 
   useEffect(() => {
-    if (waitingLogin)
-      return localStorage.setItem('waitingLogin', JSON.stringify(waitingLogin));
+    if (waitingLogin) return localStorage.setItem('waitingLogin', JSON.stringify(waitingLogin));
 
     localStorage.removeItem('waitingLogin');
   }, [waitingLogin]);
 
   useEffect(() => {
-    channel.onmessage = (message) => {
+    channel.onmessage = message => {
       if (message.data.tabId === tabId) return;
 
       if (message.data.type === 'login-scrum-poker') {
@@ -200,10 +191,10 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
       setRoom(newRoom);
       setUser(newUser);
 
-      if(data.member.status === 'LOGGED') {
+      if (data.member.status === 'LOGGED') {
         channel.postMessage({ type: 'login-scrum-poker', tabId });
       }
-      if(data.member.status !== 'LOGGED') {
+      if (data.member.status !== 'LOGGED') {
         channel.postMessage({ type: 'waiting-login-scrum-poker', roomId, tabId });
       }
     } catch (error) {
@@ -213,14 +204,8 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const getRoomsByLocation = async ({
-    distance,
-    lat,
-    lng,
-  }: GetRoomsByLocationProps) => {
-    const rooms = await api.get(
-      `rooms/location?lat=${lat}&lng=${lng}&max_distance=${distance}`,
-    );
+  const getRoomsByLocation = async ({ distance, lat, lng }: GetRoomsByLocationProps) => {
+    const rooms = await api.get(`rooms/location?lat=${lat}&lng=${lng}&max_distance=${distance}`);
 
     return rooms;
   };
@@ -257,7 +242,7 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = async (props?: LogoutProps) => {
     const { redirect = '/' } = props || {};
-    
+
     if (room && user) {
       await api.post(`rooms/${room.id}/sign-out`, {
         user_action_id: user.id,

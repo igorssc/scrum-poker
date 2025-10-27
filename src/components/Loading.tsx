@@ -12,7 +12,7 @@ export const Loading = () => {
             key={index}
             className={twMerge(
               'w-2 h-2 md:w-3 md:h-3 rounded-full animate-custom-bounce',
-              colors[index % colors.length],
+              colors[index % colors.length]
             )}
             style={{
               animationDelay: `${index * 0.1}s`,

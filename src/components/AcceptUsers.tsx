@@ -44,7 +44,7 @@ type SignOutEventProps = {
 /**
  * Componente híbrido que usa WebSocket para atualizações em tempo real
  * e REST API como fallback para garantir consistência dos dados.
- * 
+ *
  * Estratégia:
  * 1. WebSocket: Atualizações rápidas em tempo real
  * 2. REST API (via cache): Fallback para sincronizar membros PENDING
@@ -54,14 +54,11 @@ export const AcceptUsers = () => {
   const { socket } = useWebsocket();
   const { cachedRoomData } = useRoomCache();
 
-  const { room, acceptUser, refuseUser } = useContextSelector(
-    RoomContext,
-    (context) => ({
-      room: context.room,
-      acceptUser: context.acceptUser,
-      refuseUser: context.refuseUser,
-    }),
-  );
+  const { room, acceptUser, refuseUser } = useContextSelector(RoomContext, context => ({
+    room: context.room,
+    acceptUser: context.acceptUser,
+    refuseUser: context.refuseUser,
+  }));
 
   const [users, setUser] = useState<UserProps[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -73,7 +70,7 @@ export const AcceptUsers = () => {
   // Função para extrair usuários PENDING da API REST (fallback)
   const getPendingUsersFromAPI = () => {
     if (!cachedRoomData?.data.members) return [];
-    
+
     return cachedRoomData.data.members
       .filter(member => member.status === 'PENDING')
       .map(member => ({
@@ -85,23 +82,25 @@ export const AcceptUsers = () => {
   // Sincronizar com dados da API REST quando disponível
   useEffect(() => {
     const pendingUsers = getPendingUsersFromAPI();
-    
+
     setUser(prevUsers => {
       // Se temos dados da API, use eles como fonte de verdade
       if (cachedRoomData?.data.members) {
         const pendingUserIds = pendingUsers.map(user => user.id);
-        
+
         // Manter apenas usuários que ainda estão PENDING na API ou que vieram do websocket
         const filteredUsers = prevUsers.filter(user => {
           // Se o usuário está na API como PENDING, manter
           if (pendingUserIds.includes(user.id)) return true;
-          
+
           // Se o usuário não está na API, pode ter sido adicionado pelo websocket recentemente
           // Vamos manter por enquanto (o websocket vai limpar se necessário)
-          const userInAPI = cachedRoomData.data.members.some(member => member.member.id === user.id);
+          const userInAPI = cachedRoomData.data.members.some(
+            member => member.member.id === user.id
+          );
           return !userInAPI;
         });
-        
+
         // Adicionar novos usuários PENDING da API que não estão no estado local
         const mergedUsers = [...filteredUsers];
         pendingUsers.forEach(apiUser => {
@@ -110,10 +109,10 @@ export const AcceptUsers = () => {
             mergedUsers.push(apiUser);
           }
         });
-        
+
         return mergedUsers;
       }
-      
+
       return prevUsers;
     });
   }, [cachedRoomData]);
@@ -124,13 +123,12 @@ export const AcceptUsers = () => {
 
     const handleWebSocketEvent = (event: any) => {
       if (event.type === 'sign-in') {
-        return setUser((prev) => {
-          if ((event as SignInEventProps).data.user.status === 'LOGGED')
-            return prev;
+        return setUser(prev => {
+          if ((event as SignInEventProps).data.user.status === 'LOGGED') return prev;
 
           const { id, name } = (event as SignInEventProps).data.user.member;
 
-          const userAlreadyExists = prev.some((user) => user.id === id);
+          const userAlreadyExists = prev.some(user => user.id === id);
 
           if (userAlreadyExists) return prev;
 
@@ -139,23 +137,23 @@ export const AcceptUsers = () => {
       }
 
       if (event.type === 'sign-in-accept') {
-        return setUser((prev) => {
+        return setUser(prev => {
           const { user_id } = (event as SignInAcceptEventProps).data.user;
-          return prev.filter((user) => user.id !== user_id);
+          return prev.filter(user => user.id !== user_id);
         });
       }
 
       if (event.type === 'sign-in-refuse') {
-        return setUser((prev) => {
+        return setUser(prev => {
           const { user_id } = (event as SignInAcceptEventProps).data.user;
-          return prev.filter((user) => user.id !== user_id);
+          return prev.filter(user => user.id !== user_id);
         });
       }
 
       if (event.type === 'sign-out') {
-        return setUser((prev) => {
+        return setUser(prev => {
           const { id } = (event as SignOutEventProps).data.user;
-          return prev.filter((user) => user.id !== id);
+          return prev.filter(user => user.id !== id);
         });
       }
     };
@@ -214,7 +212,7 @@ export const AcceptUsers = () => {
   // Função para verificar se há overflow no container
   const checkOverflow = () => {
     if (!scrollContainerRef.current) return;
-    
+
     const container = scrollContainerRef.current;
     const hasOverflowNow = container.scrollWidth > container.clientWidth && users.length > 1;
     setHasOverflow(hasOverflowNow);
@@ -223,18 +221,18 @@ export const AcceptUsers = () => {
   // Verificar overflow após renderização e mudanças de tamanho
   useEffect(() => {
     checkOverflow();
-    
+
     const handleResize = () => {
       checkOverflow();
     };
 
     window.addEventListener('resize', handleResize);
-    
+
     // Observer para detectar mudanças no conteúdo do container
     const resizeObserver = new ResizeObserver(() => {
       checkOverflow();
     });
-    
+
     if (scrollContainerRef.current) {
       resizeObserver.observe(scrollContainerRef.current);
     }
@@ -253,9 +251,10 @@ export const AcceptUsers = () => {
     <div className="w-full">
       {/* Container do carousel */}
       <div className="relative">
-        <div 
+        <div
           ref={scrollContainerRef}
-          className={twMerge("overflow-x-auto scrollbar-hide select-none",
+          className={twMerge(
+            'overflow-x-auto scrollbar-hide select-none',
             !hasOverflow ? 'cursor-default' : isDragging ? 'cursor-grabbing' : 'cursor-grab'
           )}
           onMouseDown={hasOverflow ? handleMouseDown : undefined}
@@ -266,30 +265,25 @@ export const AcceptUsers = () => {
           onTouchMove={hasOverflow ? handleTouchMove : undefined}
           onTouchEnd={hasOverflow ? handleTouchEnd : undefined}
         >
-          <div 
-            className={twMerge(
-              "flex gap-3",
-              hasOverflow ? "" : "justify-center"
-            )} 
+          <div
+            className={twMerge('flex gap-3', hasOverflow ? '' : 'justify-center')}
             style={hasOverflow ? { width: 'max-content' } : undefined}
           >
-            {users.map((user) => (
-              <Box 
-                key={user.id} 
+            {users.map(user => (
+              <Box
+                key={user.id}
                 className="min-h-0! min-w-[260px] max-w-[260px] p-4 shrink-0 shadow-none"
               >
                 <Flex className="gap-3">
-                  <h3 className="text-xs md:text-sm font-semibold text-center">
-                    {user.name}
-                  </h3>
-                  
+                  <h3 className="text-xs md:text-sm font-semibold text-center">{user.name}</h3>
+
                   <p className="text-[0.65rem] md:text-xs text-gray-600 dark:text-gray-400 text-center">
                     Aguardando aprovação
                   </p>
-                  
+
                   <Flex className="flex-row gap-2 mt-2">
-                    <Button 
-                      onClick={(e) => {
+                    <Button
+                      onClick={e => {
                         // Previne clique durante drag
                         if (isDragging) {
                           e.preventDefault();
@@ -297,14 +291,14 @@ export const AcceptUsers = () => {
                         }
                         refuseUser(user.id);
                       }}
-                      onMouseDown={(e) => e.stopPropagation()}
+                      onMouseDown={e => e.stopPropagation()}
                       className="flex-1"
                       variant="secondary"
                     >
                       Recusar
                     </Button>
-                    <Button 
-                      onClick={(e) => {
+                    <Button
+                      onClick={e => {
                         // Previne clique durante drag
                         if (isDragging) {
                           e.preventDefault();
@@ -312,7 +306,7 @@ export const AcceptUsers = () => {
                         }
                         acceptUser(user.id);
                       }}
-                      onMouseDown={(e) => e.stopPropagation()}
+                      onMouseDown={e => e.stopPropagation()}
                       className="flex-1"
                     >
                       Aceitar
@@ -323,7 +317,7 @@ export const AcceptUsers = () => {
             ))}
           </div>
         </div>
-        
+
         {/* Gradient fade nas bordas para indicar scroll */}
         {hasOverflow && (
           <>
@@ -332,7 +326,7 @@ export const AcceptUsers = () => {
           </>
         )}
       </div>
-      
+
       {/* Indicador de scroll */}
       {hasOverflow && (
         <p className="text-xs text-gray-100 dark:text-gray-800 text-center mt-2">

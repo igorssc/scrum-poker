@@ -13,9 +13,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           <label
             className={twMerge(
               'mb-1.5 sm:mb-2 text-[0.65rem] sm:text-xs font-medium',
-              disabled
-                ? 'text-gray-400 dark:text-gray-500'
-                : 'text-gray-700 dark:text-gray-300',
+              disabled ? 'text-gray-400 dark:text-gray-500' : 'text-gray-700 dark:text-gray-300'
             )}
           >
             {label}
@@ -33,13 +31,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             disabled
               ? 'bg-gray-200 text-gray-500 cursor-not-allowed dark:bg-gray-700 dark:text-gray-500'
               : 'cursor-text',
-            className,
+            className
           )}
           {...rest}
         />
       </div>
     );
-  },
+  }
 );
 
 Input.displayName = 'Input';

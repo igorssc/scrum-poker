@@ -3,7 +3,7 @@ import { useContextSelector } from 'use-context-selector';
 import { RoomContext } from '@/context/RoomContext';
 
 export const useRoomActions = () => {
-  const { room, user } = useContextSelector(RoomContext, (context) => ({
+  const { room, user } = useContextSelector(RoomContext, context => ({
     room: context.room,
     user: context.user,
   }));
@@ -13,11 +13,14 @@ export const useRoomActions = () => {
   // Mutation para atualizar sala (extraído do SettingsModalContent)
   const updateRoomMutation = useMutation({
     mutationFn: async (payload: any) => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rooms/${room?.id}?user_id=${user?.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/rooms/${room?.id}?user_id=${user?.id}`,
+        {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        }
+      );
       if (!res.ok) throw new Error('Erro ao atualizar sala');
       return res.json();
     },

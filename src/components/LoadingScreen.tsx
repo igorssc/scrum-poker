@@ -15,15 +15,11 @@ export const LoadingScreen = () => {
 
   return (
     <div className="relative min-h-[calc(100dvh-2rem)] flex content-center items-center max-w-[90%]">
-      <Box className='w-160 min-h-60! md:h-80'>
-        <Flex className='pt-20 md:pt-[110px] flex-col gap-14 md:gap-20'>
+      <Box className="w-160 min-h-60! md:h-80">
+        <Flex className="pt-20 md:pt-[110px] flex-col gap-14 md:gap-20">
           <Loading />
           <div className="flex justify-center mt-2 sm:mt-3 md:mt-4 w-full">
-            <Button 
-              onClick={handleCancel}
-              className="w-full"
-              variant='secondary'
-            >
+            <Button onClick={handleCancel} className="w-full" variant="secondary">
               Cancelar
             </Button>
           </div>

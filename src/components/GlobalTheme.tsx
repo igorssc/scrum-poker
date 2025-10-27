@@ -12,7 +12,7 @@ export const GlobalTheme = ({ defaultTheme }: GlobalThemeProps) => {
   useEffect(() => {
     const initialTheme = getInitialTheme(defaultTheme);
     applyTheme(initialTheme);
-    
+
     // Tornar o body visível após aplicar o tema
     document.body.style.visibility = 'visible';
   }, [defaultTheme]);

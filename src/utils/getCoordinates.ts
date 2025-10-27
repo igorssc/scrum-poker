@@ -9,13 +9,13 @@ export const getCoordinates = (): Promise<Coordinates> => {
       reject(false);
     } else {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        position => {
           const { latitude, longitude } = position.coords;
           resolve({ latitude, longitude });
         },
         () => {
           reject(false);
-        },
+        }
       );
     }
   });

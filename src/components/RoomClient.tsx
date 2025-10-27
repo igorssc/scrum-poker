@@ -41,23 +41,16 @@ type SignOutEventProps = {
 };
 
 export function RoomClient({ roomId, access }: RoomClientProps) {
-  const {
-    room,
-    user,
-    isHydrated,
-    clear,
-    waitingLogin,
-    setWaitingLogin,
-    tabId,
-  } = useContextSelector(RoomContext, (context) => ({
-    room: context.room,
-    user: context.user,
-    isHydrated: context.isHydrated,
-    clear: context.clear,
-    waitingLogin: context.waitingLogin,
-    setWaitingLogin: context.setWaitingLogin,
-    tabId: context.tabId,
-  }));
+  const { room, user, isHydrated, clear, waitingLogin, setWaitingLogin, tabId } =
+    useContextSelector(RoomContext, context => ({
+      room: context.room,
+      user: context.user,
+      isHydrated: context.isHydrated,
+      clear: context.clear,
+      waitingLogin: context.waitingLogin,
+      setWaitingLogin: context.setWaitingLogin,
+      tabId: context.tabId,
+    }));
 
   const router = useRouter();
   const { socket } = useWebsocket();
@@ -77,9 +70,7 @@ export function RoomClient({ roomId, access }: RoomClientProps) {
 
     if (!data?.data || !user) return;
 
-    const userFound = data?.data.members.find(
-      (member) => member.member.id === user.id,
-    );
+    const userFound = data?.data.members.find(member => member.member.id === user.id);
 
     if (!userFound) return;
 
@@ -142,35 +133,24 @@ export function RoomClient({ roomId, access }: RoomClientProps) {
     };
   }, [roomId, socket, user, router, clear, setWaitingLogin, tabId]);
 
-  const isLoading =
-    !isHydrated ||
-    (user && room && !data?.data);
+  const isLoading = !isHydrated || (user && room && !data?.data);
 
-  const isUserNotInRoom =
-    !(user && room?.id === roomId);
+  const isUserNotInRoom = !(user && room?.id === roomId);
 
-  const shouldShowLoadingScreen =
-    isLoading;
+  const shouldShowLoadingScreen = isLoading;
 
-  const shouldShowRoomAccess =
-    isUserNotInRoom && !waitingLogin;
+  const shouldShowRoomAccess = isUserNotInRoom && !waitingLogin;
 
   if (shouldShowLoadingScreen) {
     return <LoadingScreen />;
   }
 
   if (shouldShowRoomAccess) {
-    return (
-      <RoomAccess
-        roomId={roomId}
-        roomName={data?.data.name}
-        access={access}
-      />
-    );
+    return <RoomAccess roomId={roomId} roomName={data?.data.name} access={access} />;
   }
 
   return (
-    <Box className='w-160'>
+    <Box className="w-160">
       <Flex>
         <WaitingRoom roomName={data?.data.name} roomId={roomId} />
       </Flex>

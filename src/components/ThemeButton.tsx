@@ -20,7 +20,14 @@ export const ThemeButton = ({ defaultTheme }: ThemeButtonProps) => {
         disabled
       >
         <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="10" strokeWidth={2} strokeDasharray="31.416" strokeDashoffset="31.416" />
+          <circle
+            cx="12"
+            cy="12"
+            r="10"
+            strokeWidth={2}
+            strokeDasharray="31.416"
+            strokeDashoffset="31.416"
+          />
         </svg>
       </Button>
     );
@@ -32,11 +39,7 @@ export const ThemeButton = ({ defaultTheme }: ThemeButtonProps) => {
       className="light:bg-linear-to-r from-purple-300 via-purple-400 to-purple-500 focus:ring-purple-600 focus:ring-1"
       title={isDark ? 'Modo claro' : 'Modo escuro'}
     >
-      <ThemeIcon 
-        theme={theme!} 
-        size="sm" 
-        className="text-white" 
-      />
+      <ThemeIcon theme={theme!} size="sm" className="text-white" />
     </Button>
   );
 };

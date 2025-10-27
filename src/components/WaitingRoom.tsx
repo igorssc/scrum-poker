@@ -9,7 +9,7 @@ type WaitingRoomProps = {
 };
 
 export const WaitingRoom = ({ roomId, roomName }: WaitingRoomProps) => {
-  const { logout } = useContextSelector(RoomContext, (context) => ({
+  const { logout } = useContextSelector(RoomContext, context => ({
     logout: context.logout,
   }));
 
@@ -20,9 +20,7 @@ export const WaitingRoom = ({ roomId, roomName }: WaitingRoomProps) => {
         Aguardando aprovação de entrada na sala: <b>{roomName}</b>.
       </p>
       <Loading />
-      <Button onClick={() => logout()}>
-        Sair
-      </Button>
+      <Button onClick={() => logout()}>Sair</Button>
     </div>
   );
 };

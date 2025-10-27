@@ -17,16 +17,13 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 export default function Home() {
   const [isLookingForRoom, setIsLookingForRoom] = useState(false);
 
-  const { room, user, isHydrated, clear } = useContextSelector(
-    RoomContext,
-    (context) => ({
-      room: context.room,
-      user: context.user,
-      isHydrated: context.isHydrated,
-      tabId: context.tabId,
-      clear: context.clear,
-    }),
-  );
+  const { room, user, isHydrated, clear } = useContextSelector(RoomContext, context => ({
+    room: context.room,
+    user: context.user,
+    isHydrated: context.isHydrated,
+    tabId: context.tabId,
+    clear: context.clear,
+  }));
 
   const { data, error } = useQuery<{ data: { members: MemberProps[] } & RoomProps }>({
     queryKey: ['room', room?.id],
@@ -45,7 +42,10 @@ export default function Home() {
 
   // Detecta erros e limpa o localStorage quando necessário
   useEffect(() => {
-    if (error && (error as any)?.response?.status === 404 || (error as any)?.response?.status === 403) {
+    if (
+      (error && (error as any)?.response?.status === 404) ||
+      (error as any)?.response?.status === 403
+    ) {
       clear();
     }
   }, [error, clear]);
@@ -53,9 +53,7 @@ export default function Home() {
   useEffect(() => {
     if (!(user && room)) return;
 
-    const userFound = data?.data?.members?.find(
-      (member) => member.member.id === user.id,
-    );
+    const userFound = data?.data?.members?.find(member => member.member.id === user.id);
 
     if (!userFound) return;
 
@@ -72,7 +70,7 @@ export default function Home() {
     return (
       <div className="relative min-h-[calc(100dvh-2rem)] flex content-center items-center max-w-[90%]">
         <ThemeToggle className="fixed top-3 right-3 sm:top-4 sm:right-4 z-50" />
-        <Box allowOverflow className='w-160 max-h-[80dvh] sm:max-h-[800px]'>
+        <Box allowOverflow className="w-160 max-h-[80dvh] sm:max-h-[800px]">
           <Flex>
             <SearchRoom />
           </Flex>
@@ -84,7 +82,7 @@ export default function Home() {
     return (
       <div className="relative min-h-[calc(100dvh-2rem)] flex content-center items-center max-w-[90%]">
         <ThemeToggle className="fixed top-3 right-3 sm:top-4 sm:right-4 z-50" />
-        <Box allowOverflow className='w-160'>
+        <Box allowOverflow className="w-160">
           <Flex>
             <CreateRoom setIsLookingForRoom={setIsLookingForRoom} />
           </Flex>
@@ -94,7 +92,7 @@ export default function Home() {
 
   return (
     <div className="relative min-h-[calc(100dvh-2rem)] flex content-center items-center max-w-[90%]">
-      <Board/>
+      <Board />
     </div>
   );
 }

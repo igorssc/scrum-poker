@@ -19,13 +19,13 @@ export const useTheme = (defaultTheme?: THEME) => {
   // Aplicar mudanças do tema
   useEffect(() => {
     if (theme === null) return;
-    
+
     setCookie('scrum-poker-theme', theme);
     applyTheme(theme);
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(current => current === THEME.LIGHT ? THEME.DARK : THEME.LIGHT);
+    setTheme(current => (current === THEME.LIGHT ? THEME.DARK : THEME.LIGHT));
   };
 
   return {

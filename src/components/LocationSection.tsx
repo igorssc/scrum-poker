@@ -31,7 +31,7 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
   // Converte coordenadas para endereço usando múltiplas APIs gratuitas com fallback
   const fetchAddress = async (lat: number, lng: number) => {
     setAddressLoading(true);
-    
+
     // Lista de APIs gratuitas para geocoding reverso com foco em endereços de rua
     const geocodingAPIs = [
       // 1. Nominatim (OpenStreetMap) - Customizado para rua
@@ -42,7 +42,7 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
         extractAddress: (data: any) => {
           const addr = data.address;
           if (!addr) return data.display_name;
-          
+
           const parts = [];
           // Prioriza rua e número
           if (addr.house_number && addr.road) {
@@ -50,21 +50,21 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
           } else if (addr.road) {
             parts.push(addr.road);
           }
-          
+
           // Adiciona bairro/distrito
           if (addr.neighbourhood) parts.push(addr.neighbourhood);
           else if (addr.suburb) parts.push(addr.suburb);
           else if (addr.district) parts.push(addr.district);
-          
+
           // Cidade e estado
           if (addr.city) parts.push(addr.city);
           else if (addr.town) parts.push(addr.town);
           else if (addr.village) parts.push(addr.village);
-          
+
           if (addr.state) parts.push(addr.state);
-          
+
           return parts.length > 0 ? parts.join(', ') : data.display_name;
-        }
+        },
       },
       // 2. LocationIQ - Customizado para endereço de rua
       {
@@ -74,7 +74,7 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
         extractAddress: (data: any) => {
           const addr = data.address;
           if (!addr) return data.display_name;
-          
+
           const parts = [];
           // Prioriza rua e número
           if (addr.house_number && addr.road) {
@@ -82,19 +82,19 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
           } else if (addr.road) {
             parts.push(addr.road);
           }
-          
+
           // Adiciona bairro
           if (addr.neighbourhood) parts.push(addr.neighbourhood);
           else if (addr.suburb) parts.push(addr.suburb);
-          
+
           // Cidade e estado (sem duplicatas)
           if (addr.city && !parts.includes(addr.city)) parts.push(addr.city);
           else if (addr.town && !parts.includes(addr.town)) parts.push(addr.town);
-          
+
           if (addr.state && !parts.includes(addr.state)) parts.push(addr.state);
-          
+
           return parts.length > 0 ? parts.join(', ') : data.display_name;
-        }
+        },
       },
       // 3. Photon - Customizado para rua
       {
@@ -104,7 +104,7 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
         extractAddress: (data: any) => {
           const props = data.features?.[0]?.properties;
           if (!props) return null;
-          
+
           const parts = [];
           // Prioriza rua e número
           if (props.housenumber && props.street) {
@@ -112,14 +112,14 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
           } else if (props.street) {
             parts.push(props.street);
           }
-          
+
           // Adiciona apenas bairro e cidade (sem regiões administrativas confusas)
           if (props.district && !props.district.includes('Região')) parts.push(props.district);
           if (props.city) parts.push(props.city);
           if (props.state) parts.push(props.state);
-          
+
           return parts.length > 0 ? parts.join(', ') : props.name;
-        }
+        },
       },
       // 4. BigDataCloud - Simplificado
       {
@@ -132,15 +132,15 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
           if (data.locality) parts.push(data.locality);
           if (data.principalSubdivision) parts.push(data.principalSubdivision);
           return parts.length > 0 ? parts.join(', ') : 'Localização encontrada';
-        }
-      }
+        },
+      },
     ];
 
     for (const api of geocodingAPIs) {
       try {
         const response = await fetch(api.url, { headers: api.headers });
         const data = await response.json();
-        
+
         const address = api.extractAddress(data);
         if (address) {
           setAddress(address);
@@ -152,7 +152,7 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
         continue;
       }
     }
-    
+
     // Se todas as APIs falharam
     setAddress('Endereço não encontrado');
     setAddressLoading(false);
@@ -161,11 +161,14 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
   // PATCH sala
   const patchRoomMutation = useMutation({
     mutationFn: async (payload: any) => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rooms/${room?.id}?user_id=${user?.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/rooms/${room?.id}?user_id=${user?.id}`,
+        {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        }
+      );
       if (!res.ok) throw new Error('Erro ao salvar sala');
       return res.json();
     },
@@ -179,18 +182,20 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
     setLocationLoading(true);
     setLocationError(null);
     try {
-      const { coords } = await new Promise<{ coords: { latitude: number; longitude: number } }>((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject);
-      });
+      const { coords } = await new Promise<{ coords: { latitude: number; longitude: number } }>(
+        (resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject);
+        }
+      );
       const { latitude, longitude } = coords;
       await patchRoomMutation.mutateAsync({
         lat: latitude,
         lng: longitude,
       });
-      
+
       // Busca o endereço das novas coordenadas
       await fetchAddress(latitude, longitude);
-      
+
       queryClient.invalidateQueries({ queryKey: ['room', room?.id] });
     } catch (err: any) {
       setLocationError(err.message || 'Erro ao atualizar localização');
@@ -201,8 +206,10 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
 
   return (
     <div className="flex flex-col gap-2 sm:gap-2.5 md:gap-3">
-      <label className="text-[0.65rem] sm:text-xs text-gray-700 dark:text-gray-300 font-medium">Localização da sala:</label>
-      
+      <label className="text-[0.65rem] sm:text-xs text-gray-700 dark:text-gray-300 font-medium">
+        Localização da sala:
+      </label>
+
       {/* Caixa elegante para localização */}
       <div className="bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg sm:rounded-xl p-2.5 sm:p-3 md:p-4 space-y-2 sm:space-y-2.5 md:space-y-3">
         {room?.lat && room?.lng ? (
@@ -234,9 +241,7 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
                 <div className="text-[0.65rem] sm:text-xs font-mono text-gray-700 dark:text-gray-300">
                   {room.lat.toFixed(6)}, {room.lng.toFixed(6)}
                 </div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">
-                  Coordenadas GPS
-                </div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">Coordenadas GPS</div>
               </div>
             </div>
 
@@ -251,7 +256,11 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
                   stroke="currentColor"
                   className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 animate-spin text-blue-500"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+                  />
                 </svg>
                 <span className="text-[0.65rem] sm:text-xs text-gray-500 dark:text-gray-400">
                   Buscando endereço...
@@ -279,7 +288,11 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
                 stroke="currentColor"
                 className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 text-gray-400"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 17.642 4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 17.642 4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
+                />
               </svg>
             </div>
             <div className="flex-1">
@@ -316,7 +329,11 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
                   stroke="currentColor"
                   className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 animate-spin"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+                  />
                 </svg>
                 Atualizando localização...
               </>
@@ -330,7 +347,11 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
                   stroke="currentColor"
                   className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+                  />
                 </svg>
                 {room?.lat && room?.lng ? 'Atualizar localização' : 'Definir localização atual'}
               </>
@@ -350,11 +371,13 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
                 stroke="currentColor"
                 className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 text-red-500"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+                />
               </svg>
-              <span className="text-xs text-red-600 dark:text-red-400">
-                {locationError}
-              </span>
+              <span className="text-xs text-red-600 dark:text-red-400">{locationError}</span>
             </div>
           </div>
         )}

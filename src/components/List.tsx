@@ -15,12 +15,12 @@ export const List = ({ label }: ListProps) => {
 
   const addItem = () => {
     if (newItem.trim() && !items.includes(newItem.trim())) {
-      setItems((prev) => [...prev, newItem.trim()]);
+      setItems(prev => [...prev, newItem.trim()]);
       setNewItem('');
     }
   };
 
-  const options = items.map((item) => ({ value: item, label: item }));
+  const options = items.map(item => ({ value: item, label: item }));
 
   return (
     <Box className="min-h-min">

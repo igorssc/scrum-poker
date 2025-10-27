@@ -28,13 +28,13 @@ export const Select = ({
   const [isOpen, setIsOpen] = useState(false);
   const [hasFocus, setHasFocus] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(
-    options.findIndex((option) => option.value === value),
+    options.findIndex(option => option.value === value)
   );
   const selectRef = useRef<HTMLDivElement>(null);
 
   const toggleOptions = () => {
     if (disabled) return;
-    setIsOpen((prev) => !prev);
+    setIsOpen(prev => !prev);
   };
 
   const closeDropdown = () => {
@@ -50,7 +50,7 @@ export const Select = ({
     if (event.key === 'Enter') {
       let prevHighlightedIndex = 0;
 
-      const setHighlightedIndexFunction = setHighlightedIndex((prev) => {
+      const setHighlightedIndexFunction = setHighlightedIndex(prev => {
         prevHighlightedIndex = prev;
 
         return prev;
@@ -71,14 +71,14 @@ export const Select = ({
 
       let wasOpen = false;
 
-      setIsOpen((prev) => {
+      setIsOpen(prev => {
         wasOpen = prev;
         return true;
       });
 
       let prevValue = '';
 
-      const onChangeFunction = onChange((prev) => {
+      const onChangeFunction = onChange(prev => {
         prevValue = prev;
 
         return prev;
@@ -86,10 +86,8 @@ export const Select = ({
 
       await Promise.all([onChangeFunction]);
 
-      setHighlightedIndex((prev) => {
-        const currentValueSelected = options.findIndex(
-          (option) => option.value === prevValue,
-        );
+      setHighlightedIndex(prev => {
+        const currentValueSelected = options.findIndex(option => option.value === prevValue);
 
         const nextPosition = (advance = 1) => (prev + advance) % options.length;
 
@@ -110,14 +108,14 @@ export const Select = ({
 
       let wasOpen = false;
 
-      setIsOpen((prev) => {
+      setIsOpen(prev => {
         wasOpen = prev;
         return true;
       });
 
       let prevValue = '';
 
-      const onChangeFunction = onChange((prev) => {
+      const onChangeFunction = onChange(prev => {
         prevValue = prev;
 
         return prev;
@@ -125,13 +123,10 @@ export const Select = ({
 
       await Promise.all([onChangeFunction]);
 
-      setHighlightedIndex((prev) => {
-        const currentValueSelected = options.findIndex(
-          (option) => option.value === prevValue,
-        );
+      setHighlightedIndex(prev => {
+        const currentValueSelected = options.findIndex(option => option.value === prevValue);
 
-        const nextPosition = (advance = 1) =>
-          (prev - advance + options.length) % options.length;
+        const nextPosition = (advance = 1) => (prev - advance + options.length) % options.length;
 
         if (wasOpen) {
           const prevPosition = nextPosition();
@@ -148,10 +143,7 @@ export const Select = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        selectRef.current &&
-        !selectRef.current.contains(event.target as Node)
-      ) {
+      if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
         closeDropdown();
       }
     };
@@ -179,7 +171,7 @@ export const Select = ({
   useEffect(() => {
     if (!isOpen) return;
 
-    setHighlightedIndex(options.findIndex((option) => option.value === value));
+    setHighlightedIndex(options.findIndex(option => option.value === value));
   }, [isOpen]);
 
   const getOptionClass = (option: Option, index: number) => {
@@ -198,7 +190,7 @@ export const Select = ({
         ? 'bg-purple-300 dark:bg-purple-700'
         : isHighlighted
           ? 'bg-purple-200 dark:bg-purple-600'
-          : 'hover:bg-purple-200 dark:hover:bg-purple-600',
+          : 'hover:bg-purple-200 dark:hover:bg-purple-600'
     );
   };
 
@@ -208,9 +200,7 @@ export const Select = ({
         <label
           className={twMerge(
             'mb-1.5 sm:mb-2 text-[0.65rem] sm:text-xs font-medium',
-            disabled
-              ? 'text-gray-400 dark:text-gray-500'
-              : 'text-gray-700 dark:text-gray-300',
+            disabled ? 'text-gray-400 dark:text-gray-500' : 'text-gray-700 dark:text-gray-300'
           )}
         >
           {label}
@@ -223,7 +213,7 @@ export const Select = ({
           setHasFocus(false);
           closeDropdown();
         }}
-        className={twMerge("relative", disabled ? "cursor-not-allowed" : "cursor-pointer")}
+        className={twMerge('relative', disabled ? 'cursor-not-allowed' : 'cursor-pointer')}
       >
         <div
           onClick={toggleOptions}
@@ -232,12 +222,10 @@ export const Select = ({
             'bg-white text-gray-900 placeholder-gray-500 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600',
             disabled
               ? 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-500'
-              : 'focus:border-purple-500 focus:outline-none',
+              : 'focus:border-purple-500 focus:outline-none'
           )}
         >
-          {value
-            ? options.find((option) => option.value === value)?.label
-            : placeholder}
+          {value ? options.find(option => option.value === value)?.label : placeholder}
           <span
             className={twMerge(
               'absolute right-2.5 sm:right-3 md:right-4 top-1/2 transform -translate-y-1/2 transition-transform duration-200',

@@ -16,21 +16,22 @@ export const UsersList = () => {
   // Detectar mudança no cardsOpen para ativar animação
   useEffect(() => {
     const currentCardsOpen = cachedRoomData?.data?.cards_open;
-    
+
     if (previousCardsOpen === false && currentCardsOpen === true) {
       // Cartas foram reveladas - iniciar animação de flip
-      const votedMemberIds = cachedRoomData?.data?.members
-        ?.filter(member => member.status === 'LOGGED' && member.vote)
-        ?.map(member => member.id) || [];
-      
+      const votedMemberIds =
+        cachedRoomData?.data?.members
+          ?.filter(member => member.status === 'LOGGED' && member.vote)
+          ?.map(member => member.id) || [];
+
       setFlippingCards(new Set(votedMemberIds));
-      
+
       // Remover estado de flip após a animação
       setTimeout(() => {
         setFlippingCards(new Set());
       }, 600); // Duração da animação
     }
-    
+
     setPreviousCardsOpen(currentCardsOpen);
   }, [cachedRoomData?.data?.cards_open, cachedRoomData?.data?.members, previousCardsOpen]);
 
@@ -59,33 +60,33 @@ export const UsersList = () => {
   };
 
   // Organizar membros baseado no estado das cartas
-  const organizedMembers = cardsOpen 
+  const organizedMembers = cardsOpen
     ? // Cartas abertas: agrupar por voto com ordenação sofisticada
       loggedMembers.sort((a, b) => {
         // Separar membros que votaram dos que não votaram
         if (a.vote && !b.vote) return -1;
         if (!a.vote && b.vote) return 1;
         if (!a.vote && !b.vote) return a.member.name.localeCompare(b.member.name);
-        
+
         // Ambos votaram - ordenar por tipo de voto
         const valueA = getCardValue(a.vote!);
         const valueB = getCardValue(b.vote!);
-        
+
         const numA = parseFloat(valueA);
         const numB = parseFloat(valueB);
-        
+
         const isNumA = !isNaN(numA);
         const isNumB = !isNaN(numB);
-        
+
         // Números primeiro, ordenados do menor para o maior
         if (isNumA && isNumB) {
           return numA - numB;
         }
-        
+
         // Números vêm antes de strings
         if (isNumA && !isNumB) return -1;
         if (!isNumA && isNumB) return 1;
-        
+
         // Ambos são strings - ordem alfabética
         return valueA.localeCompare(valueB);
       })
@@ -101,34 +102,37 @@ export const UsersList = () => {
             <h3 className="text-xs md:text-sm xl:text-md font-bold text-center">
               Membros Ativos ({organizedMembers.length})
             </h3>
-            
+
             <div className="w-full space-y-3">
               {organizedMembers.map((member, index) => {
                 const hasVoted = !!member.vote;
                 const isFlipping = flippingCards.has(member.id);
-                
+
                 // Verificar se é um novo grupo de voto (apenas quando cartas estão abertas)
                 const previousMember = index > 0 ? organizedMembers[index - 1] : null;
-                const isNewVoteGroup = cardsOpen && (
+                const isNewVoteGroup =
+                  cardsOpen &&
                   // Primeiro membro com voto
-                  (member.vote && (index === 0 || !previousMember?.vote)) ||
-                  // Mudança de voto entre membros que votaram
-                  (member.vote && previousMember?.vote && 
-                   getCardValue(member.vote) !== getCardValue(previousMember.vote)) ||
-                  // Primeiro membro sem voto (após membros que votaram)
-                  (!member.vote && previousMember?.vote)
-                );
-                
+                  ((member.vote && (index === 0 || !previousMember?.vote)) ||
+                    // Mudança de voto entre membros que votaram
+                    (member.vote &&
+                      previousMember?.vote &&
+                      getCardValue(member.vote) !== getCardValue(previousMember.vote)) ||
+                    // Primeiro membro sem voto (após membros que votaram)
+                    (!member.vote && previousMember?.vote));
+
                 // Determinar o que mostrar baseado no estado das cartas
                 let voteDisplay = null;
                 let statusText = cardsOpen ? '' : 'Aguardando voto';
-                
+
                 if (hasVoted) {
                   if (cardsOpen) {
                     // Cartas reveladas - mostrar a carta real ou animação de flip
                     voteDisplay = (
                       <div className="flex items-center gap-2">
-                        <div className={`relative w-6 h-8 sm:w-7 sm:h-10 md:w-8 md:h-12 ${isFlipping ? 'flip-container' : ''}`}>
+                        <div
+                          className={`relative w-6 h-8 sm:w-7 sm:h-10 md:w-8 md:h-12 ${isFlipping ? 'flip-container' : ''}`}
+                        >
                           {isFlipping ? (
                             <>
                               {/* Verso da carta - primeira metade da animação */}
@@ -182,12 +186,14 @@ export const UsersList = () => {
                     statusText = 'Já votou';
                   }
                 }
-                
+
                 return (
                   <div key={member.id}>
                     {/* Separador de grupo de voto */}
                     {isNewVoteGroup && (
-                      <div className={`flex items-center gap-2 mb-2 md:mb-4 ${index > 0 ? 'mt-2 md:mt-4' : ''}`}>
+                      <div
+                        className={`flex items-center gap-2 mb-2 md:mb-4 ${index > 0 ? 'mt-2 md:mt-4' : ''}`}
+                      >
                         <div className="h-px bg-gray-300 dark:bg-gray-600 flex-1"></div>
                         <span className="text-xs font-medium text-gray-700 dark:text-gray-400 px-2">
                           {member.vote ? getCardValue(member.vote) : 'Não votaram'}
@@ -195,37 +201,37 @@ export const UsersList = () => {
                         <div className="h-px bg-gray-300 dark:bg-gray-600 flex-1"></div>
                       </div>
                     )}
-                    
+
                     <div className="flex items-center justify-between p-2 sm:p-3 text-[0.65rem] md:text-xs lg:text-sm rounded-lg bg-gray-100 dark:bg-gray-700 min-h-8 sm:min-h-10 md:min-h-12">
                       <div className="flex flex-col flex-1">
-                        <span className="font-medium">
-                          {member.member.name}
-                        </span>
+                        <span className="font-medium">{member.member.name}</span>
                         <span className="text-[80%] text-gray-500 dark:text-gray-400">
                           {statusText}
                         </span>
                       </div>
-                      
+
                       <div className="flex items-center gap-2 sm:gap-3 min-w-8 sm:min-w-10 md:min-w-12 justify-end">
-                        {voteDisplay || <div className="w-6 h-8 sm:w-7 sm:h-10 md:w-8 md:h-12"></div>}
-                        <div 
+                        {voteDisplay || (
+                          <div className="w-6 h-8 sm:w-7 sm:h-10 md:w-8 md:h-12"></div>
+                        )}
+                        <div
                           className={twMerge(
                             'w-3 h-3 rounded-full animate-glow-pulse',
-                            cardsOpen 
-                              ? hasVoted 
+                            cardsOpen
+                              ? hasVoted
                                 ? 'bg-green-500' // Revelado e votou - verde
                                 : 'bg-gray-400' // Revelado e não votou - cinza
-                              : hasVoted 
+                              : hasVoted
                                 ? 'bg-green-500' // Não revelado mas votou - verde
                                 : 'bg-yellow-500' // Não revelado e não votou - amarelo (aguardando)
                           )}
                           title={
-                            cardsOpen 
-                              ? hasVoted 
-                                ? 'Votou' 
+                            cardsOpen
+                              ? hasVoted
+                                ? 'Votou'
                                 : 'Não votou'
-                              : hasVoted 
-                                ? 'Já votou' 
+                              : hasVoted
+                                ? 'Já votou'
                                 : 'Aguardando voto'
                           }
                         ></div>
@@ -252,6 +258,6 @@ export const UsersList = () => {
           </Flex>
         </Box>
       )}
-    </ div>
+    </div>
   );
 };

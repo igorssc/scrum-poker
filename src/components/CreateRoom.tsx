@@ -14,7 +14,7 @@ export const CreateRoom = ({ setIsLookingForRoom }: CreateRoomProps) => {
   const userName = useRef<HTMLInputElement>(null);
   const [isCreating, setIsCreating] = useState(false);
 
-  const { createRoom } = useContextSelector(RoomContext, (context) => ({
+  const { createRoom } = useContextSelector(RoomContext, context => ({
     createRoom: context.createRoom,
   }));
 
@@ -53,15 +53,11 @@ export const CreateRoom = ({ setIsLookingForRoom }: CreateRoomProps) => {
           <Input type="text" ref={userName} label="Nome de usuário" required />
 
           <div className="flex gap-3 sm:gap-4 w-full justify-center flex-col">
-            <Button 
-              type="submit" 
-              className="mt-2 sm:mt-3 md:mt-4"
-              isLoading={isCreating}
-            >
+            <Button type="submit" className="mt-2 sm:mt-3 md:mt-4" isLoading={isCreating}>
               Criar sala
             </Button>
-            <Button 
-              variant="secondary" 
+            <Button
+              variant="secondary"
               onClick={() => setIsLookingForRoom(true)}
               disabled={isCreating}
             >
