@@ -1,10 +1,10 @@
 'use client';
+import { RoomContext } from '@/context/RoomContext';
+import { useRouter } from 'next/navigation';
 import { FormEvent, useRef, useState } from 'react';
+import { useContextSelector } from 'use-context-selector';
 import { Button } from './Button';
 import { Input } from './Input';
-import { useRouter } from 'next/navigation';
-import { useContextSelector } from 'use-context-selector';
-import { RoomContext } from '@/context/RoomContext';
 
 type EnterRoomProps = {
   roomId: string;
@@ -55,7 +55,7 @@ export const EnterRoom = ({ roomId, roomName, access }: EnterRoomProps) => {
           <Button type="submit" className="mt-4" isLoading={isEntering}>
             Entrar
           </Button>
-          <Button variant="secondary" onClick={() => router.push('/')} disabled={isEntering}>
+          <Button variant="secondary" onClick={() => router.push('/board')} disabled={isEntering}>
             Voltar ao início
           </Button>
         </div>

@@ -1,11 +1,11 @@
-import { useState, useEffect, ReactNode, Dispatch, SetStateAction } from 'react';
-import { getCoordinates } from '../utils/getCoordinates';
-import api from '../services/api';
-import { RoomProps as RoomPropsProtocols } from '../protocols/Room';
-import { MemberProps } from '../protocols/Member';
-import { createContext } from 'use-context-selector';
-import { usePathname } from 'next/navigation';
 import { AxiosResponse } from 'axios';
+import { usePathname } from 'next/navigation';
+import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react';
+import { createContext } from 'use-context-selector';
+import { MemberProps } from '../protocols/Member';
+import { RoomProps as RoomPropsProtocols } from '../protocols/Room';
+import api from '../services/api';
+import { getCoordinates } from '../utils/getCoordinates';
 
 type CreateRoomProps = {
   roomName: string;
@@ -116,7 +116,7 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
       if (message.data.tabId === tabId) return;
 
       if (message.data.type === 'login-scrum-poker') {
-        window.location.replace('/');
+        window.location.replace('/board');
       }
       if (message.data.type === 'waiting-login-scrum-poker') {
         window.location.replace(`/room/${message.data?.roomId}`);

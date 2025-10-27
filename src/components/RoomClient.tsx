@@ -2,9 +2,7 @@
 
 import { Box } from '@/components/Box';
 import { Flex } from '@/components/Flex';
-import { Glass } from '@/components/Glass';
 import { LoadingScreen } from '@/components/LoadingScreen';
-import { SampleCards } from '@/components/SampleCards';
 import { WaitingRoom } from '@/components/WaitingRoom';
 import { RoomContext } from '@/context/RoomContext';
 import { useWebsocket } from '@/hooks/useWebsocket';
@@ -84,7 +82,7 @@ export function RoomClient({ roomId, access }: RoomClientProps) {
 
     channel.postMessage({ type: 'login-scrum-poker', tabId });
 
-    router.replace('/');
+    router.replace('/board');
   }, [user, data?.data, clear, tabId, router]);
 
   useEffect(() => {
@@ -102,7 +100,7 @@ export function RoomClient({ roomId, access }: RoomClientProps) {
 
         channel.postMessage({ type: 'login-scrum-poker', tabId });
 
-        window.location.replace('/');
+        window.location.replace('/board');
       }
 
       if (event.type === 'sign-out') {
@@ -112,7 +110,7 @@ export function RoomClient({ roomId, access }: RoomClientProps) {
 
         clear();
         setWaitingLogin(false);
-        // window.location.reload();
+        window.location.reload();
       }
 
       if (event.type === 'sign-in-refuse') {
