@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
 import QRCode from 'qrcode';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from './Button';
 
 type ShareModalContentProps = {
@@ -139,7 +139,7 @@ export const ShareModalContent = ({
       </div>
 
       {/* Botões fixos no rodapé */}
-      <div className="flex gap-2 sm:gap-3 w-full border-t border-gray-200 dark:border-gray-700 pt-4 sm:pt-6 lg:pt-8 pb-3 sm:pb-4 md:pb-5 lg:pb-6">
+      <div className="flex gap-2 sm:gap-3 w-full pb-3 sm:pb-4 md:pb-5 lg:pb-6">
         <Button variant="secondary" onClick={onClose} className="flex-1">
           Fechar
         </Button>

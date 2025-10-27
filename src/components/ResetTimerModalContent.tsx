@@ -18,7 +18,7 @@ export const ResetTimerModalContent = ({
           Tem certeza que deseja resetar o timer? O tempo atual ({formattedTime}) será perdido.
         </p>
 
-        <footer className="flex gap-2 sm:gap-3 w-full border-t border-gray-200 dark:border-gray-700 pt-4 sm:pt-6 lg:pt-8">
+        <footer className="flex gap-2 sm:gap-3 w-full">
           <Button onClick={onCancel} variant="secondary" className="flex-1">
             Cancelar
           </Button>

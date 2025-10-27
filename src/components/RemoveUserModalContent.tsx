@@ -20,16 +20,12 @@ export const RemoveUserModalContent = ({
           Tem certeza que deseja remover <strong>{userName}</strong> da sala?
         </p>
 
-        <footer className="flex gap-2 sm:gap-3 w-full border-t border-gray-200 dark:border-gray-700 pt-4 sm:pt-6 lg:pt-8">
+        <footer className="flex gap-2 sm:gap-3 w-full dark:border-gray-700">
           <Button onClick={onCancel} variant="secondary" className="flex-1" disabled={isRemoving}>
             Cancelar
           </Button>
 
-          <Button
-            onClick={onConfirm}
-            className="flex-1 bg-red-500! hover:bg-red-600!"
-            disabled={isRemoving}
-          >
+          <Button onClick={onConfirm} className="flex-1" disabled={isRemoving}>
             {isRemoving ? 'Removendo...' : 'Remover'}
           </Button>
         </footer>

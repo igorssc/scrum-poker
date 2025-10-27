@@ -1,16 +1,16 @@
 'use client';
 
-import { useContextSelector } from 'use-context-selector';
 import { RoomContext } from '@/context/RoomContext';
-import { useRoomCache } from '@/hooks/useRoomCache';
 import { useRoomActions } from '@/hooks/useRoomActions';
+import { useRoomCache } from '@/hooks/useRoomCache';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
+import { useContextSelector } from 'use-context-selector';
 import { Button } from './Button';
 import { Input } from './Input';
-import { Select } from './Select';
 import { LocationSection } from './LocationSection';
-import { twMerge } from 'tailwind-merge';
-import { useState, useEffect } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Select } from './Select';
 
 type SettingsModalContentProps = {
   onClose: () => void;
@@ -196,7 +196,7 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
               {error}
             </div>
           )}
-          <div className="grid grid-cols-2 md:flex gap-2 sm:gap-3 justify-end pt-2 sm:pt-3 md:pt-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="grid grid-cols-2 md:flex gap-2 sm:gap-3 justify-end">
             <Button
               type="button"
               variant="secondary"
