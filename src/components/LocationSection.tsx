@@ -16,6 +16,9 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
   const [addressLoading, setAddressLoading] = useState(false);
   const queryClient = useQueryClient();
 
+  const isPrivate = !!room?.private;
+  const canEditRoom = !isPrivate || room?.owner_id === user?.id;
+
   // Converte coordenadas para endereço quando a sala tem localização
   useEffect(() => {
     if (room?.lat && room?.lng) {
@@ -295,10 +298,10 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
           <button
             type="button"
             onClick={handleUpdateLocation}
-            disabled={locationLoading}
+            disabled={locationLoading || !canEditRoom}
             className={twMerge(
               'w-full flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 text-[0.65rem] sm:text-xs rounded-lg transition-all duration-200',
-              locationLoading
+              locationLoading || !canEditRoom
                 ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
                 : 'bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 cursor-pointer'
             )}

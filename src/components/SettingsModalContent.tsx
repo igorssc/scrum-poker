@@ -166,8 +166,16 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
                   </span>
               </div>
             </div>
-              {/* Localização da sala */}
-              <LocationSection room={room} user={user} />
+
+            <div className="text-[0.6rem] sm:text-[0.65rem] text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
+              <p>
+              <strong>Salas privadas</strong> requerem aprovação do proprietário para entrada e apenas ele pode modificar configurações; <strong>salas públicas</strong> permitem entrada livre via link e edição por qualquer membro, porém entrada via busca por distância ainda requer permissão.
+              </p>
+            </div>
+
+            {/* Localização da sala */}
+            <LocationSection room={room} user={user} />
+            
             </div>
           </div>
         </div>
