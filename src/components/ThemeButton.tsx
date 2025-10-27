@@ -29,7 +29,7 @@ export const ThemeButton = ({ defaultTheme }: ThemeButtonProps) => {
   return (
     <Button
       onClick={toggleTheme}
-      className="bg-blue-600 hover:bg-blue-700 focus:ring-blue-500"
+      className="light:bg-linear-to-r from-purple-300 via-purple-400 to-purple-500 focus:ring-purple-600 focus:ring-1"
       title={isDark ? 'Modo claro' : 'Modo escuro'}
     >
       <ThemeIcon 

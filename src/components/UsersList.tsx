@@ -188,14 +188,14 @@ export const UsersList = () => {
                     {isNewVoteGroup && (
                       <div className={`flex items-center gap-2 mb-2 md:mb-4 ${index > 0 ? 'mt-2 md:mt-4' : ''}`}>
                         <div className="h-px bg-gray-300 dark:bg-gray-600 flex-1"></div>
-                        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 px-2">
+                        <span className="text-xs font-medium text-gray-700 dark:text-gray-400 px-2">
                           {member.vote ? getCardValue(member.vote) : 'Não votaram'}
                         </span>
                         <div className="h-px bg-gray-300 dark:bg-gray-600 flex-1"></div>
                       </div>
                     )}
                     
-                    <div className="flex items-center justify-between p-2 sm:p-3 text-[0.65rem] md:text-xs lg:text-sm rounded-lg bg-gray-50 dark:bg-gray-700 min-h-8 sm:min-h-10 md:min-h-12">
+                    <div className="flex items-center justify-between p-2 sm:p-3 text-[0.65rem] md:text-xs lg:text-sm rounded-lg bg-gray-100 dark:bg-gray-700 min-h-8 sm:min-h-10 md:min-h-12">
                       <div className="flex flex-col flex-1">
                         <span className="font-medium">
                           {member.member.name}

@@ -56,10 +56,10 @@ export const NavBar = () => {
             <Popover.Root open={isMenuOpen} onOpenChange={setIsMenuOpen}>
               <Popover.Trigger asChild>
                 <button
-                  className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
+                  className="p-2 rounded-lg bg-purple-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
                   title="Menu"
                 >
-                  <svg className="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 text-purple-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                   </svg>
                 </button>
@@ -171,7 +171,7 @@ export const NavBar = () => {
             
             <Button
               onClick={() => setIsShareOpen(true)}
-              className="bg-blue-800 hover:bg-blue-900 focus:ring-blue-500"
+              className="light:bg-linear-to-r from-purple-300 via-purple-400 to-purple-500 focus:ring-purple-600 focus:ring-1"
               title="Compartilhar sala"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -181,7 +181,7 @@ export const NavBar = () => {
             
             <Button
               onClick={() => setIsSettingsOpen(true)}
-              className="bg-gray-600 hover:bg-gray-700 focus:ring-gray-500"
+              className="light:bg-linear-to-r from-purple-300 via-purple-400 to-purple-500 focus:ring-purple-600 focus:ring-1"
               title="Configurações"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -192,7 +192,7 @@ export const NavBar = () => {
             
             <Button 
               onClick={() => logout()}
-              className="bg-red-600 hover:bg-red-700 focus:ring-red-500"
+              className="light:bg-linear-to-r from-purple-300 via-purple-400 to-purple-500 focus:ring-purple-600 focus:ring-1"
               title="Sair da sala"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

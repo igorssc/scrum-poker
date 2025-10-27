@@ -2,6 +2,8 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@custom-variant light (html:not(.dark) &);
+
 @layer base {
   @font-face {
     font-family: 'sinera';
