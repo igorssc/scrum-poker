@@ -10,6 +10,7 @@ import { Button } from './Button';
 import { Modal } from './Modal';
 import { SettingsModalContent } from './SettingsModalContent';
 import { ShareModalContent } from './ShareModalContent';
+import { ResetTimerModalContent } from './ResetTimerModalContent';
 import { ThemeButton } from './ThemeButton';
 import * as Popover from '@radix-ui/react-popover';
 import * as Tooltip from '@radix-ui/react-tooltip';
@@ -18,6 +19,7 @@ export const NavBar = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
 
   const { room, user, logout } = useContextSelector(RoomContext, (context) => ({
     room: context.room,
@@ -176,7 +178,7 @@ export const NavBar = () => {
               {/* Botão de Reset - aparece apenas quando timer está rodando */}
               {secondsTimer > 0 && (
                 <button
-                  onClick={resetTimer}
+                  onClick={() => setIsResetConfirmOpen(true)}
                   className="p-2 rounded-lg cursor-pointer transition-colors"
                   title="Resetar timer"
                 >
@@ -261,6 +263,22 @@ export const NavBar = () => {
           roomName={cachedRoomData?.data?.name}
           access={cachedRoomData?.data?.access}
           onClose={() => setIsShareOpen(false)} 
+        />
+      </Modal>
+
+      {/* Modal de Confirmação de Reset do Timer */}
+      <Modal
+        isOpen={isResetConfirmOpen}
+        onClose={() => setIsResetConfirmOpen(false)}
+        title="Resetar Timer"
+      >
+        <ResetTimerModalContent
+          formattedTime={formattedTime}
+          onConfirm={() => {
+            resetTimer();
+            setIsResetConfirmOpen(false);
+          }}
+          onCancel={() => setIsResetConfirmOpen(false)}
         />
       </Modal>
     </>
