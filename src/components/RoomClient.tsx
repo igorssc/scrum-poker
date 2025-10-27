@@ -86,7 +86,7 @@ export function RoomClient({ roomId, access }: RoomClientProps) {
   }, [user, data?.data, clear, tabId, router]);
 
   useEffect(() => {
-    if (room) setWaitingLogin(true);
+    if (room && room.id === roomId) setWaitingLogin(true);
   }, [room, setWaitingLogin]);
 
   useEffect(() => {

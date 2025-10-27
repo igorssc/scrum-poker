@@ -53,16 +53,22 @@ export default function BoardPage() {
   }, [error, clear]);
 
   useEffect(() => {
-    if (!(user && room)) return;
+    if (!(user && room && data)) return;
 
     const userFound = data?.data?.members?.find(member => member.member.id === user.id);
 
-    if (!userFound) return;
+    console.log(data, user.id, userFound);
+
+    // Se o usuário não foi encontrado na sala, desloga ele
+    if (!userFound) {
+      clear();
+      return;
+    }
 
     const userIsLogged = userFound.status === 'LOGGED';
 
     if (!userIsLogged) window.location.replace(`/room/${room?.id}`);
-  }, [data?.data, room]);
+  }, [data?.data, room, user, clear]);
 
   if (!isHydrated || (user && room && !data?.data)) {
     return <LoadingScreen />;
