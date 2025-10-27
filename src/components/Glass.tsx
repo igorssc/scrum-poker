@@ -8,7 +8,7 @@ export const Glass = ({ children }: GlassProps) => {
   return (
     <>
       <div className="w-full flex justify-center py-4">
-        <div className="backdrop-blur-md bg-white/30 dark:bg-zinc-800/50 fixed inset-0" />
+        <div className="backdrop-blur-md bg-white/50 dark:bg-zinc-800/60 fixed inset-0" />
         {children}
       </div>
     </>
