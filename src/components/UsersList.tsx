@@ -1,17 +1,28 @@
 'use client';
 
+import { RoomContext } from '@/context/RoomContext';
 import { useRoomCache } from '@/hooks/useRoomCache';
-import { Box } from './Box';
-import { Flex } from './Flex';
+import api from '@/services/api';
+import * as Popover from '@radix-ui/react-popover';
 import Image from 'next/image';
 import path from 'path';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { FaTimes } from 'react-icons/fa';
 import { twMerge } from 'tailwind-merge';
+import { useContext } from 'use-context-selector';
+import { Box } from './Box';
+import { Flex } from './Flex';
+import { Modal } from './Modal';
+import { RemoveUserModalContent } from './RemoveUserModalContent';
 
 export const UsersList = () => {
   const { cachedRoomData } = useRoomCache();
+  const { room, user } = useContext(RoomContext);
   const [flippingCards, setFlippingCards] = useState<Set<string>>(new Set());
   const [previousCardsOpen, setPreviousCardsOpen] = useState<boolean | undefined>(undefined);
+  const [removingUsers, setRemovingUsers] = useState<Set<string>>(new Set());
+  const [userToRemove, setUserToRemove] = useState<{ id: string; name: string } | null>(null);
+  const [openPopover, setOpenPopover] = useState<string | null>(null);
 
   // Detectar mudança no cardsOpen para ativar animação
   useEffect(() => {
@@ -53,6 +64,37 @@ export const UsersList = () => {
   const loggedMembers = members.filter(member => member.status === 'LOGGED');
   const pendingMembers = members.filter(member => member.status === 'PENDING');
   const cardsOpen = cachedRoomData?.data?.cards_open;
+
+  // Verificar se o usuário atual é o owner
+  const isOwner = room?.owner_id === user?.id;
+
+  // Função para confirmar remoção do usuário
+  const confirmRemoveUser = async () => {
+    if (!room?.id || !user?.id || !userToRemove || removingUsers.has(userToRemove.id)) return;
+
+    setRemovingUsers(prev => new Set(prev).add(userToRemove.id));
+
+    try {
+      await api.post(`/rooms/${room.id}/sign-out`, {
+        user_id: userToRemove.id,
+        user_action_id: user.id,
+      });
+    } catch (error) {
+      console.error('Erro ao remover usuário:', error);
+    } finally {
+      setRemovingUsers(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(userToRemove.id);
+        return newSet;
+      });
+      setUserToRemove(null);
+    }
+  };
+
+  // Função para cancelar remoção
+  const cancelRemoveUser = () => {
+    setUserToRemove(null);
+  };
 
   // Função para extrair o valor da carta
   const getCardValue = (vote: string) => {
@@ -107,6 +149,7 @@ export const UsersList = () => {
               {organizedMembers.map((member, index) => {
                 const hasVoted = !!member.vote;
                 const isFlipping = flippingCards.has(member.id);
+                const memberIsOwner = room?.owner_id === member?.member?.id;
 
                 // Verificar se é um novo grupo de voto (apenas quando cartas estão abertas)
                 const previousMember = index > 0 ? organizedMembers[index - 1] : null;
@@ -202,12 +245,21 @@ export const UsersList = () => {
                       </div>
                     )}
 
-                    <div className="flex items-center justify-between p-2 sm:p-3 text-[0.65rem] md:text-xs lg:text-sm rounded-lg bg-gray-100 dark:bg-gray-700 min-h-8 sm:min-h-10 md:min-h-12">
-                      <div className="flex flex-col flex-1">
-                        <span className="font-medium">{member.member.name}</span>
-                        <span className="text-[80%] text-gray-500 dark:text-gray-400">
-                          {statusText}
-                        </span>
+                    <div
+                      className={twMerge(
+                        'group flex items-center justify-between p-2 sm:p-3 text-[0.65rem] md:text-xs lg:text-sm rounded-lg min-h-8 sm:min-h-10 md:min-h-12 transition-colors',
+                        memberIsOwner && isOwner
+                          ? 'bg-gray-200 dark:bg-gray-800 cursor-not-allowed'
+                          : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200/60 dark:hover:bg-gray-600'
+                      )}
+                    >
+                      <div className="flex items-center flex-1 gap-2">
+                        <div className="flex flex-col flex-1">
+                          <span className="font-medium">{member.member.name}</span>
+                          <span className="text-[80%] text-gray-500 dark:text-gray-400">
+                            {statusText}
+                          </span>
+                        </div>
                       </div>
 
                       <div className="flex items-center gap-2 sm:gap-3 min-w-8 sm:min-w-10 md:min-w-12 justify-end">
@@ -235,6 +287,53 @@ export const UsersList = () => {
                                 : 'Aguardando voto'
                           }
                         ></div>
+
+                        {/* Dropdown de ações (apenas para o owner e não para si mesmo) */}
+                        {isOwner && member.member.id !== user?.id && (
+                          <Popover.Root
+                            open={openPopover === member.id}
+                            onOpenChange={open => setOpenPopover(open ? member.id : null)}
+                          >
+                            <Popover.Trigger asChild>
+                              <button
+                                disabled={removingUsers.has(member.member.id)}
+                                className="cursor-pointer p-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-all duration-200 disabled:opacity-30 shrink-0 rounded-full"
+                                title="Opções do usuário"
+                              >
+                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+                                </svg>
+                              </button>
+                            </Popover.Trigger>
+
+                            <Popover.Portal>
+                              <Popover.Content
+                                className="w-40 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 overflow-hidden"
+                                side="bottom"
+                                align="end"
+                                sideOffset={8}
+                                onOpenAutoFocus={e => e.preventDefault()}
+                              >
+                                <div className="py-1">
+                                  <button
+                                    onClick={() => {
+                                      setUserToRemove({
+                                        id: member.member.id,
+                                        name: member.member.name,
+                                      });
+                                      setOpenPopover(null);
+                                    }}
+                                    disabled={removingUsers.has(member.member.id)}
+                                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                  >
+                                    <FaTimes className="w-3 h-3" />
+                                    Remover da sala
+                                  </button>
+                                </div>
+                              </Popover.Content>
+                            </Popover.Portal>
+                          </Popover.Root>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -258,6 +357,18 @@ export const UsersList = () => {
           </Flex>
         </Box>
       )}
+
+      {/* Modal de confirmação de remoção */}
+      <Modal isOpen={!!userToRemove} onClose={cancelRemoveUser} title="Remover Usuário">
+        {userToRemove && (
+          <RemoveUserModalContent
+            userName={userToRemove.name}
+            isRemoving={removingUsers.has(userToRemove.id)}
+            onConfirm={confirmRemoveUser}
+            onCancel={cancelRemoveUser}
+          />
+        )}
+      </Modal>
     </div>
   );
 };

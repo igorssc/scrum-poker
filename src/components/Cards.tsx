@@ -1,13 +1,13 @@
-import Image from 'next/image';
-import { iconsData } from '../utils/icons';
+import { RoomContext } from '@/context/RoomContext';
 import { useRoomActions } from '@/hooks/useRoomActions';
 import { useRoomCache } from '@/hooks/useRoomCache';
-import { useContextSelector } from 'use-context-selector';
-import { RoomContext } from '@/context/RoomContext';
-import path from 'path';
-import { Children, useState, useEffect, useRef, useMemo } from 'react';
 import confetti from 'canvas-confetti';
+import Image from 'next/image';
+import path from 'path';
+import { Children, useEffect, useMemo, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { useContextSelector } from 'use-context-selector';
+import { iconsData } from '../utils/icons';
 
 export const Cards = () => {
   const { vote, isVoting } = useRoomActions();
@@ -205,6 +205,7 @@ export const Cards = () => {
                 src={path.join('assets', 'cards', icon)}
                 width={167}
                 height={249}
+                loading="eager"
                 className="w-12 h-18 sm:w-14 sm:h-20 md:w-16 md:h-24 lg:w-20 lg:h-30 xl:w-24 xl:h-36"
               />
 
