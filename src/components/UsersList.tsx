@@ -108,14 +108,15 @@ export const UsersList = () => {
                 const isFlipping = flippingCards.has(member.id);
                 
                 // Verificar se é um novo grupo de voto (apenas quando cartas estão abertas)
+                const previousMember = index > 0 ? organizedMembers[index - 1] : null;
                 const isNewVoteGroup = cardsOpen && (
                   // Primeiro membro com voto
-                  (member.vote && (index === 0 || !organizedMembers[index - 1].vote)) ||
+                  (member.vote && (index === 0 || !previousMember?.vote)) ||
                   // Mudança de voto entre membros que votaram
-                  (member.vote && organizedMembers[index - 1].vote && 
-                   getCardValue(member.vote) !== getCardValue(organizedMembers[index - 1].vote!)) ||
+                  (member.vote && previousMember?.vote && 
+                   getCardValue(member.vote) !== getCardValue(previousMember.vote)) ||
                   // Primeiro membro sem voto (após membros que votaram)
-                  (!member.vote && organizedMembers[index - 1].vote)
+                  (!member.vote && previousMember?.vote)
                 );
                 
                 // Determinar o que mostrar baseado no estado das cartas
