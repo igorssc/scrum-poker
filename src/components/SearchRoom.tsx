@@ -1,13 +1,12 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { Select } from './Select';
-import { Button } from './Button';
-import { useContextSelector } from 'use-context-selector';
 import { RoomContext } from '@/context/RoomContext';
-import { getCoordinates } from '@/utils/getCoordinates';
 import { RoomProps } from '@/protocols/Room';
-import { List } from './List';
+import { getCoordinates } from '@/utils/getCoordinates';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useContextSelector } from 'use-context-selector';
+import { Button } from './Button';
+import { Select } from './Select';
 
 export const SearchRoom = () => {
   const availableDistances = [
@@ -141,7 +140,7 @@ export const SearchRoom = () => {
                     Nenhuma sala encontrada
                   </h4>
                 </div>
-                <div className="text-center p-3 sm:p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                <div className="text-center p-3 sm:p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800 w-full">
                   <svg
                     className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-amber-500 mx-auto mb-1.5 sm:mb-2"
                     fill="none"
@@ -158,7 +157,7 @@ export const SearchRoom = () => {
                   <p className="text-[0.65rem] sm:text-xs text-amber-700 dark:text-amber-300">
                     Não encontramos salas ativas na distância selecionada.
                   </p>
-                  <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5 sm:mt-1">
+                  <p className="text-[0.65rem] sm:text-xs text-amber-600 dark:text-amber-400 mt-0.5 sm:mt-1">
                     Tente aumentar a distância ou criar uma nova sala.
                   </p>
                 </div>
