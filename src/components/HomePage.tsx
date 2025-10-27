@@ -65,27 +65,27 @@ export function HomePage() {
     },
   ];
 
-  const testimonials = [
+  const benefits = [
     {
-      name: 'Maria Silva',
-      role: 'Scrum Master',
-      company: 'TechCorp',
-      content:
-        'Revolucionou nossas planning meetings. A interface é intuitiva e a colaboração em tempo real é perfeita.',
+      title: 'Estimativas Mais Precisas',
+      description:
+        'O Planning Poker elimina o viés de ancoragem, onde a primeira estimativa influencia as demais, resultando em avaliações mais precisas.',
+      statistic: '40%',
+      detail: 'mais precisão',
     },
     {
-      name: 'João Santos',
-      role: 'Product Owner',
-      company: 'StartupXYZ',
-      content:
-        'Ferramenta essencial para nossa equipe remota. As estimativas ficaram muito mais precisas.',
+      title: 'Melhor Engajamento da Equipe',
+      description:
+        'Todos os membros participam ativamente do processo de estimativa, aumentando o comprometimento com os prazos.',
+      statistic: '85%',
+      detail: 'mais engajamento',
     },
     {
-      name: 'Ana Costa',
-      role: 'Agile Coach',
-      company: 'DevTeam',
-      content:
-        'Simples, eficiente e gratuito. Exatamente o que procurávamos para nossas retrospectivas.',
+      title: 'Discussões Mais Focadas',
+      description:
+        'As divergências nas estimativas geram discussões valiosas que revelam diferentes perspectivas sobre o trabalho.',
+      statistic: '60%',
+      detail: 'menos retrabalho',
     },
   ];
 
@@ -116,10 +116,10 @@ export function HomePage() {
                 Como Funciona
               </button>
               <button
-                onClick={() => scrollToSection('testimonials')}
+                onClick={() => scrollToSection('benefits')}
                 className="cursor-pointer text-xs sm:text-sm md:text-sm lg:text-base text-gray-700 dark:text-gray-300 hover:text-purple-400 dark:hover:text-purple-400 transition-colors"
               >
-                Depoimentos
+                Benefícios
               </button>
               <Link href="/board">
                 <Button className="light:bg-linear-to-r from-purple-300 via-purple-400 to-purple-500 focus:ring-purple-600 focus:ring-1 text-white px-6 py-2 rounded-lg font-medium transition-colors">
@@ -174,10 +174,10 @@ export function HomePage() {
                   Como Funciona
                 </button>
                 <button
-                  onClick={() => scrollToSection('testimonials')}
+                  onClick={() => scrollToSection('benefits')}
                   className="cursor-pointer text-left text-xs sm:text-sm md:text-sm lg:text-base text-gray-700 dark:text-gray-300 hover:text-purple-400 dark:hover:text-purple-400 transition-colors"
                 >
-                  Depoimentos
+                  Benefícios
                 </button>
                 <Link href="/board">
                   <Button className="w-full light:bg-linear-to-r from-purple-300 via-purple-400 to-purple-500 focus:ring-purple-600 focus:ring-1 text-white px-6 py-2 rounded-lg font-medium transition-colors">
@@ -312,43 +312,39 @@ export function HomePage() {
           </div>
         </div>
       </section>
-      {/* Testimonials Section */}
-      <section id="testimonials" className="py-20 bg-white dark:bg-gray-800">
+      {/* Benefits Section */}
+      <section id="benefits" className="py-20 bg-white dark:bg-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-gray-900 dark:text-white mb-4">
-              O que dizem sobre nós
+              Por que usar Planning Poker?
             </h2>
             <p className="text-xs sm:text-sm md:text-sm lg:text-base text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Times ao redor do mundo já estão usando nossa ferramenta para melhorar suas
-              estimativas
+              Descubra como o Planning Poker pode transformar suas estimativas e melhorar a
+              colaboração da sua equipe ágil
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
+            {benefits.map((benefit, index) => (
               <div
                 key={index}
-                className="bg-gray-50 dark:bg-gray-700 p-8 rounded-xl hover:shadow-lg transition-all duration-300"
+                className="bg-gray-50 dark:bg-gray-700 p-8 rounded-xl hover:shadow-lg transition-all duration-300 text-center"
               >
-                <p className="text-xs sm:text-sm md:text-sm lg:text-base text-gray-600 dark:text-gray-300 mb-6 leading-relaxed italic">
-                  "{testimonial.content}"
-                </p>
-                <div className="flex items-center">
-                  <div className="w-12 h-12 bg-purple-50 dark:bg-purple-900 rounded-full flex items-center justify-center mr-4">
-                    <span className="text-purple-400 dark:text-purple-400 font-semibold">
-                      {testimonial.name.charAt(0)}
-                    </span>
+                <div className="mb-6">
+                  <div className="text-4xl font-bold text-purple-400 dark:text-purple-400 mb-2">
+                    {benefit.statistic}
                   </div>
-                  <div>
-                    <h4 className="font-semibold text-xs sm:text-sm md:text-sm lg:text-base text-gray-900 dark:text-white">
-                      {testimonial.name}
-                    </h4>
-                    <p className="text-[0.6rem] sm:text-xs md:text-xs lg:text-sm text-gray-600 dark:text-gray-300">
-                      {testimonial.role} • {testimonial.company}
-                    </p>
+                  <div className="text-xs sm:text-sm text-purple-600 dark:text-purple-300 font-medium">
+                    {benefit.detail}
                   </div>
                 </div>
+                <h3 className="text-sm sm:text-base md:text-base lg:text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  {benefit.title}
+                </h3>
+                <p className="text-xs sm:text-sm md:text-sm lg:text-base text-gray-600 dark:text-gray-300 leading-relaxed">
+                  {benefit.description}
+                </p>
               </div>
             ))}
           </div>
