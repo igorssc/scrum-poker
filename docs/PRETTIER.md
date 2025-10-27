@@ -11,7 +11,9 @@ Este projeto está configurado com Prettier para formatação automática de có
 ## Configuração
 
 ### .prettierrc
+
 Configurações de formatação:
+
 - **Semi**: Adiciona ponto e vírgula no final das linhas
 - **TrailingComma**: Vírgulas finais nos objetos/arrays (es5)
 - **SingleQuote**: Usa aspas simples ao invés de duplas
@@ -21,7 +23,9 @@ Configurações de formatação:
 - **ArrowParens**: Evita parênteses desnecessários em arrow functions
 
 ### .prettierignore
+
 Arquivos/pastas ignorados:
+
 - `node_modules/`
 - `.next/`
 - `build/`
@@ -32,11 +36,13 @@ Arquivos/pastas ignorados:
 ## Integração com VS Code
 
 ### Extensões Recomendadas
+
 - **Prettier - Code formatter**: Formatação automática
 - **ESLint**: Linting de código
 - **Tailwind CSS IntelliSense**: Autocomplete para Tailwind
 
 ### Configurações Automáticas
+
 - Formatação ao salvar habilitada
 - Correção automática do ESLint ao salvar
 - Organização automática de imports
