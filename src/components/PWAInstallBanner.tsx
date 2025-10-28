@@ -41,7 +41,7 @@ export const PWAInstallBanner = () => {
 
   return (
     <div className="fixed bottom-4 left-4 right-4 z-50 animate-slide-up">
-      <div className="mx-auto max-w-xl">
+      <div className="mx-auto max-w-lg">
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-4">
           <div className="flex items-start gap-3">
             {/* Ícone */}
