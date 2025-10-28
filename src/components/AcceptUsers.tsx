@@ -35,48 +35,49 @@ export const AcceptUsers = () => {
   const [scrollLeft, setScrollLeft] = useState(0);
   const [hasOverflow, setHasOverflow] = useState(false);
   
-  // Estados de loading para cada usuário
-  const [loadingUsers, setLoadingUsers] = useState<Set<string>>(new Set());
+  // Estados de loading para cada usuário com ação específica
+  const [loadingUsers, setLoadingUsers] = useState<Map<string, 'accept' | 'refuse' | null>>(new Map());
 
   // Funções para gerenciar loading
-  const setUserLoading = (userId: string, loading: boolean) => {
+  const setUserLoading = (userId: string, action: 'accept' | 'refuse' | null) => {
     setLoadingUsers(prev => {
-      const newSet = new Set(prev);
-      if (loading) {
-        newSet.add(userId);
+      const newMap = new Map(prev);
+      if (action === null) {
+        newMap.delete(userId);
       } else {
-        newSet.delete(userId);
+        newMap.set(userId, action);
       }
-      return newSet;
+      return newMap;
     });
   };
 
+  const getUserLoadingAction = (userId: string) => loadingUsers.get(userId) || null;
   const isUserLoading = (userId: string) => loadingUsers.has(userId);
 
   // Handlers para aceitar/recusar usuários
   const handleAcceptUser = async (userId: string) => {
     if (isDragging || isUserLoading(userId)) return;
     
-    setUserLoading(userId, true);
+    setUserLoading(userId, 'accept');
     try {
       await acceptUser(userId);
     } catch (error) {
       // Error já tratado no RoomContext com toast
     } finally {
-      setUserLoading(userId, false);
+      setUserLoading(userId, null);
     }
   };
 
   const handleRefuseUser = async (userId: string) => {
     if (isDragging || isUserLoading(userId)) return;
     
-    setUserLoading(userId, true);
+    setUserLoading(userId, 'refuse');
     try {
       await refuseUser(userId);
     } catch (error) {
       // Error já tratado no RoomContext com toast
     } finally {
-      setUserLoading(userId, false);
+      setUserLoading(userId, null);
     }
   };
 
@@ -204,7 +205,8 @@ export const AcceptUsers = () => {
                       onMouseDown={e => e.stopPropagation()}
                       className="flex-1"
                       variant="secondary"
-                      isLoading={isUserLoading(user.id)}
+                      isLoading={getUserLoadingAction(user.id) === 'refuse'}
+                      disabled={getUserLoadingAction(user.id) === 'accept'}
                     >
                       Recusar
                     </Button>
@@ -215,7 +217,8 @@ export const AcceptUsers = () => {
                       }}
                       onMouseDown={e => e.stopPropagation()}
                       className="flex-1"
-                      isLoading={isUserLoading(user.id)}
+                      isLoading={getUserLoadingAction(user.id) === 'accept'}
+                      disabled={getUserLoadingAction(user.id) === 'refuse'}
                     >
                       Aceitar
                     </Button>
