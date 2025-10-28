@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://scrumpoker.dev.br/sitemap.xml
+
+# Disallow API routes and internal paths
+Disallow: /api/
+Disallow: /room/
+Disallow: /board
+Disallow: /_next/
+Disallow: /.next/
