@@ -1,5 +1,5 @@
 // Service Worker para Scrum Poker PWA
-const VERSION = 'v10';
+const VERSION = 'v11';
 const CACHE_NAME = `scrum-poker-${VERSION}`;
 const OFFLINE_URL = '/';
 
@@ -8,7 +8,6 @@ console.log('SW: Service Worker loading...');
 // URLs que devem ser cacheadas para funcionamento offline
 const CACHE_URLS = [
   '/',
-  '/board',
   '/favicon.ico',
   '/icon-192x192.png',
   '/icon-512x512.png'
@@ -76,14 +75,9 @@ self.addEventListener('fetch', event => {
 
   // Handle HTML pages
   if (event.request.headers.get('accept')?.includes('text/html')) {
-    // Se é uma requisição de navegação (não uma requisição interna do Next.js)
-    const isNavigation = event.request.mode === 'navigate' || 
-                         (event.request.method === 'GET' && 
-                          event.request.headers.get('accept').includes('text/html') &&
-                          !event.request.headers.get('x-requested-with'));
-    
-    if (isNavigation) {
-      console.log('SW: Handling navigation to:', url.pathname);
+    // Apenas intercepta a home page ('/') 
+    if (url.pathname === '/' || url.pathname === '/index.html') {
+      console.log('SW: Handling home page request');
       
       event.respondWith(
         // Try network first
@@ -98,22 +92,22 @@ self.addEventListener('fetch', event => {
             return response;
           })
           .catch(() => {
-            console.log('SW: Network failed, serving app shell for:', url.pathname);
-            // Para qualquer rota quando offline, serve o app shell
+            console.log('SW: Network failed, serving cached home');
             return caches.match('/')
               .then(homeResponse => {
                 if (homeResponse) {
                   return homeResponse;
                 }
-                throw new Error('No app shell available');
+                throw new Error('No cached home available');
               });
           })
       );
       return;
     }
     
-    // Para requisições internas do Next.js, deixa passar
-    console.log('SW: Allowing internal request:', url.pathname);
+    // Para TODAS as outras rotas (/board, /room/*, etc), NÃO intercepta
+    // Deixa o Next.js lidar com tudo - inclusive mostrar erro offline se necessário
+    console.log('SW: NOT intercepting route, letting Next.js handle:', url.pathname);
     return;
   }
 
