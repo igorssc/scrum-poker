@@ -34,10 +34,10 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
 
     // Lista de APIs para geocoding reverso - apenas as que funcionam
     const geocodingAPIs = [
-      // 1. Google Geocoding API - Primeira opção (mais precisa)
+      // 1. Google Geocoding API via nossa API route (mais precisa e segura)
       {
         name: 'Google',
-        url: `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&language=pt-BR&result_type=street_address|route|neighborhood|political`,
+        url: `/api/geocoding?lat=${lat}&lng=${lng}`,
         headers: {} as Record<string, string>,
         extractAddress: (data: any) => {
           if (!data.results || data.results.length === 0) return null;
