@@ -68,7 +68,7 @@ export const PWAInstallBanner = () => {
                 Instalar Scrum Poker
               </h3>
               <p className="text-[0.7rem] text-gray-600 dark:text-gray-400 mt-1 sm:py-2 leading-relaxed">
-                Instale nosso app para acesso rápido e experiência otimizada, mesmo offline.
+                Instale nosso app para acesso rápido e experiência otimizada.
               </p>
 
               {/* Botões */}

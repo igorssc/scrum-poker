@@ -11,6 +11,8 @@ export const DynamicManifest = () => {
         window.matchMedia('(prefers-color-scheme: dark)').matches;
 
       const theme = isDark ? 'dark' : 'light';
+      
+      console.log('🎨 Atualizando manifest para tema:', theme);
 
       // Remove manifest existente
       const existingManifest = document.querySelector('link[rel="manifest"]');
@@ -18,10 +20,10 @@ export const DynamicManifest = () => {
         existingManifest.remove();
       }
 
-      // Adiciona novo manifest com tema
+      // Adiciona novo manifest com tema e cache-busting
       const manifestLink = document.createElement('link');
       manifestLink.rel = 'manifest';
-      manifestLink.href = `/api/manifest?theme=${theme}`;
+      manifestLink.href = `/api/manifest?theme=${theme}&t=${Date.now()}`;
       document.head.appendChild(manifestLink);
 
       // Atualiza meta theme-color também
@@ -32,8 +34,10 @@ export const DynamicManifest = () => {
         document.head.appendChild(themeColorMeta);
       }
 
-      const themeColor = isDark ? '#a855f7' : '#8b5cf6';
+      const themeColor = isDark ? '#374151' : '#8b5cf6'; // gray-700 para dark, purple-600 para light
       themeColorMeta.setAttribute('content', themeColor);
+      
+      console.log('✅ Theme color atualizado para:', themeColor);
     };
 
     // Atualiza inicialmente
