@@ -31,7 +31,7 @@ export default function BoardPage() {
     queryKey: ['room', room?.id],
     queryFn: () => api.get(`rooms/${room?.id}`),
     enabled: !!room?.id,
-    refetchInterval: 5000,
+    refetchInterval: 3000,
     retry: (failureCount, error: any) => {
       // Se for erro 404 (sala não encontrada) ou 403 (sem permissão), não tenta novamente
       if (error?.response?.status === 404 || error?.response?.status === 403) {

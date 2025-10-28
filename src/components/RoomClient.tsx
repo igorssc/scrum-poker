@@ -69,7 +69,7 @@ export function RoomClient({ roomId, access }: RoomClientProps) {
   }>({
     queryKey: ['room', roomId],
     queryFn: () => api.get(`rooms/${roomId}`),
-    refetchInterval: 5000,
+    refetchInterval: 3000,
   });
 
   useEffect(() => {
