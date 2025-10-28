@@ -57,8 +57,6 @@ export default function BoardPage() {
 
     const userFound = data?.data?.members?.find(member => member.member.id === user.id);
 
-    console.log(data, user.id, userFound);
-
     // Se o usuário não foi encontrado na sala, desloga ele
     if (!userFound) {
       clear();

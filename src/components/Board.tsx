@@ -1,9 +1,12 @@
 import { RoomContext } from '@/context/RoomContext';
 import { useRoomActions } from '@/hooks/useRoomActions';
+import { useWebSocketEventHandlers } from '@/hooks/useWebSocketEventHandlers';
 import { MemberProps } from '@/protocols/Member';
 import { RoomProps } from '@/protocols/Room';
 import { useQueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { useContextSelector } from 'use-context-selector';
+import { useWebsocket } from '../hooks/useWebsocket';
 import { AcceptUsers } from './AcceptUsers';
 import { Box } from './Box';
 import { Button } from './Button';
@@ -13,9 +16,10 @@ import { NavBar } from './NavBar';
 import { UsersList } from './UsersList';
 
 export const Board = () => {
-  const { room, user } = useContextSelector(RoomContext, context => ({
+  const { room, user, clear } = useContextSelector(RoomContext, context => ({
     room: context.room,
     user: context.user,
+    clear: context.clear,
   }));
 
   const { revealCards, clearVotes, isRevealingCards, isClearingVotes } = useRoomActions();
@@ -25,7 +29,23 @@ export const Board = () => {
     room?.id,
   ]);
 
+  const { socket } = useWebsocket();
+  const { handleEvent } = useWebSocketEventHandlers(room?.id || '', clear);
+
   const isOwner = room?.owner_id === user?.id;
+
+  useEffect(() => {
+    const roomId = room?.id;
+
+    if (!roomId) return;
+    if (!user || !user.id) return;
+
+    socket.on(roomId, handleEvent);
+
+    return () => {
+      socket.off(roomId, handleEvent);
+    };
+  }, [room?.id, socket, handleEvent]);
 
   return (
     <div className="w-[1200px] max-w-full flex flex-col gap-3 sm:gap-4 md:gap-6">

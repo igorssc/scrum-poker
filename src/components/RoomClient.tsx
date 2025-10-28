@@ -38,6 +38,15 @@ type SignOutEventProps = {
   };
 };
 
+type SignInRefuseEventProps = {
+  type: string;
+  data: {
+    user: {
+      user_id: string;
+    };
+  };
+};
+
 export function RoomClient({ roomId, access }: RoomClientProps) {
   const { room, user, isHydrated, clear, waitingLogin, setWaitingLogin, tabId } =
     useContextSelector(RoomContext, context => ({
@@ -103,24 +112,13 @@ export function RoomClient({ roomId, access }: RoomClientProps) {
         window.location.replace('/board');
       }
 
-      if (event.type === 'sign-out') {
-        const { id } = (event as SignOutEventProps).data.user;
-
-        if (id !== user.id) return;
-
-        clear();
-        setWaitingLogin(false);
-        window.location.reload();
-      }
-
       if (event.type === 'sign-in-refuse') {
-        const { id } = (event as SignOutEventProps).data.user;
+        const { user_id: id } = (event as SignInRefuseEventProps).data.user;
 
         if (id !== user.id) return;
 
         clear();
         setWaitingLogin(false);
-        window.location.reload();
       }
     };
 
