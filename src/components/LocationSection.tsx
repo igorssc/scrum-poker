@@ -32,7 +32,7 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
   const fetchAddress = async (lat: number, lng: number) => {
     setAddressLoading(true);
 
-    // Lista de APIs para geocoding reverso com foco em endereços de rua
+    // Lista de APIs para geocoding reverso - apenas as que funcionam
     const geocodingAPIs = [
       // 1. Google Geocoding API - Primeira opção (mais precisa)
       {
@@ -82,94 +82,7 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
           return parts.length > 0 ? parts.join(', ') : result.formatted_address;
         },
       },
-      // 2. Nominatim (OpenStreetMap) - Fallback
-      {
-        name: 'Nominatim',
-        url: `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=pt&addressdetails=1&zoom=18`,
-        headers: { 'User-Agent': 'ScrumPoker/1.0' } as Record<string, string>,
-        extractAddress: (data: any) => {
-          const addr = data.address;
-          if (!addr) return data.display_name;
-
-          const parts = [];
-          // Prioriza rua e número
-          if (addr.house_number && addr.road) {
-            parts.push(`${addr.road}, ${addr.house_number}`);
-          } else if (addr.road) {
-            parts.push(addr.road);
-          }
-
-          // Adiciona bairro/distrito
-          if (addr.neighbourhood) parts.push(addr.neighbourhood);
-          else if (addr.suburb) parts.push(addr.suburb);
-          else if (addr.district) parts.push(addr.district);
-
-          // Cidade e estado
-          if (addr.city) parts.push(addr.city);
-          else if (addr.town) parts.push(addr.town);
-          else if (addr.village) parts.push(addr.village);
-
-          if (addr.state) parts.push(addr.state);
-
-          return parts.length > 0 ? parts.join(', ') : data.display_name;
-        },
-      },
-      // 3. LocationIQ - Customizado para endereço de rua
-      {
-        name: 'LocationIQ',
-        url: `https://us1.locationiq.com/v1/reverse.php?key=pk.6ac1d50e5a6b64e9bfd2d43ad25e4be2&lat=${lat}&lon=${lng}&format=json&accept-language=pt&zoom=18&addressdetails=1`,
-        headers: {} as Record<string, string>,
-        extractAddress: (data: any) => {
-          const addr = data.address;
-          if (!addr) return data.display_name;
-
-          const parts = [];
-          // Prioriza rua e número
-          if (addr.house_number && addr.road) {
-            parts.push(`${addr.road}, ${addr.house_number}`);
-          } else if (addr.road) {
-            parts.push(addr.road);
-          }
-
-          // Adiciona bairro
-          if (addr.neighbourhood) parts.push(addr.neighbourhood);
-          else if (addr.suburb) parts.push(addr.suburb);
-
-          // Cidade e estado (sem duplicatas)
-          if (addr.city && !parts.includes(addr.city)) parts.push(addr.city);
-          else if (addr.town && !parts.includes(addr.town)) parts.push(addr.town);
-
-          if (addr.state && !parts.includes(addr.state)) parts.push(addr.state);
-
-          return parts.length > 0 ? parts.join(', ') : data.display_name;
-        },
-      },
-      // 4. Photon - Customizado para rua
-      {
-        name: 'Photon',
-        url: `https://photon.komoot.io/reverse?lat=${lat}&lon=${lng}&lang=pt`,
-        headers: {} as Record<string, string>,
-        extractAddress: (data: any) => {
-          const props = data.features?.[0]?.properties;
-          if (!props) return null;
-
-          const parts = [];
-          // Prioriza rua e número
-          if (props.housenumber && props.street) {
-            parts.push(`${props.street}, ${props.housenumber}`);
-          } else if (props.street) {
-            parts.push(props.street);
-          }
-
-          // Adiciona apenas bairro e cidade (sem regiões administrativas confusas)
-          if (props.district && !props.district.includes('Região')) parts.push(props.district);
-          if (props.city) parts.push(props.city);
-          if (props.state) parts.push(props.state);
-
-          return parts.length > 0 ? parts.join(', ') : props.name;
-        },
-      },
-      // 5. BigDataCloud - Simplificado
+      // 2. BigDataCloud - Fallback confiável
       {
         name: 'BigDataCloud',
         url: `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=pt`,
