@@ -16,17 +16,45 @@ export const ThemeColorManager = () => {
       
       const themeColor = isDark ? colors.dark : colors.light;
 
-      // Remove todas as meta tags theme-color existentes
-      const existingMetas = document.querySelectorAll('meta[name="theme-color"]');
-      existingMetas.forEach(meta => meta.remove());
+      // Strategy 1: Update existing meta tag first (mobile browsers prefer this)
+      let existingMeta = document.querySelector('meta[name="theme-color"]');
+      if (existingMeta) {
+        existingMeta.setAttribute('content', themeColor);
+      }
 
-      // Cria nova meta tag theme-color
-      const meta = document.createElement('meta');
-      meta.setAttribute('name', 'theme-color');
-      meta.setAttribute('content', themeColor);
-      document.head.appendChild(meta);
+      // Strategy 2: For mobile browsers, also force DOM re-evaluation
+      // Remove and recreate after a micro-delay
+      setTimeout(() => {
+        const allMetas = document.querySelectorAll('meta[name="theme-color"]');
+        allMetas.forEach(meta => meta.remove());
 
-      // Para navegadores que usam msapplication-navbutton-color (Edge/IE)
+        // Create fresh meta tag
+        const newMeta = document.createElement('meta');
+        newMeta.name = 'theme-color';
+        newMeta.content = themeColor;
+        
+        // Insert at the very beginning of head for mobile priority
+        if (document.head.firstChild) {
+          document.head.insertBefore(newMeta, document.head.firstChild);
+        } else {
+          document.head.appendChild(newMeta);
+        }
+
+        // Force viewport meta refresh for mobile browsers
+        const viewport = document.querySelector('meta[name="viewport"]');
+        if (viewport) {
+          const content = viewport.getAttribute('content');
+          if (content) {
+            viewport.setAttribute('content', content + ', theme-color=' + themeColor);
+            // Restore original viewport after micro-delay
+            setTimeout(() => {
+              viewport.setAttribute('content', content);
+            }, 10);
+          }
+        }
+      }, 5);
+
+      // Para navegadores Edge/IE
       let msMeta = document.querySelector('meta[name="msapplication-navbutton-color"]');
       if (!msMeta) {
         msMeta = document.createElement('meta');
@@ -35,15 +63,15 @@ export const ThemeColorManager = () => {
       }
       msMeta.setAttribute('content', themeColor);
 
-      // Para navegadores que usam apple-mobile-web-app-status-bar-style
+      // Para Safari iOS - status bar
       let appleMeta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
       if (appleMeta) {
         const statusBarStyle = isDark ? 'black-translucent' : 'default';
         appleMeta.setAttribute('content', statusBarStyle);
       }
 
-      console.log('🎨 Theme color forcibly updated:', themeColor, '| Dark mode:', isDark);
-      console.log('📱 Applied to both PWA and browser header');
+      console.log('🎨 Theme color updated (mobile-optimized):', themeColor, '| Dark mode:', isDark);
+      console.log('📱 Using dual strategy: update + recreate for mobile browsers');
     };
 
     // Atualização inicial com retry agressivo
