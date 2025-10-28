@@ -1,104 +1,135 @@
-// Service Worker para cache offline básico
-const CACHE_NAME = 'scrum-poker-v1';
-const OFFLINE_ASSETS = [
+// Service Worker para Scrum Poker PWA
+const VERSION = 'v4';
+const CACHE_NAME = `scrum-poker-${VERSION}`;
+const OFFLINE_URL = '/';
+
+console.log('SW: Service Worker loading...');
+
+// URLs que devem ser cacheadas para funcionamento offline
+const CACHE_URLS = [
   '/',
-  '/offline',
+  '/favicon.ico',
   '/icon-192x192.png',
-  '/icon-512x512.png',
-  '/favicon.ico'
+  '/icon-512x512.png'
 ];
 
-// Install event - cache assets
+// Install - cache essential resources
 self.addEventListener('install', event => {
+  console.log('SW: Installing service worker...');
+  
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('SW: Caching offline assets');
-        return cache.addAll(OFFLINE_ASSETS);
+        console.log('SW: Caching essential resources');
+        return cache.addAll(CACHE_URLS);
+      })
+      .then(() => {
+        console.log('SW: Installation complete');
+        return self.skipWaiting();
       })
       .catch(error => {
-        console.error('SW: Failed to cache offline assets:', error);
+        console.error('SW: Installation failed:', error);
       })
   );
-  // Força ativação imediata
-  self.skipWaiting();
 });
 
-// Activate event - cleanup old caches
+// Activate - clean up old caches
 self.addEventListener('activate', event => {
+  console.log('SW: Activating service worker...');
+  
   event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('SW: Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+    caches.keys()
+      .then(cacheNames => {
+        return Promise.all(
+          cacheNames.map(cacheName => {
+            if (cacheName.startsWith('scrum-poker-') && cacheName !== CACHE_NAME) {
+              console.log('SW: Deleting old cache:', cacheName);
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      })
+      .then(() => {
+        console.log('SW: Activation complete');
+        return self.clients.claim();
+      })
   );
-  // Toma controle imediato de todas as páginas
-  self.clients.claim();
 });
 
-// Fetch event - serve from cache when offline
+// Fetch - handle network requests
 self.addEventListener('fetch', event => {
-  // Só intercepta requests GET
+  // Only handle GET requests
   if (event.request.method !== 'GET') return;
-
-  // Ignora requests de API, WebSocket e external resources
+  
   const url = new URL(event.request.url);
+  
+  // Skip irrelevant requests
   if (
-    url.pathname.startsWith('/api/') ||
     url.pathname.startsWith('/_next/webpack-hmr') ||
+    url.pathname.startsWith('/api/') ||
     url.protocol === 'chrome-extension:' ||
     url.hostname !== self.location.hostname
   ) {
     return;
   }
 
+  // Handle HTML pages
+  if (event.request.headers.get('accept')?.includes('text/html')) {
+    event.respondWith(
+      // Try network first
+      fetch(event.request)
+        .then(response => {
+          // If successful, cache it
+          if (response.ok) {
+            caches.open(CACHE_NAME).then(cache => {
+              cache.put(event.request, response.clone());
+            });
+          }
+          return response;
+        })
+        .catch(() => {
+          console.log('SW: Network failed for page, trying cache:', url.pathname);
+          // If network fails, try cache
+          return caches.match(event.request)
+            .then(cachedResponse => {
+              if (cachedResponse) {
+                console.log('SW: Serving cached page:', url.pathname);
+                return cachedResponse;
+              }
+              // Final fallback: serve home page
+              console.log('SW: Serving home page as fallback');
+              return caches.match(OFFLINE_URL);
+            });
+        })
+    );
+    return;
+  }
+
+  // Handle other resources (CSS, JS, images)
   event.respondWith(
     caches.match(event.request)
-      .then(response => {
-        // Se está no cache, retorna
-        if (response) {
-          return response;
+      .then(cachedResponse => {
+        if (cachedResponse) {
+          return cachedResponse;
         }
-
-        // Tenta buscar na rede
-        return fetch(event.request)
-          .then(response => {
-            // Se não conseguiu buscar e é uma página, tenta servir a home
-            if (!response || response.status !== 200) {
-              if (event.request.headers.get('accept')?.includes('text/html')) {
-                return caches.match('/');
-              }
-            }
-            return response;
-          })
-          .catch(() => {
-            // Se falhou e é uma request HTML, serve a home
-            if (event.request.headers.get('accept')?.includes('text/html')) {
-              return caches.match('/');
-            }
-            // Para outros recursos, deixa falhar
-            throw new Error('Network request failed and no cache available');
-          });
+        // Try to fetch and cache
+        return fetch(event.request).then(response => {
+          if (response.ok) {
+            caches.open(CACHE_NAME).then(cache => {
+              cache.put(event.request, response.clone());
+            });
+          }
+          return response;
+        });
       })
   );
 });
 
-// Listen for messages from the main thread
+// Handle messages from main thread
 self.addEventListener('message', event => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
+  if (event.data?.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
-  
-  if (event.data && event.data.type === 'MANIFEST_UPDATE') {
-    // Limpa cache do manifest quando tema muda
-    caches.open(CACHE_NAME).then(cache => {
-      cache.delete('/api/manifest');
-    });
-  }
 });
+
+console.log('SW: Service Worker script loaded');

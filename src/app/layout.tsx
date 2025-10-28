@@ -1,6 +1,7 @@
 import { DynamicManifest } from '@/components/DynamicManifest';
 import { GlobalTheme } from '@/components/GlobalTheme';
 import { PWAInstallBanner } from '@/components/PWAInstallBanner';
+import { ServiceWorkerRegistration } from '@/components/ServiceWorkerRegistration';
 import '@/styles/globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
@@ -81,10 +82,12 @@ export default async function RootLayout({
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
         <link rel="manifest" href="/api/manifest" />
+        <meta name="theme-color" content="#8b5cf6" />
       </head>
       <body className={twMerge(inter.className)} style={{ visibility: 'hidden' }}>
         <GlobalTheme />
         <DynamicManifest />
+        <ServiceWorkerRegistration />
         <Providers>
           {children}
           <PWAInstallBanner />

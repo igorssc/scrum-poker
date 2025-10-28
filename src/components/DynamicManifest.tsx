@@ -10,7 +10,7 @@ export const DynamicManifest = () => {
         document.documentElement.classList.contains('dark') ||
         window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-      // Atualiza apenas meta theme-color (mais estável)
+      // Atualiza meta theme-color
       let themeColorMeta = document.querySelector('meta[name="theme-color"]');
       if (!themeColorMeta) {
         themeColorMeta = document.createElement('meta');
@@ -22,20 +22,12 @@ export const DynamicManifest = () => {
       themeColorMeta.setAttribute('content', themeColor);
     };
 
-    // Atualiza inicialmente
-    updateThemeColor();
+    // Aguarda um pouco para garantir que o tema foi aplicado
+    setTimeout(updateThemeColor, 100);
 
     // Observer para mudanças no tema
-    const observer = new MutationObserver(mutations => {
-      mutations.forEach(mutation => {
-        if (
-          mutation.type === 'attributes' &&
-          mutation.attributeName === 'class' &&
-          mutation.target === document.documentElement
-        ) {
-          updateThemeColor();
-        }
-      });
+    const observer = new MutationObserver(() => {
+      setTimeout(updateThemeColor, 50);
     });
 
     observer.observe(document.documentElement, {
@@ -45,7 +37,9 @@ export const DynamicManifest = () => {
 
     // Listener para mudanças de preferência do sistema
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = () => updateThemeColor();
+    const handleChange = () => {
+      setTimeout(updateThemeColor, 50);
+    };
     mediaQuery.addEventListener('change', handleChange);
 
     return () => {
