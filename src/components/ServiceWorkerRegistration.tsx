@@ -4,10 +4,6 @@ import { useEffect } from 'react';
 
 export const ServiceWorkerRegistration = () => {
   useEffect(() => {
-    // TEMPORARIAMENTE DESABILITADO PARA DEBUG
-    console.log('SW Registration temporarily disabled for debugging');
-    return;
-    
     if ('serviceWorker' in navigator) {
       // Aguarda o carregamento completo da página
       window.addEventListener('load', () => {

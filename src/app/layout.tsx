@@ -2,7 +2,7 @@ import { DynamicManifest } from '@/components/DynamicManifest';
 import { GlobalTheme } from '@/components/GlobalTheme';
 import { PWAInstallBanner } from '@/components/PWAInstallBanner';
 import { ServiceWorkerRegistration } from '@/components/ServiceWorkerRegistration';
-import { DebugServiceWorker } from '@/components/DebugServiceWorker';
+import { SPACacheHelper } from '@/components/SPACacheHelper';
 import '@/styles/globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
@@ -89,7 +89,7 @@ export default async function RootLayout({
         <GlobalTheme />
         <DynamicManifest />
         <ServiceWorkerRegistration />
-        <DebugServiceWorker />
+        <SPACacheHelper />
         <Providers>
           {children}
           <PWAInstallBanner />
