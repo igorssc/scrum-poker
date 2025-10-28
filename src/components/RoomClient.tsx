@@ -91,7 +91,7 @@ export function RoomClient({ roomId, access }: RoomClientProps) {
 
     channel.postMessage({ type: 'login-scrum-poker', tabId });
 
-    router.replace('/board');
+    window.location.replace('/board');
   }, [user, data?.data, clear, tabId, router]);
 
   useEffect(() => {
