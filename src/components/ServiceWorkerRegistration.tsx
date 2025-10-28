@@ -35,9 +35,8 @@ export const ServiceWorkerRegistration = () => {
 
         // Listener para quando o SW toma controle
         navigator.serviceWorker.addEventListener('controllerchange', () => {
-          console.log('SW controller changed - reloading page');
-          // Recarrega página quando nova versão do SW assume controle
-          window.location.reload();
+          console.log('SW controller changed');
+          // Não recarrega automaticamente para evitar loops
         });
       });
     }

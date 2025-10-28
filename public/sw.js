@@ -1,5 +1,5 @@
 // Service Worker para Scrum Poker PWA
-const VERSION = 'v5';
+const VERSION = 'v7';
 const CACHE_NAME = `scrum-poker-${VERSION}`;
 const OFFLINE_URL = '/';
 
@@ -8,6 +8,7 @@ console.log('SW: Service Worker loading...');
 // URLs que devem ser cacheadas para funcionamento offline
 const CACHE_URLS = [
   '/',
+  '/board',
   '/favicon.ico',
   '/icon-192x192.png',
   '/icon-512x512.png'
@@ -75,14 +76,6 @@ self.addEventListener('fetch', event => {
 
   // Handle HTML pages
   if (event.request.headers.get('accept')?.includes('text/html')) {
-    // Para páginas que não são a home, deixa o Next.js lidar com o roteamento
-    if (url.pathname !== '/' && url.pathname !== '/index.html') {
-      console.log('SW: Allowing Next.js to handle route:', url.pathname);
-      // Não intercepta - deixa o Next.js roteamento funcionar
-      return;
-    }
-    
-    // Apenas para a home page
     event.respondWith(
       // Try network first
       fetch(event.request)
@@ -96,16 +89,32 @@ self.addEventListener('fetch', event => {
           return response;
         })
         .catch(() => {
-          console.log('SW: Network failed for home page, serving cached version');
-          // Only fallback to cache for home page
+          console.log('SW: Network failed for HTML page:', url.pathname);
+          
+          // For app routes (SPA routes), always serve the app shell (home page)
+          // This allows React Router to handle the routing client-side
+          if (url.pathname.startsWith('/board') || 
+              url.pathname.startsWith('/room/') || 
+              url.pathname === '/') {
+            
+            console.log('SW: Serving app shell for SPA route:', url.pathname);
+            return caches.match('/')
+              .then(homeResponse => {
+                if (homeResponse) {
+                  return homeResponse;
+                }
+                throw new Error('No app shell available');
+              });
+          }
+          
+          // For other pages, try exact cache match first
           return caches.match(event.request)
             .then(cachedResponse => {
               if (cachedResponse) {
-                console.log('SW: Serving cached home page');
+                console.log('SW: Serving exact cached page:', url.pathname);
                 return cachedResponse;
               }
-              // If no cached home, let it fail naturally
-              throw new Error('No cached home page available');
+              throw new Error('No cached version available');
             });
         })
     );
