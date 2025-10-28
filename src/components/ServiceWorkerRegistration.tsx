@@ -15,6 +15,9 @@ export const ServiceWorkerRegistration = () => {
           .then(registration => {
             console.log('SW registered successfully:', registration.scope);
             
+            // Força verificação de atualizações imediatamente
+            registration.update();
+            
             // Verifica se há atualizações
             registration.addEventListener('updatefound', () => {
               const newWorker = registration.installing;

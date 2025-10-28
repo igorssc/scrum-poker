@@ -1,20 +1,17 @@
+'use client';
+
 import { RoomClient } from '@/components/RoomClient';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { HomeButton } from '../../../../components/HomeButton';
 import { OfflineGuard } from '@/components/OfflineGuard';
+import { useParams, useSearchParams } from 'next/navigation';
 
-type RoomPageProps = {
-  params: Promise<{
-    id: string;
-  }>;
-  searchParams: Promise<{
-    access?: string;
-  }>;
-};
-
-export default async function Room({ params, searchParams }: RoomPageProps) {
-  const { id: roomId } = await params;
-  const { access } = await searchParams;
+export default function Room() {
+  const params = useParams();
+  const searchParams = useSearchParams();
+  
+  const roomId = params.id as string;
+  const access = searchParams.get('access') || undefined;
 
   return (
     <OfflineGuard>

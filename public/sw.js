@@ -1,5 +1,5 @@
 // Service Worker para Scrum Poker PWA
-const VERSION = 'v7';
+const VERSION = 'v10';
 const CACHE_NAME = `scrum-poker-${VERSION}`;
 const OFFLINE_URL = '/';
 
@@ -76,28 +76,30 @@ self.addEventListener('fetch', event => {
 
   // Handle HTML pages
   if (event.request.headers.get('accept')?.includes('text/html')) {
-    event.respondWith(
-      // Try network first
-      fetch(event.request)
-        .then(response => {
-          // If successful, cache it
-          if (response.ok) {
-            caches.open(CACHE_NAME).then(cache => {
-              cache.put(event.request, response.clone());
-            });
-          }
-          return response;
-        })
-        .catch(() => {
-          console.log('SW: Network failed for HTML page:', url.pathname);
-          
-          // For app routes (SPA routes), always serve the app shell (home page)
-          // This allows React Router to handle the routing client-side
-          if (url.pathname.startsWith('/board') || 
-              url.pathname.startsWith('/room/') || 
-              url.pathname === '/') {
-            
-            console.log('SW: Serving app shell for SPA route:', url.pathname);
+    // Se é uma requisição de navegação (não uma requisição interna do Next.js)
+    const isNavigation = event.request.mode === 'navigate' || 
+                         (event.request.method === 'GET' && 
+                          event.request.headers.get('accept').includes('text/html') &&
+                          !event.request.headers.get('x-requested-with'));
+    
+    if (isNavigation) {
+      console.log('SW: Handling navigation to:', url.pathname);
+      
+      event.respondWith(
+        // Try network first
+        fetch(event.request)
+          .then(response => {
+            // If successful, cache it
+            if (response.ok) {
+              caches.open(CACHE_NAME).then(cache => {
+                cache.put(event.request, response.clone());
+              });
+            }
+            return response;
+          })
+          .catch(() => {
+            console.log('SW: Network failed, serving app shell for:', url.pathname);
+            // Para qualquer rota quando offline, serve o app shell
             return caches.match('/')
               .then(homeResponse => {
                 if (homeResponse) {
@@ -105,19 +107,13 @@ self.addEventListener('fetch', event => {
                 }
                 throw new Error('No app shell available');
               });
-          }
-          
-          // For other pages, try exact cache match first
-          return caches.match(event.request)
-            .then(cachedResponse => {
-              if (cachedResponse) {
-                console.log('SW: Serving exact cached page:', url.pathname);
-                return cachedResponse;
-              }
-              throw new Error('No cached version available');
-            });
-        })
-    );
+          })
+      );
+      return;
+    }
+    
+    // Para requisições internas do Next.js, deixa passar
+    console.log('SW: Allowing internal request:', url.pathname);
     return;
   }
 
