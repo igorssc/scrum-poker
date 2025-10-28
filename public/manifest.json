@@ -1,7 +1,7 @@
 {
   "name": "Scrum Poker - Planning Poker Online",
   "short_name": "Scrum Poker",
-  "description": "Planning Poker online gratuito para equipes ágeis. Estime tarefas de forma colaborativa com seu time.",
+  "description": "Planning Poker para equipes ágeis. Estime tarefas de forma colaborativa com seu time.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

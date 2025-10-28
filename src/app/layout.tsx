@@ -1,4 +1,5 @@
 import { GlobalTheme } from '@/components/GlobalTheme';
+import { PWAInstallBanner } from '@/components/PWAInstallBanner';
 import '@/styles/globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
@@ -8,9 +9,9 @@ import { Providers } from '../components/Providers';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Scrum Poker - Planning Poker Online Gratuito',
+  title: 'Scrum Poker - Planning Poker',
   description:
-    'Planning Poker online gratuito para equipes ágeis. Estime tarefas de forma colaborativa com seu time usando Scrum Poker. Interface simples e intuitiva.',
+    'Planning Poker para equipes ágeis. Estime tarefas de forma colaborativa com seu time usando Scrum Poker. Interface simples e intuitiva.',
   keywords:
     'scrum poker, planning poker, estimativa ágil, metodologia ágil, scrum, planning, poker, estimativa, desenvolvimento ágil',
   authors: [{ name: 'Igor Costa', url: 'https://github.com/igorssc' }],
@@ -26,9 +27,9 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: 'Scrum Poker - Planning Poker Online Gratuito',
+    title: 'Scrum Poker - Planning Poker',
     description:
-      'Planning Poker online gratuito para equipes ágeis. Estime tarefas de forma colaborativa com seu time.',
+      'Planning Poker para equipes ágeis. Estime tarefas de forma colaborativa com seu time.',
     url: 'https://scrumpoker.dev.br',
     siteName: 'Scrum Poker',
     locale: 'pt_BR',
@@ -39,16 +40,16 @@ export const metadata: Metadata = {
         secureUrl: 'https://scrumpoker.dev.br/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Scrum Poker - Planning Poker Online Gratuito',
+        alt: 'Scrum Poker - Planning Poker',
         type: 'image/png',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Scrum Poker - Planning Poker Online Gratuito',
+    title: 'Scrum Poker - Planning Poker',
     description:
-      'Planning Poker online gratuito para equipes ágeis. Estime tarefas de forma colaborativa com seu time.',
+      'Planning Poker para equipes ágeis. Estime tarefas de forma colaborativa com seu time.',
     creator: '@igorssc',
     images: ['https://scrumpoker.dev.br/og-image.png'],
   },
@@ -83,7 +84,10 @@ export default async function RootLayout({
       </head>
       <body className={twMerge(inter.className)} style={{ visibility: 'hidden' }}>
         <GlobalTheme />
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <PWAInstallBanner />
+        </Providers>
       </body>
     </html>
   );

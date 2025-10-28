@@ -5,7 +5,8 @@ const jsonLd = {
   '@type': 'WebApplication',
   name: 'Scrum Poker',
   alternateName: 'Planning Poker Online',
-  description: 'Planning Poker online gratuito para equipes ágeis. Ferramenta colaborativa para estimativa de tarefas usando metodologia Scrum.',
+  description:
+    'Planning Poker para equipes ágeis. Ferramenta colaborativa para estimativa de tarefas usando metodologia Scrum.',
   url: 'https://scrumpoker.dev.br',
   applicationCategory: 'BusinessApplication',
   operatingSystem: 'Web Browser',

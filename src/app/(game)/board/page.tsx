@@ -4,6 +4,7 @@ import { Board } from '@/components/Board';
 import { Box } from '@/components/Box';
 import { CreateRoom } from '@/components/CreateRoom';
 import { Flex } from '@/components/Flex';
+import { HomeButton } from '@/components/HomeButton';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { SearchRoom } from '@/components/SearchRoom';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -15,7 +16,6 @@ import { handleApiError } from '@/utils/errorHandler';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useContextSelector } from 'use-context-selector';
-import { HomeButton } from '../../../components/HomeButton';
 
 export default function BoardPage() {
   const [isLookingForRoom, setIsLookingForRoom] = useState(false);
