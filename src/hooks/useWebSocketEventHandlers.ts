@@ -220,8 +220,8 @@ export const useWebSocketEventHandlers = (roomId: string, clear: () => void) => 
     }
 
     if (event.type === 'vote-member') {
-      const userId = event?.data?.user_id || event?.data?.user?.id;
-      const vote = event?.data?.vote || event?.data?.user?.vote || null;
+      const userId = event?.data?.user?.id;
+      const vote = event?.data?.user?.vote || null;
 
       if (userId) {
         queryClient.setQueryData<{ data: { members: MemberProps[] } & RoomProps }>(
@@ -234,10 +234,10 @@ export const useWebSocketEventHandlers = (roomId: string, clear: () => void) => 
               data: {
                 ...oldData.data,
                 members: oldData.data.members.map(member => {
-                  if (member.member.id === userId) {
+                  if (member.id === userId) {
                     return {
                       ...member,
-                      vote: vote,
+                      vote,
                     };
                   }
                   return member;
