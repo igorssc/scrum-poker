@@ -16,38 +16,60 @@ export const ThemeColorManager = () => {
       
       const themeColor = isDark ? colors.dark : colors.light;
 
-      // Força atualização da meta tag
-      let meta = document.querySelector('meta[name="theme-color"]');
-      if (!meta) {
-        meta = document.createElement('meta');
-        meta.setAttribute('name', 'theme-color');
-        document.head.appendChild(meta);
-      }
-      
-      meta.setAttribute('content', themeColor);
-      
-      // Log apenas quando há mudança real
-      const currentColor = meta.getAttribute('content');
-      if (currentColor !== themeColor) {
-        console.log('🎨 Theme color changed:', themeColor, '| Dark mode:', isDark);
-      }
+      // Remove todas as meta tags theme-color existentes
+      const existingMetas = document.querySelectorAll('meta[name="theme-color"]');
+      existingMetas.forEach(meta => meta.remove());
 
-      // Para dispositivos iOS - ajusta estilo da status bar
+      // Cria nova meta tag theme-color
+      const meta = document.createElement('meta');
+      meta.setAttribute('name', 'theme-color');
+      meta.setAttribute('content', themeColor);
+      document.head.appendChild(meta);
+
+      // Para navegadores que usam msapplication-navbutton-color (Edge/IE)
+      let msMeta = document.querySelector('meta[name="msapplication-navbutton-color"]');
+      if (!msMeta) {
+        msMeta = document.createElement('meta');
+        msMeta.setAttribute('name', 'msapplication-navbutton-color');
+        document.head.appendChild(msMeta);
+      }
+      msMeta.setAttribute('content', themeColor);
+
+      // Para navegadores que usam apple-mobile-web-app-status-bar-style
       let appleMeta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
       if (appleMeta) {
         const statusBarStyle = isDark ? 'black-translucent' : 'default';
         appleMeta.setAttribute('content', statusBarStyle);
       }
+
+      console.log('🎨 Theme color forcibly updated:', themeColor, '| Dark mode:', isDark);
+      console.log('📱 Applied to both PWA and browser header');
     };
 
-    // Atualização inicial com retry
+    // Atualização inicial com retry agressivo
     const initialUpdate = () => {
       updateThemeColor();
-      // Segunda tentativa após pequeno delay para garantir
-      setTimeout(updateThemeColor, 200);
+      // Retry múltiplo para navegadores teimosos
+      setTimeout(updateThemeColor, 100);
+      setTimeout(updateThemeColor, 300);
+      setTimeout(updateThemeColor, 600);
     };
 
     initialUpdate();
+
+    // Também força atualização quando a página fica visível ou ganha foco
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        setTimeout(updateThemeColor, 50);
+      }
+    };
+
+    const handleFocus = () => {
+      setTimeout(updateThemeColor, 50);
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
 
     // Observer otimizado - só observa mudanças de classe
     const observer = new MutationObserver((mutations) => {
@@ -73,6 +95,8 @@ export const ThemeColorManager = () => {
 
     return () => {
       observer.disconnect();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
     };
   }, []);
 
