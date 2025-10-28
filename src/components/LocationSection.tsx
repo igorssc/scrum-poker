@@ -7,9 +7,22 @@ import { twMerge } from 'tailwind-merge';
 type LocationSectionProps = {
   room: any;
   user: any;
+  // Coordenadas controladas pelo componente pai
+  lat?: number;
+  lng?: number;
+  onLocationChange?: (lat: number, lng: number) => void;
+  // Modo do componente
+  mode?: 'view' | 'edit'; // 'view' = atualiza automaticamente via API, 'edit' = controlado pelo pai
 };
 
-export const LocationSection = ({ room, user }: LocationSectionProps) => {
+export const LocationSection = ({ 
+  room, 
+  user, 
+  lat: controlledLat, 
+  lng: controlledLng, 
+  onLocationChange,
+  mode = 'view' 
+}: LocationSectionProps) => {
   const [locationLoading, setLocationLoading] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [address, setAddress] = useState<string | null>(null);
@@ -19,14 +32,18 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
   const isPrivate = !!room?.private;
   const canEditRoom = !isPrivate || room?.owner_id === user?.id;
 
-  // Converte coordenadas para endereço quando a sala tem localização
+  // Usa coordenadas controladas se fornecidas, senão usa do room
+  const currentLat = controlledLat ?? room?.lat;
+  const currentLng = controlledLng ?? room?.lng;
+
+  // Converte coordenadas para endereço quando há localização
   useEffect(() => {
-    if (room?.lat && room?.lng) {
-      fetchAddress(room.lat, room.lng);
+    if (currentLat && currentLng) {
+      fetchAddress(currentLat, currentLng);
     } else {
       setAddress(null);
     }
-  }, [room?.lat, room?.lng]);
+  }, [currentLat, currentLng]);
 
   // Converte coordenadas para endereço usando múltiplas APIs gratuitas com fallback
   const fetchAddress = async (lat: number, lng: number) => {
@@ -138,7 +155,7 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
     },
   });
 
-  // Atualiza localização da sala
+  // Atualiza localização
   const handleUpdateLocation = async () => {
     setLocationLoading(true);
     setLocationError(null);
@@ -149,15 +166,22 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
         }
       );
       const { latitude, longitude } = coords;
-      await patchRoomMutation.mutateAsync({
-        lat: latitude,
-        lng: longitude,
-      });
 
-      // Busca o endereço das novas coordenadas
-      await fetchAddress(latitude, longitude);
+      if (mode === 'edit' && onLocationChange) {
+        // Modo edit: apenas notifica o componente pai das novas coordenadas
+        onLocationChange(latitude, longitude);
+      } else {
+        // Modo view: atualiza diretamente via API (comportamento original)
+        await patchRoomMutation.mutateAsync({
+          lat: latitude,
+          lng: longitude,
+        });
 
-      queryClient.invalidateQueries({ queryKey: ['room', room?.id] });
+        // Busca o endereço das novas coordenadas
+        await fetchAddress(latitude, longitude);
+
+        queryClient.invalidateQueries({ queryKey: ['room', room?.id] });
+      }
     } catch (err: any) {
       setLocationError(err.message || 'Erro ao atualizar localização');
     } finally {
@@ -173,7 +197,7 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
 
       {/* Caixa elegante para localização */}
       <div className="bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg sm:rounded-xl p-2.5 sm:p-3 md:p-4 space-y-2 sm:space-y-2.5 md:space-y-3">
-        {room?.lat && room?.lng ? (
+        {currentLat && currentLng ? (
           <div className="space-y-2 sm:space-y-2.5 md:space-y-3">
             {/* Coordenadas */}
             <div className="flex items-center gap-2 sm:gap-2.5 md:gap-3">
@@ -200,7 +224,7 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
               </div>
               <div className="flex-1">
                 <div className="text-[0.65rem] sm:text-xs font-mono text-gray-700 dark:text-gray-300">
-                  {room.lat.toFixed(6)}, {room.lng.toFixed(6)}
+                  {currentLat.toFixed(6)}, {currentLng.toFixed(6)}
                 </div>
                 <div className="text-xs text-gray-500 dark:text-gray-400">Coordenadas GPS</div>
               </div>
@@ -314,7 +338,7 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
                     d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
                   />
                 </svg>
-                {room?.lat && room?.lng ? 'Atualizar localização' : 'Definir localização atual'}
+                {currentLat && currentLng ? 'Atualizar localização' : 'Definir localização atual'}
               </>
             )}
           </button>

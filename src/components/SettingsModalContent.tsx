@@ -30,6 +30,8 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
   const [isPrivate, setIsPrivate] = useState(!!room?.private);
   const [theme, setTheme] = useState(room?.theme || 'primary');
   const [userName, setUserName] = useState(userMember?.member.name || '');
+  const [lat, setLat] = useState<number | undefined>(room?.lat);
+  const [lng, setLng] = useState<number | undefined>(room?.lng);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
@@ -42,7 +44,9 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
     setIsPrivate(!!room?.private);
     setTheme(room?.theme || 'primary');
     setUserName(userMember?.member.name || '');
-  }, [room?.name, room?.private, room?.theme, userMember?.member.name]);
+    setLat(room?.lat);
+    setLng(room?.lng);
+  }, [room?.name, room?.private, room?.theme, room?.lat, room?.lng, userMember?.member.name]);
 
   // Temas fake
   const themeOptions = [{ value: 'nature', label: 'Natureza (Padrão)' }];
@@ -72,13 +76,16 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
     setSaving(true);
     setError(null);
     try {
-      // Permissões: se sala pública, qualquer usuário pode editar nome/tema; se privada, só owner
+      // Permissões: se sala pública, qualquer usuário pode editar nome/tema/localização; se privada, só owner
       const canEditRoom = !isPrivate || room?.owner_id === user?.id;
-      if (canEditRoom && (roomName !== room?.name || theme !== room?.theme)) {
-        await updateRoom({
-          name: roomName,
-          theme,
-        });
+      if (canEditRoom && (roomName !== room?.name || theme !== room?.theme || lat !== room?.lat || lng !== room?.lng)) {
+        const updateData: any = {};
+        if (roomName !== room?.name) updateData.name = roomName;
+        if (theme !== room?.theme) updateData.theme = theme;
+        if (lat !== room?.lat) updateData.lat = lat;
+        if (lng !== room?.lng) updateData.lng = lng;
+        
+        await updateRoom(updateData);
       }
       // Só owner pode mudar privacidade
       if (room?.owner_id === user?.id && isPrivate !== !!room?.private) {
@@ -184,7 +191,17 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
               </div>
 
               {/* Localização da sala */}
-              <LocationSection room={room} user={user} />
+              <LocationSection 
+                room={room} 
+                user={user} 
+                lat={lat}
+                lng={lng}
+                mode="edit"
+                onLocationChange={(newLat, newLng) => {
+                  setLat(newLat);
+                  setLng(newLng);
+                }}
+              />
             </div>
           </div>
         </div>
