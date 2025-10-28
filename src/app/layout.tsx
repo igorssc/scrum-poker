@@ -33,6 +33,16 @@ export const metadata: Metadata = {
     siteName: 'Scrum Poker',
     locale: 'pt_BR',
     type: 'website',
+    images: [
+      {
+        url: 'https://scrumpoker.dev.br/og-image.png',
+        secureUrl: 'https://scrumpoker.dev.br/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Scrum Poker - Planning Poker Online Gratuito',
+        type: 'image/png',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
@@ -40,6 +50,7 @@ export const metadata: Metadata = {
     description:
       'Planning Poker online gratuito para equipes ágeis. Estime tarefas de forma colaborativa com seu time.',
     creator: '@igorssc',
+    images: ['https://scrumpoker.dev.br/og-image.png'],
   },
   robots: {
     index: true,
