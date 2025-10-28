@@ -96,8 +96,6 @@ export const useWebSocketEventHandlers = (roomId: string, clear: () => void) => 
         oldData => {
           if (!oldData) return oldData;
 
-          console.log(oldData, eventData);
-
           return {
             ...oldData,
             data: {
