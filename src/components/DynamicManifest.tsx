@@ -11,23 +11,24 @@ export const DynamicManifest = () => {
         window.matchMedia('(prefers-color-scheme: dark)').matches;
 
       // Atualiza meta theme-color
-      let themeColorMeta = document.querySelector('meta[name="theme-color"]');
-      if (!themeColorMeta) {
-        themeColorMeta = document.createElement('meta');
-        themeColorMeta.setAttribute('name', 'theme-color');
-        document.head.appendChild(themeColorMeta);
+      const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+      if (themeColorMeta) {
+        const themeColor = isDark ? '#374151' : '#8b5cf6'; // gray-700 : purple-500
+        themeColorMeta.setAttribute('content', themeColor);
+        console.log('Theme color updated:', themeColor, 'Dark mode:', isDark);
       }
-
-      const themeColor = isDark ? '#374151' : '#8b5cf6';
-      themeColorMeta.setAttribute('content', themeColor);
     };
 
-    // Aguarda um pouco para garantir que o tema foi aplicado
-    setTimeout(updateThemeColor, 100);
+    // Atualiza inicialmente
+    updateThemeColor();
 
-    // Observer para mudanças no tema
-    const observer = new MutationObserver(() => {
-      setTimeout(updateThemeColor, 50);
+    // Observer para mudanças no tema DOM
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          updateThemeColor();
+        }
+      });
     });
 
     observer.observe(document.documentElement, {
@@ -35,16 +36,14 @@ export const DynamicManifest = () => {
       attributeFilter: ['class'],
     });
 
-    // Listener para mudanças de preferência do sistema
+    // Listener para mudanças do sistema
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = () => {
-      setTimeout(updateThemeColor, 50);
-    };
-    mediaQuery.addEventListener('change', handleChange);
+    const handleSystemThemeChange = () => updateThemeColor();
+    mediaQuery.addEventListener('change', handleSystemThemeChange);
 
     return () => {
       observer.disconnect();
-      mediaQuery.removeEventListener('change', handleChange);
+      mediaQuery.removeEventListener('change', handleSystemThemeChange);
     };
   }, []);
 

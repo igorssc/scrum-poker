@@ -19,12 +19,7 @@ import { useEffect, useState } from 'react';
 import { useContextSelector } from 'use-context-selector';
 
 export default function BoardPage() {
-  // Renderiza OfflineGuard primeiro, antes de qualquer lógica
-  return (
-    <OfflineGuard>
-      <BoardContent />
-    </OfflineGuard>
-  );
+  return <BoardContent />;
 }
 
 function BoardContent() {

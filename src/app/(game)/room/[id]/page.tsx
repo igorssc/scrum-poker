@@ -14,12 +14,10 @@ export default function Room() {
   const access = searchParams.get('access') || undefined;
 
   return (
-    <OfflineGuard>
-      <div className="relative min-h-[calc(100dvh-2rem)] flex content-center items-center max-w-[90%]">
-        <ThemeToggle className="fixed top-4 right-4 z-50" />
-        <HomeButton className="fixed top-4 left-4 z-50" />
-        <RoomClient roomId={roomId} access={access} />
-      </div>
-    </OfflineGuard>
+    <div className="relative min-h-[calc(100dvh-2rem)] flex content-center items-center max-w-[90%]">
+      <ThemeToggle className="fixed top-4 right-4 z-50" />
+      <HomeButton className="fixed top-4 left-4 z-50" />
+      <RoomClient roomId={roomId} access={access} />
+    </div>
   );
 }

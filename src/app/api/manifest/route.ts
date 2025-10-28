@@ -8,12 +8,12 @@ export async function GET(request: NextRequest) {
   // Cores baseadas no tema
   const colors = {
     light: {
-      background_color: '#ffffff',
-      theme_color: '#8b5cf6',
+      background_color: '#6b7280', // gray-500 neutro
+      theme_color: '#8b5cf6', // purple-500
     },
     dark: {
-      background_color: '#1f2937', // gray-800
-      theme_color: '#374151', // gray-700 (tom mais neutro para dark mode)
+      background_color: '#6b7280', // gray-500 neutro (mesmo para ambos)
+      theme_color: '#374151', // gray-700
     },
   };
 

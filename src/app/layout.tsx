@@ -2,7 +2,6 @@ import { DynamicManifest } from '@/components/DynamicManifest';
 import { GlobalTheme } from '@/components/GlobalTheme';
 import { PWAInstallBanner } from '@/components/PWAInstallBanner';
 import { ServiceWorkerRegistration } from '@/components/ServiceWorkerRegistration';
-import { SPACacheHelper } from '@/components/SPACacheHelper';
 import '@/styles/globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
@@ -84,12 +83,12 @@ export default async function RootLayout({
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
         <link rel="manifest" href="/api/manifest" />
         <meta name="theme-color" content="#8b5cf6" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
       <body className={twMerge(inter.className)} style={{ visibility: 'hidden' }}>
         <GlobalTheme />
         <DynamicManifest />
         <ServiceWorkerRegistration />
-        <SPACacheHelper />
         <Providers>
           {children}
           <PWAInstallBanner />
