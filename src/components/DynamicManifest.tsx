@@ -1,17 +1,29 @@
 'use client';
 
 import { useEffect } from 'react';
-import { refreshPWAManifest, detectTheme } from '@/utils/pwaUtils';
 
 export const DynamicManifest = () => {
   useEffect(() => {
-    const updateManifest = async () => {
-      const theme = detectTheme();
-      await refreshPWAManifest(theme);
+    const updateThemeColor = () => {
+      // Detecta o tema atual
+      const isDark =
+        document.documentElement.classList.contains('dark') ||
+        window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+      // Atualiza apenas meta theme-color (mais estável)
+      let themeColorMeta = document.querySelector('meta[name="theme-color"]');
+      if (!themeColorMeta) {
+        themeColorMeta = document.createElement('meta');
+        themeColorMeta.setAttribute('name', 'theme-color');
+        document.head.appendChild(themeColorMeta);
+      }
+
+      const themeColor = isDark ? '#374151' : '#8b5cf6';
+      themeColorMeta.setAttribute('content', themeColor);
     };
 
     // Atualiza inicialmente
-    updateManifest();
+    updateThemeColor();
 
     // Observer para mudanças no tema
     const observer = new MutationObserver(mutations => {
@@ -21,7 +33,7 @@ export const DynamicManifest = () => {
           mutation.attributeName === 'class' &&
           mutation.target === document.documentElement
         ) {
-          updateManifest();
+          updateThemeColor();
         }
       });
     });
@@ -33,7 +45,7 @@ export const DynamicManifest = () => {
 
     // Listener para mudanças de preferência do sistema
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = () => updateManifest();
+    const handleChange = () => updateThemeColor();
     mediaQuery.addEventListener('change', handleChange);
 
     return () => {
@@ -42,5 +54,5 @@ export const DynamicManifest = () => {
     };
   }, []);
 
-  return null; // Componente sem UI
+  return null;
 };
