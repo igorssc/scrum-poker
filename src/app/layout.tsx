@@ -2,6 +2,7 @@ import { DynamicManifest } from '@/components/DynamicManifest';
 import { GlobalTheme } from '@/components/GlobalTheme';
 import { PWAInstallBanner } from '@/components/PWAInstallBanner';
 import { ServiceWorkerRegistration } from '@/components/ServiceWorkerRegistration';
+import { ThemeColorManager } from '@/components/ThemeColorManager';
 import '@/styles/globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
@@ -90,6 +91,7 @@ export default async function RootLayout({
       <body className={twMerge(inter.className)} style={{ visibility: 'hidden' }}>
         <GlobalTheme />
         <DynamicManifest />
+        <ThemeColorManager />
         <ServiceWorkerRegistration />
         <Providers>
           {children}
