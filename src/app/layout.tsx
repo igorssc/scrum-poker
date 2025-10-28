@@ -83,7 +83,9 @@ export default async function RootLayout({
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
         <link rel="manifest" href="/api/manifest" />
         <meta name="theme-color" content="#8b5cf6" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="mobile-web-app-capable" content="yes" />
       </head>
       <body className={twMerge(inter.className)} style={{ visibility: 'hidden' }}>
         <GlobalTheme />

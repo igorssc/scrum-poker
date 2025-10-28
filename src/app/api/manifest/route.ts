@@ -83,7 +83,9 @@ export async function GET(request: NextRequest) {
   return NextResponse.json(manifest, {
     headers: {
       'Content-Type': 'application/manifest+json',
-      'Cache-Control': 'public, max-age=300', // Cache por 5 minutos
+      'Cache-Control': 'no-cache, no-store, must-revalidate', // Força atualização para testes
+      'Pragma': 'no-cache',
+      'Expires': '0',
     },
   });
 }

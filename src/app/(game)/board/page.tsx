@@ -6,7 +6,6 @@ import { CreateRoom } from '@/components/CreateRoom';
 import { Flex } from '@/components/Flex';
 import { HomeButton } from '@/components/HomeButton';
 import { LoadingScreen } from '@/components/LoadingScreen';
-import { OfflineGuard } from '@/components/OfflineGuard';
 import { SearchRoom } from '@/components/SearchRoom';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { RoomContext } from '@/context/RoomContext';
