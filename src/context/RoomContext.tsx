@@ -153,7 +153,7 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
         roomData.lng = longitude;
       } catch (locationError) {
         // Se falhar ao obter localização, cria sala sem coordenadas
-        console.log('Criando sala sem localização:', locationError);
+
       }
 
       const { data } = await api.post<RoomPropsProtocols>('rooms', roomData);

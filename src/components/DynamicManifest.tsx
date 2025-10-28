@@ -13,7 +13,6 @@ export const DynamicManifest = () => {
       let manifestLink = document.querySelector('link[rel="manifest"]');
       if (manifestLink) {
         manifestLink.setAttribute('href', `/api/manifest?theme=${theme}`);
-        console.log('📄 Manifest updated for theme:', theme);
       }
     };
 

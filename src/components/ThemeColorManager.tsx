@@ -70,8 +70,7 @@ export const ThemeColorManager = () => {
         appleMeta.setAttribute('content', statusBarStyle);
       }
 
-      console.log('🎨 Theme color updated (mobile-optimized):', themeColor, '| Dark mode:', isDark);
-      console.log('📱 Using dual strategy: update + recreate for mobile browsers');
+
     };
 
     // Atualização inicial com retry agressivo

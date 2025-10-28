@@ -3,7 +3,6 @@
 import { RoomClient } from '@/components/RoomClient';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { HomeButton } from '../../../../components/HomeButton';
-import { OfflineGuard } from '@/components/OfflineGuard';
 import { useParams, useSearchParams } from 'next/navigation';
 
 export default function Room() {
