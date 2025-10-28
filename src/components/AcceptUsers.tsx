@@ -34,8 +34,51 @@ export const AcceptUsers = () => {
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
   const [hasOverflow, setHasOverflow] = useState(false);
+  
+  // Estados de loading para cada usuário
+  const [loadingUsers, setLoadingUsers] = useState<Set<string>>(new Set());
 
+  // Funções para gerenciar loading
+  const setUserLoading = (userId: string, loading: boolean) => {
+    setLoadingUsers(prev => {
+      const newSet = new Set(prev);
+      if (loading) {
+        newSet.add(userId);
+      } else {
+        newSet.delete(userId);
+      }
+      return newSet;
+    });
+  };
 
+  const isUserLoading = (userId: string) => loadingUsers.has(userId);
+
+  // Handlers para aceitar/recusar usuários
+  const handleAcceptUser = async (userId: string) => {
+    if (isDragging || isUserLoading(userId)) return;
+    
+    setUserLoading(userId, true);
+    try {
+      await acceptUser(userId);
+    } catch (error) {
+      console.error('Erro ao aceitar usuário:', error);
+    } finally {
+      setUserLoading(userId, false);
+    }
+  };
+
+  const handleRefuseUser = async (userId: string) => {
+    if (isDragging || isUserLoading(userId)) return;
+    
+    setUserLoading(userId, true);
+    try {
+      await refuseUser(userId);
+    } catch (error) {
+      console.error('Erro ao recusar usuário:', error);
+    } finally {
+      setUserLoading(userId, false);
+    }
+  };
 
   // Funções para drag scroll (mouse)
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -155,30 +198,24 @@ export const AcceptUsers = () => {
                   <Flex className="flex-row gap-2 mt-2">
                     <Button
                       onClick={e => {
-                        // Previne clique durante drag
-                        if (isDragging) {
-                          e.preventDefault();
-                          return;
-                        }
-                        refuseUser(user.id);
+                        e.preventDefault();
+                        handleRefuseUser(user.id);
                       }}
                       onMouseDown={e => e.stopPropagation()}
                       className="flex-1"
                       variant="secondary"
+                      isLoading={isUserLoading(user.id)}
                     >
                       Recusar
                     </Button>
                     <Button
                       onClick={e => {
-                        // Previne clique durante drag
-                        if (isDragging) {
-                          e.preventDefault();
-                          return;
-                        }
-                        acceptUser(user.id);
+                        e.preventDefault();
+                        handleAcceptUser(user.id);
                       }}
                       onMouseDown={e => e.stopPropagation()}
                       className="flex-1"
+                      isLoading={isUserLoading(user.id)}
                     >
                       Aceitar
                     </Button>
