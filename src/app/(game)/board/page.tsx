@@ -6,6 +6,7 @@ import { CreateRoom } from '@/components/CreateRoom';
 import { Flex } from '@/components/Flex';
 import { HomeButton } from '@/components/HomeButton';
 import { LoadingScreen } from '@/components/LoadingScreen';
+import { OfflineGuard } from '@/components/OfflineGuard';
 import { SearchRoom } from '@/components/SearchRoom';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { RoomContext } from '@/context/RoomContext';
@@ -77,38 +78,48 @@ export default function BoardPage() {
   }, [data?.data, room, user, clear]);
 
   if (!isHydrated || (user && room && !data?.data)) {
-    return <LoadingScreen />;
+    return (
+      <OfflineGuard>
+        <LoadingScreen />
+      </OfflineGuard>
+    );
   }
 
   if (isLookingForRoom)
     return (
-      <div className="relative min-h-[calc(100dvh-2rem)] flex content-center items-center max-w-[90%]">
-        <ThemeToggle className="fixed top-3 right-3 sm:top-4 sm:right-4 z-50" />
-        <HomeButton className="fixed top-4 left-4 z-50" />
-        <Box allowOverflow className="w-160 max-h-[80dvh] sm:max-h-[800px]">
-          <Flex>
-            <SearchRoom />
-          </Flex>
-        </Box>
-      </div>
+      <OfflineGuard>
+        <div className="relative min-h-[calc(100dvh-2rem)] flex content-center items-center max-w-[90%]">
+          <ThemeToggle className="fixed top-3 right-3 sm:top-4 sm:right-4 z-50" />
+          <HomeButton className="fixed top-4 left-4 z-50" />
+          <Box allowOverflow className="w-160 max-h-[80dvh] sm:max-h-[800px]">
+            <Flex>
+              <SearchRoom />
+            </Flex>
+          </Box>
+        </div>
+      </OfflineGuard>
     );
 
   if (!room)
     return (
-      <div className="relative min-h-[calc(100dvh-2rem)] flex content-center items-center max-w-[90%]">
-        <ThemeToggle className="fixed top-3 right-3 sm:top-4 sm:right-4 z-50" />
-        <HomeButton className="fixed top-4 left-4 z-50" />
-        <Box allowOverflow className="w-160">
-          <Flex>
-            <CreateRoom setIsLookingForRoom={setIsLookingForRoom} />
-          </Flex>
-        </Box>
-      </div>
+      <OfflineGuard>
+        <div className="relative min-h-[calc(100dvh-2rem)] flex content-center items-center max-w-[90%]">
+          <ThemeToggle className="fixed top-3 right-3 sm:top-4 sm:right-4 z-50" />
+          <HomeButton className="fixed top-4 left-4 z-50" />
+          <Box allowOverflow className="w-160">
+            <Flex>
+              <CreateRoom setIsLookingForRoom={setIsLookingForRoom} />
+            </Flex>
+          </Box>
+        </div>
+      </OfflineGuard>
     );
 
   return (
-    <div className="relative min-h-[calc(100dvh-2rem)] flex content-center items-center max-w-[90%]">
-      <Board />
-    </div>
+    <OfflineGuard>
+      <div className="relative min-h-[calc(100dvh-2rem)] flex content-center items-center max-w-[90%]">
+        <Board />
+      </div>
+    </OfflineGuard>
   );
 }

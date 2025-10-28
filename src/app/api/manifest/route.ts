@@ -4,8 +4,6 @@ export async function GET(request: NextRequest) {
   // Detecta o tema preferido através de headers ou query params
   const { searchParams } = new URL(request.url);
   const theme = searchParams.get('theme') || 'light';
-  
-  console.log('📱 Manifest API chamada - tema:', theme);
 
   // Cores baseadas no tema
   const colors = {
@@ -20,8 +18,6 @@ export async function GET(request: NextRequest) {
   };
 
   const selectedColors = colors[theme as keyof typeof colors] || colors.light;
-  
-  console.log('🎨 Cores selecionadas:', selectedColors);
 
   const manifest = {
     name: 'Scrum Poker - Planning Poker Online',
@@ -87,7 +83,9 @@ export async function GET(request: NextRequest) {
   return NextResponse.json(manifest, {
     headers: {
       'Content-Type': 'application/manifest+json',
-      'Cache-Control': 'public, max-age=300', // Cache por 5 minutos (para testes)
+      'Cache-Control': 'no-cache, no-store, must-revalidate', // Força recarregamento para testes
+      'Pragma': 'no-cache',
+      'Expires': '0',
     },
   });
 }
