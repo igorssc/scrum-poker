@@ -1,10 +1,11 @@
 'use client';
 import { RoomContext } from '@/context/RoomContext';
 import { RoomProps } from '@/protocols/Room';
-import { getCoordinates } from '@/utils/getCoordinates';
 import { handleApiError } from '@/utils/errorHandler';
+import { getCoordinates } from '@/utils/getCoordinates';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { useContextSelector } from 'use-context-selector';
 import { Button } from './Button';
 import { Select } from './Select';
@@ -36,26 +37,24 @@ export const SearchRoom = () => {
     setIsSearching(true);
 
     try {
-      const permissionStatus = await navigator.permissions.query({
-        name: 'geolocation',
+      // Tentativa direta de obter localização (funciona melhor no Firefox)
+      const { latitude, longitude } = await getCoordinates();
+
+      const rooms = await getRoomsByLocation({
+        distance: +distance,
+        lat: latitude,
+        lng: longitude,
       });
 
-      if (permissionStatus.state === 'granted') {
-        const { latitude, longitude } = await getCoordinates();
-
-        const rooms = await getRoomsByLocation({
-          distance: +distance,
-          lat: latitude,
-          lng: longitude,
-        });
-
-        setAvailableRooms(rooms.data as RoomProps[]);
-        setHasSearched(true);
+      setAvailableRooms(rooms.data as RoomProps[]);
+      setHasSearched(true);
+    } catch (error: any) {
+      // Se o erro é relacionado à permissão de geolocalização
+      if (error?.code === 1 || error?.message?.includes('permission') || error?.message?.includes('denied')) {
+        toast.error('Permissão de localização negada. Não foi possível buscar salas próximas.');
       } else {
-        navigator.geolocation.getCurrentPosition(() => {});
+        handleApiError(error, 'Erro ao buscar salas próximas');
       }
-    } catch (error) {
-      handleApiError(error, 'Erro ao buscar salas próximas');
     } finally {
       setIsSearching(false);
     }
