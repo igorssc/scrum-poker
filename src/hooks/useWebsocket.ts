@@ -12,7 +12,7 @@ export const useWebsocket = () => {
     }
 
     // Cria nova instância apenas se necessário
-    globalSocket = io('ws://localhost:8089', {
+    globalSocket = io(process.env.NEXT_PUBLIC_WS_URL, {
       transports: ['websocket'],
       reconnection: true,
       reconnectionAttempts: 5,
