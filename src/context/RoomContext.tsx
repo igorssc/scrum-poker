@@ -140,15 +140,23 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
 
   const createRoom = async ({ roomName, userName, theme }: CreateRoomProps) => {
     try {
-      const { latitude, longitude } = await getCoordinates();
-
-      const { data } = await api.post<RoomPropsProtocols>('rooms', {
+      // Tenta obter coordenadas, mas não bloqueia a criação da sala se falhar
+      let roomData: any = {
         name: roomName,
         user_name: userName,
-        lat: latitude,
-        lng: longitude,
         theme,
-      });
+      };
+
+      try {
+        const { latitude, longitude } = await getCoordinates();
+        roomData.lat = latitude;
+        roomData.lng = longitude;
+      } catch (locationError) {
+        // Se falhar ao obter localização, cria sala sem coordenadas
+        console.log('Criando sala sem localização:', locationError);
+      }
+
+      const { data } = await api.post<RoomPropsProtocols>('rooms', roomData);
 
       const newRoom = {
         id: data.id,
