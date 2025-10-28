@@ -163,7 +163,7 @@ export const Cards = () => {
     try {
       await vote(icon);
     } catch (error) {
-      console.error('Erro ao votar na carta:', error);
+      // Error já tratado no useRoomActions com toast
     }
   };
 

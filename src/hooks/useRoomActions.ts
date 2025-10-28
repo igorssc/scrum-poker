@@ -1,6 +1,7 @@
+import { RoomContext } from '@/context/RoomContext';
+import { handleApiError } from '@/utils/errorHandler';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useContextSelector } from 'use-context-selector';
-import { RoomContext } from '@/context/RoomContext';
 
 export const useRoomActions = () => {
   const { room, user } = useContextSelector(RoomContext, context => ({
@@ -82,7 +83,7 @@ export const useRoomActions = () => {
     try {
       await revealCardsMutation.mutateAsync();
     } catch (error) {
-      console.error('Erro ao revelar cartas:', error);
+      handleApiError(error, 'Erro ao revelar cartas');
       throw error;
     }
   };
@@ -92,7 +93,7 @@ export const useRoomActions = () => {
     try {
       await clearVotesMutation.mutateAsync();
     } catch (error) {
-      console.error('Erro ao limpar votos:', error);
+      handleApiError(error, 'Erro ao limpar votos');
       throw error;
     }
   };
@@ -102,7 +103,7 @@ export const useRoomActions = () => {
     try {
       await voteMutation.mutateAsync(cardName);
     } catch (error) {
-      console.error('Erro ao votar:', error);
+      handleApiError(error, 'Erro ao votar');
       throw error;
     }
   };

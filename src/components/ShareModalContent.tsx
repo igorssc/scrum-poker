@@ -2,6 +2,7 @@
 
 import QRCode from 'qrcode';
 import { useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 import { Button } from './Button';
 
 type ShareModalContentProps = {
@@ -40,7 +41,7 @@ export const ShareModalContent = ({
           },
         },
         error => {
-          if (error) console.error('Erro ao gerar QR Code:', error);
+          if (error) toast.error('Erro ao gerar QR Code');
         }
       );
     }
@@ -52,7 +53,7 @@ export const ShareModalContent = ({
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
-      console.error('Erro ao copiar:', error);
+      toast.error('Erro ao copiar link');
     }
   };
 
@@ -65,7 +66,7 @@ export const ShareModalContent = ({
           url: shareUrl,
         });
       } catch (error) {
-        console.error('Erro ao compartilhar:', error);
+        toast.error('Erro ao compartilhar link');
       }
     }
   };

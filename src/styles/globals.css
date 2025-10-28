@@ -165,4 +165,9 @@
   .dark .scrollbar-thumb-purple-300::-webkit-scrollbar-thumb {
     background-color: rgb(75 85 99);
   }
+
+  /* Toast styles - Animações suaves */
+  [data-hot-toast] {
+    transition: all 0.3s ease !important;
+  }
 }

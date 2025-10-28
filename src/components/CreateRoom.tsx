@@ -35,7 +35,7 @@ export const CreateRoom = ({ setIsLookingForRoom }: CreateRoomProps) => {
         theme: 'nature',
       });
     } catch (error) {
-      console.error('Erro ao criar sala:', error);
+      // Error já tratado no RoomContext com toast
     } finally {
       setIsCreating(false);
     }

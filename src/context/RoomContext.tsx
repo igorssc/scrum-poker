@@ -5,6 +5,7 @@ import { createContext } from 'use-context-selector';
 import { MemberProps } from '../protocols/Member';
 import { RoomProps as RoomPropsProtocols } from '../protocols/Room';
 import api from '../services/api';
+import { handleApiError } from '../utils/errorHandler';
 import { getCoordinates } from '../utils/getCoordinates';
 
 type CreateRoomProps = {
@@ -138,9 +139,9 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
   }, [channel, room]);
 
   const createRoom = async ({ roomName, userName, theme }: CreateRoomProps) => {
-    const { latitude, longitude } = await getCoordinates();
-
     try {
+      const { latitude, longitude } = await getCoordinates();
+
       const { data } = await api.post<RoomPropsProtocols>('rooms', {
         name: roomName,
         user_name: userName,
@@ -164,7 +165,7 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
 
       channel.postMessage({ type: 'login-scrum-poker', tabId });
     } catch (error) {
-      console.error(error);
+      handleApiError(error, 'Erro ao criar sala');
     }
   };
 
@@ -198,25 +199,34 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
         channel.postMessage({ type: 'waiting-login-scrum-poker', roomId, tabId });
       }
     } catch (error) {
-      console.error(error);
+      handleApiError(error, 'Erro ao entrar na sala');
     } finally {
       setWaitingLogin(false);
     }
   };
 
   const getRoomsByLocation = async ({ distance, lat, lng }: GetRoomsByLocationProps) => {
-    const rooms = await api.get(`rooms/location?lat=${lat}&lng=${lng}&max_distance=${distance}`);
-
-    return rooms;
+    try {
+      const rooms = await api.get(`rooms/location?lat=${lat}&lng=${lng}&max_distance=${distance}`);
+      return rooms;
+    } catch (error) {
+      handleApiError(error, 'Erro ao buscar salas próximas');
+      throw error;
+    }
   };
 
   const acceptUser = async (userId: string) => {
     if (room && user) {
-      await api.post(`rooms/${room.id}/sign-in/accept`, {
-        owner_id: user.id,
-        user_id: userId,
-        access: room.access,
-      });
+      try {
+        await api.post(`rooms/${room.id}/sign-in/accept`, {
+          owner_id: user.id,
+          user_id: userId,
+          access: room.access,
+        });
+      } catch (error) {
+        handleApiError(error, 'Erro ao aceitar usuário');
+        throw error;
+      }
     }
   };
 
@@ -229,7 +239,8 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
           access: room.access,
         });
       } catch (error) {
-        console.error(error);
+        handleApiError(error, 'Erro ao recusar usuário');
+        throw error;
       }
     }
   };
@@ -243,19 +254,28 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
   const logout = async (props?: LogoutProps) => {
     const { redirect = '/' } = props || {};
 
-    if (room && user) {
-      await api.post(`rooms/${room.id}/sign-out`, {
-        user_action_id: user.id,
-        user_id: user.id,
-        room_id: room.id,
-      });
+    try {
+      if (room && user) {
+        await api.post(`rooms/${room.id}/sign-out`, {
+          user_action_id: user.id,
+          user_id: user.id,
+          room_id: room.id,
+        });
+      }
+
+      setRoom(null);
+      setUser(null);
+      setWaitingLogin(false);
+
+      channel.postMessage({ type: 'logout-scrum-poker', redirect, tabId });
+    } catch (error) {
+      handleApiError(error, 'Erro ao fazer logout');
+      // Mesmo com erro, vamos limpar o estado local
+      setRoom(null);
+      setUser(null);
+      setWaitingLogin(false);
+      channel.postMessage({ type: 'logout-scrum-poker', redirect, tabId });
     }
-
-    setRoom(null);
-    setUser(null);
-    setWaitingLogin(false);
-
-    channel.postMessage({ type: 'logout-scrum-poker', redirect, tabId });
   };
 
   return (

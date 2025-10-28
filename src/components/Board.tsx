@@ -64,6 +64,7 @@ export const Board = () => {
                 onClick={clearVotes}
                 isLoading={isClearingVotes}
                 variant="tertiary"
+                disabled={isRevealingCards || isClearingVotes || !data?.data.cards_open}
               >
                 Limpar votos
               </Button>
@@ -72,6 +73,7 @@ export const Board = () => {
                 onClick={revealCards}
                 isLoading={isRevealingCards}
                 variant="tertiary"
+                disabled={isRevealingCards || isClearingVotes || data?.data.cards_open}
               >
                 Revelar cartas
               </Button>

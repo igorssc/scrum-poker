@@ -11,6 +11,7 @@ import { RoomContext } from '@/context/RoomContext';
 import { MemberProps } from '@/protocols/Member';
 import { RoomProps } from '@/protocols/Room';
 import api from '@/services/api';
+import { handleApiError } from '@/utils/errorHandler';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useContextSelector } from 'use-context-selector';
@@ -29,7 +30,14 @@ export default function BoardPage() {
 
   const { data, error } = useQuery<{ data: { members: MemberProps[] } & RoomProps }>({
     queryKey: ['room', room?.id],
-    queryFn: () => api.get(`rooms/${room?.id}`),
+    queryFn: async () => {
+      try {
+        return await api.get(`rooms/${room?.id}`);
+      } catch (error) {
+        handleApiError(error, 'Erro ao carregar dados da sala');
+        throw error;
+      }
+    },
     enabled: !!room?.id,
     refetchInterval: 3000,
     retry: (failureCount, error: any) => {

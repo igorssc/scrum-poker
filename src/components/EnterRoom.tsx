@@ -35,7 +35,7 @@ export const EnterRoom = ({ roomId, roomName, access }: EnterRoomProps) => {
       try {
         await enterRoom({ roomId, userName: userName.current.value, access });
       } catch (error) {
-        console.error('Erro ao entrar na sala:', error);
+        // Error já tratado no RoomContext com toast
       } finally {
         setIsEntering(false);
       }

@@ -3,6 +3,7 @@
 import { RoomContext } from '@/context/RoomContext';
 import { useRoomCache } from '@/hooks/useRoomCache';
 import api from '@/services/api';
+import { handleApiError, showSuccessToast } from '@/utils/errorHandler';
 import * as Popover from '@radix-ui/react-popover';
 import Image from 'next/image';
 import path from 'path';
@@ -79,8 +80,9 @@ export const UsersList = () => {
         user_id: userToRemove.id,
         user_action_id: user.id,
       });
+      showSuccessToast('Usuário removido com sucesso!');
     } catch (error) {
-      console.error('Erro ao remover usuário:', error);
+      handleApiError(error, 'Erro ao remover usuário');
     } finally {
       setRemovingUsers(prev => {
         const newSet = new Set(prev);

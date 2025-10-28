@@ -2,6 +2,7 @@
 import { RoomContext } from '@/context/RoomContext';
 import { RoomProps } from '@/protocols/Room';
 import { getCoordinates } from '@/utils/getCoordinates';
+import { handleApiError } from '@/utils/errorHandler';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useContextSelector } from 'use-context-selector';
@@ -54,7 +55,7 @@ export const SearchRoom = () => {
         navigator.geolocation.getCurrentPosition(() => {});
       }
     } catch (error) {
-      console.error('Erro ao buscar salas:', error);
+      handleApiError(error, 'Erro ao buscar salas próximas');
     } finally {
       setIsSearching(false);
     }

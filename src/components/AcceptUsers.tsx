@@ -61,7 +61,7 @@ export const AcceptUsers = () => {
     try {
       await acceptUser(userId);
     } catch (error) {
-      console.error('Erro ao aceitar usuário:', error);
+      // Error já tratado no RoomContext com toast
     } finally {
       setUserLoading(userId, false);
     }
@@ -74,7 +74,7 @@ export const AcceptUsers = () => {
     try {
       await refuseUser(userId);
     } catch (error) {
-      console.error('Erro ao recusar usuário:', error);
+      // Error já tratado no RoomContext com toast
     } finally {
       setUserLoading(userId, false);
     }

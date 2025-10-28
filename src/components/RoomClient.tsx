@@ -9,6 +9,7 @@ import { useWebsocket } from '@/hooks/useWebsocket';
 import { MemberProps } from '@/protocols/Member';
 import { RoomProps } from '@/protocols/Room';
 import api from '@/services/api';
+import { handleApiError } from '@/utils/errorHandler';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -68,8 +69,16 @@ export function RoomClient({ roomId, access }: RoomClientProps) {
     data: { members: MemberProps[] } & RoomProps;
   }>({
     queryKey: ['room', roomId],
-    queryFn: () => api.get(`rooms/${roomId}`),
+    queryFn: async () => {
+      try {
+        return await api.get(`rooms/${roomId}`);
+      } catch (error) {
+        handleApiError(error, 'Erro ao carregar dados da sala');
+        throw error;
+      }
+    },
     refetchInterval: 3000,
+    retry: 2,
   });
 
   useEffect(() => {
