@@ -77,12 +77,17 @@ export const ShareModalContent = ({
         <div className="py-4 sm:py-6 lg:py-8">
           <div className="flex flex-col items-center gap-6 lg:gap-8">
             {/* QR Code */}
-            <div className="bg-white p-2.5 sm:p-3 md:p-4 rounded-lg shadow-sm shadow-purple-300 dark:shadow-current">
+            <div className="bg-white p-2.5 sm:p-3 md:p-4 rounded-lg dark:shadow-sm dark:shadow-current">
               <canvas ref={canvasRef} className="max-w-full h-auto" />
             </div>
 
             {/* URL */}
             <div className="w-full flex flex-col">
+              <p className="block text-[0.65rem] text-gray-700 dark:text-gray-300 mb-4 sm:mb-5 lg:mb-6">
+                Acesso via link ou QR Code não requer autorização para salas públicas. Para alterar
+                a privacidade da sala, acesse as configurações. Em salas privadas, apenas o
+                proprietário pode aceitar novos integrantes.
+              </p>
               <label className="block text-[0.65rem] sm:text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5 sm:mb-2">
                 Link da sala:
               </label>
