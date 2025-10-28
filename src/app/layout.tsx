@@ -1,3 +1,4 @@
+import { DynamicManifest } from '@/components/DynamicManifest';
 import { GlobalTheme } from '@/components/GlobalTheme';
 import { PWAInstallBanner } from '@/components/PWAInstallBanner';
 import '@/styles/globals.css';
@@ -77,13 +78,12 @@ export default async function RootLayout({
   return (
     <html lang="pt-BR">
       <head>
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#8b5cf6" />
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
       </head>
       <body className={twMerge(inter.className)} style={{ visibility: 'hidden' }}>
         <GlobalTheme />
+        <DynamicManifest />
         <Providers>
           {children}
           <PWAInstallBanner />

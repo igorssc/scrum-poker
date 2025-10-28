@@ -8,12 +8,16 @@ const nextConfig = {
   // Compress responses
   compress: true,
   
-  // Generate static sitemap at build time
+  // Generate dynamic files at build time
   async rewrites() {
     return [
       {
         source: '/sitemap.xml',
         destination: '/api/sitemap',
+      },
+      {
+        source: '/manifest.json',
+        destination: '/api/manifest',
       },
     ];
   },
