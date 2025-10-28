@@ -32,9 +32,57 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
   const fetchAddress = async (lat: number, lng: number) => {
     setAddressLoading(true);
 
-    // Lista de APIs gratuitas para geocoding reverso com foco em endereços de rua
+    // Lista de APIs para geocoding reverso com foco em endereços de rua
     const geocodingAPIs = [
-      // 1. Nominatim (OpenStreetMap) - Customizado para rua
+      // 1. Google Geocoding API - Primeira opção (mais precisa)
+      {
+        name: 'Google',
+        url: `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&language=pt-BR&result_type=street_address|route|neighborhood|political`,
+        headers: {} as Record<string, string>,
+        extractAddress: (data: any) => {
+          if (!data.results || data.results.length === 0) return null;
+          
+          const result = data.results[0];
+          const components = result.address_components;
+          
+          const parts = [];
+          let streetNumber = '';
+          let route = '';
+          let neighborhood = '';
+          let city = '';
+          let state = '';
+          
+          // Extrai componentes específicos
+          components.forEach((component: any) => {
+            const types = component.types;
+            if (types.includes('street_number')) {
+              streetNumber = component.long_name;
+            } else if (types.includes('route')) {
+              route = component.long_name;
+            } else if (types.includes('sublocality') || types.includes('neighborhood')) {
+              neighborhood = component.long_name;
+            } else if (types.includes('administrative_area_level_2') || types.includes('locality')) {
+              city = component.long_name;
+            } else if (types.includes('administrative_area_level_1')) {
+              state = component.short_name;
+            }
+          });
+          
+          // Monta endereço priorizando rua e número
+          if (route && streetNumber) {
+            parts.push(`${route}, ${streetNumber}`);
+          } else if (route) {
+            parts.push(route);
+          }
+          
+          if (neighborhood) parts.push(neighborhood);
+          if (city) parts.push(city);
+          if (state) parts.push(state);
+          
+          return parts.length > 0 ? parts.join(', ') : result.formatted_address;
+        },
+      },
+      // 2. Nominatim (OpenStreetMap) - Fallback
       {
         name: 'Nominatim',
         url: `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=pt&addressdetails=1&zoom=18`,
@@ -66,7 +114,7 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
           return parts.length > 0 ? parts.join(', ') : data.display_name;
         },
       },
-      // 2. LocationIQ - Customizado para endereço de rua
+      // 3. LocationIQ - Customizado para endereço de rua
       {
         name: 'LocationIQ',
         url: `https://us1.locationiq.com/v1/reverse.php?key=pk.6ac1d50e5a6b64e9bfd2d43ad25e4be2&lat=${lat}&lon=${lng}&format=json&accept-language=pt&zoom=18&addressdetails=1`,
@@ -96,7 +144,7 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
           return parts.length > 0 ? parts.join(', ') : data.display_name;
         },
       },
-      // 3. Photon - Customizado para rua
+      // 4. Photon - Customizado para rua
       {
         name: 'Photon',
         url: `https://photon.komoot.io/reverse?lat=${lat}&lon=${lng}&lang=pt`,
@@ -121,7 +169,7 @@ export const LocationSection = ({ room, user }: LocationSectionProps) => {
           return parts.length > 0 ? parts.join(', ') : props.name;
         },
       },
-      // 4. BigDataCloud - Simplificado
+      // 5. BigDataCloud - Simplificado
       {
         name: 'BigDataCloud',
         url: `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=pt`,
