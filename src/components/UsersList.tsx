@@ -251,7 +251,7 @@ export const UsersList = () => {
                       className={twMerge(
                         'group flex items-center justify-between p-2 sm:p-3 text-[0.65rem] md:text-xs lg:text-sm rounded-lg min-h-8 sm:min-h-10 md:min-h-12 transition-colors',
                         memberIsOwner && isOwner
-                          ? 'bg-gray-200 dark:bg-gray-800 cursor-not-allowed'
+                          ? 'bg-gray-200 dark:bg-gray-600 cursor-not-allowed'
                           : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200/60 dark:hover:bg-gray-600'
                       )}
                     >
@@ -299,7 +299,7 @@ export const UsersList = () => {
                             <Popover.Trigger asChild>
                               <button
                                 disabled={removingUsers.has(member.member.id)}
-                                className="cursor-pointer p-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-all duration-200 disabled:opacity-30 shrink-0 rounded-full"
+                                className="cursor-pointer p-1 text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300 transition-all duration-200 disabled:opacity-30 shrink-0 rounded-full"
                                 title="Opções do usuário"
                               >
                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
