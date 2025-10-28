@@ -1,5 +1,5 @@
 // Service Worker para Scrum Poker PWA
-const VERSION = 'v4';
+const VERSION = 'v5';
 const CACHE_NAME = `scrum-poker-${VERSION}`;
 const OFFLINE_URL = '/';
 
@@ -75,6 +75,14 @@ self.addEventListener('fetch', event => {
 
   // Handle HTML pages
   if (event.request.headers.get('accept')?.includes('text/html')) {
+    // Para páginas que não são a home, deixa o Next.js lidar com o roteamento
+    if (url.pathname !== '/' && url.pathname !== '/index.html') {
+      console.log('SW: Allowing Next.js to handle route:', url.pathname);
+      // Não intercepta - deixa o Next.js roteamento funcionar
+      return;
+    }
+    
+    // Apenas para a home page
     event.respondWith(
       // Try network first
       fetch(event.request)
@@ -88,17 +96,16 @@ self.addEventListener('fetch', event => {
           return response;
         })
         .catch(() => {
-          console.log('SW: Network failed for page, trying cache:', url.pathname);
-          // If network fails, try cache
+          console.log('SW: Network failed for home page, serving cached version');
+          // Only fallback to cache for home page
           return caches.match(event.request)
             .then(cachedResponse => {
               if (cachedResponse) {
-                console.log('SW: Serving cached page:', url.pathname);
+                console.log('SW: Serving cached home page');
                 return cachedResponse;
               }
-              // Final fallback: serve home page
-              console.log('SW: Serving home page as fallback');
-              return caches.match(OFFLINE_URL);
+              // If no cached home, let it fail naturally
+              throw new Error('No cached home page available');
             });
         })
     );

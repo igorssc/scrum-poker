@@ -21,7 +21,9 @@ export const ServiceWorkerRegistration = () => {
               if (newWorker) {
                 newWorker.addEventListener('statechange', () => {
                   if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    console.log('New SW available, will activate on next reload');
+                    console.log('New SW available, activating immediately');
+                    // Força ativação imediata da nova versão
+                    newWorker.postMessage({ type: 'SKIP_WAITING' });
                   }
                 });
               }
@@ -33,7 +35,9 @@ export const ServiceWorkerRegistration = () => {
 
         // Listener para quando o SW toma controle
         navigator.serviceWorker.addEventListener('controllerchange', () => {
-          console.log('SW controller changed');
+          console.log('SW controller changed - reloading page');
+          // Recarrega página quando nova versão do SW assume controle
+          window.location.reload();
         });
       });
     }
