@@ -10,7 +10,7 @@ type ThemeIconProps = {
 const sizeClasses = {
   sm: 'w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4',
   md: 'w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5',
-  lg: 'w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6',
+  lg: 'w-4 h-4',
 };
 
 export const ThemeIcon = ({ theme, size = 'md', className = '' }: ThemeIconProps) => {
