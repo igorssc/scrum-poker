@@ -9,8 +9,10 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Scrum Poker - Planning Poker Online Gratuito',
-  description: 'Planning Poker online gratuito para equipes ágeis. Estime tarefas de forma colaborativa com seu time usando Scrum Poker. Interface simples e intuitiva.',
-  keywords: 'scrum poker, planning poker, estimativa ágil, metodologia ágil, scrum, planning, poker, estimativa, desenvolvimento ágil',
+  description:
+    'Planning Poker online gratuito para equipes ágeis. Estime tarefas de forma colaborativa com seu time usando Scrum Poker. Interface simples e intuitiva.',
+  keywords:
+    'scrum poker, planning poker, estimativa ágil, metodologia ágil, scrum, planning, poker, estimativa, desenvolvimento ágil',
   authors: [{ name: 'Igor Costa', url: 'https://github.com/igorssc' }],
   creator: 'Igor Costa',
   publisher: 'Igor Costa',
@@ -25,7 +27,8 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Scrum Poker - Planning Poker Online Gratuito',
-    description: 'Planning Poker online gratuito para equipes ágeis. Estime tarefas de forma colaborativa com seu time.',
+    description:
+      'Planning Poker online gratuito para equipes ágeis. Estime tarefas de forma colaborativa com seu time.',
     url: 'https://scrumpoker.dev.br',
     siteName: 'Scrum Poker',
     locale: 'pt_BR',
@@ -34,7 +37,8 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Scrum Poker - Planning Poker Online Gratuito',
-    description: 'Planning Poker online gratuito para equipes ágeis. Estime tarefas de forma colaborativa com seu time.',
+    description:
+      'Planning Poker online gratuito para equipes ágeis. Estime tarefas de forma colaborativa com seu time.',
     creator: '@igorssc',
   },
   robots: {
@@ -49,7 +53,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: 'google-site-verification-code', // Substituir pelo código real do Google Search Console
+    google: 'google-site-verification=1EANzAxO-q2AbTKizXGxDyH49kux9sHLtzZnpcbcALk',
   },
 };
 
