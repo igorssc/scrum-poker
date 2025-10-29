@@ -172,11 +172,11 @@ export const Cards = () => {
     const cardCount = allCards.length;
 
     if (cardCount === 12) {
-      // 12 cartas: 3 linhas de 4 (mobile) / 2 linhas de 6 (desktop)
-      return 'relative grid grid-cols-4 md:grid-cols-6 gap-x-2 gap-y-3 sm:gap-x-3 sm:gap-y-4 md:gap-x-4 md:gap-y-5 justify-items-center w-full h-fit';
+      // 12 cartas: 3 linhas de 4 (mobile) / 2 linhas de 6 (desktop) - espaçamentos reduzidos
+      return 'relative grid grid-cols-4 md:grid-cols-6 gap-x-1.5 gap-y-2 sm:gap-x-2 sm:gap-y-2.5 md:gap-x-2.5 md:gap-y-3 justify-items-center w-full h-fit';
     } else {
-      // 10 cartas: layout original (5 colunas)
-      return 'relative grid grid-cols-5 gap-x-2 gap-y-3 sm:gap-x-3 sm:gap-y-4 md:gap-x-4 md:gap-y-5 justify-items-center w-full h-fit';
+      // 10 cartas: layout original (5 colunas) - espaçamentos reduzidos
+      return 'relative grid grid-cols-5 gap-x-1.5 gap-y-2 sm:gap-x-2 sm:gap-y-2.5 md:gap-x-2.5 md:gap-y-3 justify-items-center w-full h-fit';
     }
   };
 

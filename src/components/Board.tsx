@@ -54,34 +54,41 @@ export const Board = () => {
       <main className="flex flex-col gap-3 sm:gap-4 md:gap-6">
         {(!data?.data.private || room?.owner_id === user?.id) && <AcceptUsers />}
 
-        <Box className="max-w-full min-h-0! flex flex-col gap-y-3 sm:gap-y-4 md:gap-y-6 lg:gap-y-8">
-          <Cards />
+        {/* Layout responsivo: coluna em mobile/tablet, lado a lado em lg+ */}
+        <div className="flex flex-col lg:flex-row lg:items-start gap-3 sm:gap-4 md:gap-6">
+          {/* Cards Section */}
+          <Box className="max-w-full lg:flex-1 min-h-0! flex flex-col gap-y-3 sm:gap-y-4 md:gap-y-6 lg:gap-y-8">
+            <Cards />
 
-          {isOwner && (
-            <Flex className="w-full flex-row gap-2 md:gap-4">
-              <Button
-                className="flex-1"
-                onClick={clearVotes}
-                isLoading={isClearingVotes}
-                variant="tertiary"
-                disabled={isRevealingCards || isClearingVotes || !data?.data.cards_open}
-              >
-                Limpar votos
-              </Button>
-              <Button
-                className="flex-1"
-                onClick={revealCards}
-                isLoading={isRevealingCards}
-                variant="tertiary"
-                disabled={isRevealingCards || isClearingVotes || data?.data.cards_open}
-              >
-                Revelar cartas
-              </Button>
-            </Flex>
-          )}
-        </Box>
+            {isOwner && (
+              <Flex className="w-full flex-row gap-2 md:gap-4">
+                <Button
+                  className="flex-1"
+                  onClick={clearVotes}
+                  isLoading={isClearingVotes}
+                  variant="tertiary"
+                  disabled={isRevealingCards || isClearingVotes || !data?.data.cards_open}
+                >
+                  Limpar votos
+                </Button>
+                <Button
+                  className="flex-1"
+                  onClick={revealCards}
+                  isLoading={isRevealingCards}
+                  variant="tertiary"
+                  disabled={isRevealingCards || isClearingVotes || data?.data.cards_open}
+                >
+                  Revelar cartas
+                </Button>
+              </Flex>
+            )}
+          </Box>
 
-        <UsersList />
+          {/* Users List - lateral em lg+ */}
+          <div className="lg:w-80 lg:shrink-0">
+            <UsersList />
+          </div>
+        </div>
       </main>
     </div>
   );

@@ -141,13 +141,13 @@ export const UsersList = () => {
     <div>
       {/* Membros Logados */}
       {organizedMembers.length > 0 && (
-        <Box className="min-h-0! max-w-full p-3 sm:p-4 md:p-6 lg:p-8">
-          <Flex className="gap-3 sm:gap-4 md:gap-6 lg:gap-8">
+        <Box className="min-h-0! max-w-full p-3 sm:p-4 md:p-4 lg:p-5">
+          <Flex className="gap-2 sm:gap-3 md:gap-4">
             <h3 className="text-xs md:text-sm xl:text-md font-medium text-center">
               Membros Ativos ({organizedMembers.length})
             </h3>
 
-            <div className="w-full space-y-3">
+            <div className="w-full space-y-2">
               {organizedMembers.map((member, index) => {
                 const hasVoted = !!member.vote;
                 const isFlipping = flippingCards.has(member.id);
@@ -174,9 +174,9 @@ export const UsersList = () => {
                   if (cardsOpen) {
                     // Cartas reveladas - mostrar a carta real ou animação de flip
                     voteDisplay = (
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5">
                         <div
-                          className={`relative w-6 h-8 sm:w-7 sm:h-10 md:w-8 md:h-12 ${isFlipping ? 'flip-container' : ''}`}
+                          className={`relative w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9 ${isFlipping ? 'flip-container' : ''}`}
                         >
                           {isFlipping ? (
                             <>
@@ -185,9 +185,9 @@ export const UsersList = () => {
                                 <Image
                                   alt="Card back"
                                   src="/assets/cards/nature/verse.svg"
-                                  width={32}
-                                  height={48}
-                                  className="w-6 h-8 sm:w-7 sm:h-10 md:w-8 md:h-12 rounded"
+                                  width={24}
+                                  height={36}
+                                  className="w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9 rounded"
                                 />
                               </div>
                               {/* Carta real - segunda metade da animação */}
@@ -195,9 +195,9 @@ export const UsersList = () => {
                                 <Image
                                   alt={`Card ${member.vote}`}
                                   src={path.join('assets', 'cards', member.vote)}
-                                  width={32}
-                                  height={48}
-                                  className="w-6 h-8 sm:w-7 sm:h-10 md:w-8 md:h-12 rounded"
+                                  width={24}
+                                  height={36}
+                                  className="w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9 rounded"
                                 />
                               </div>
                             </>
@@ -206,9 +206,9 @@ export const UsersList = () => {
                             <Image
                               alt={`Card ${member.vote}`}
                               src={path.join('assets', 'cards', member.vote)}
-                              width={32}
-                              height={48}
-                              className="w-6 h-8 sm:w-7 sm:h-10 md:w-8 md:h-12 rounded"
+                              width={24}
+                              height={36}
+                              className="w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9 rounded"
                             />
                           )}
                         </div>
@@ -218,13 +218,13 @@ export const UsersList = () => {
                   } else {
                     // Cartas não reveladas - mostrar o verso
                     voteDisplay = (
-                      <div className="relative w-6 h-8 sm:w-7 sm:h-10 md:w-8 md:h-12">
+                      <div className="relative w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9">
                         <Image
                           alt="Card back"
                           src="/assets/cards/nature/verse.svg"
-                          width={32}
-                          height={48}
-                          className="w-6 h-8 sm:w-7 sm:h-10 md:w-8 md:h-12 rounded"
+                          width={24}
+                          height={36}
+                          className="w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9 rounded"
                         />
                       </div>
                     );
@@ -237,7 +237,7 @@ export const UsersList = () => {
                     {/* Separador de grupo de voto */}
                     {isNewVoteGroup && (
                       <div
-                        className={`flex items-center gap-2 mb-2 md:mb-4 ${index > 0 ? 'mt-2 md:mt-4' : ''}`}
+                        className={`flex items-center gap-2 mb-1.5 md:mb-2 ${index > 0 ? 'mt-1.5 md:mt-2' : ''}`}
                       >
                         <div className="h-px bg-gray-300 dark:bg-gray-600 flex-1"></div>
                         <span className="text-xs font-medium text-gray-700 dark:text-gray-400 px-2">
@@ -249,28 +249,17 @@ export const UsersList = () => {
 
                     <div
                       className={twMerge(
-                        'group flex items-center justify-between p-2 sm:p-3 text-[0.65rem] md:text-xs lg:text-sm rounded-lg min-h-8 sm:min-h-10 md:min-h-12 transition-colors',
+                        'group flex items-center justify-between p-2 sm:p-2.5 md:p-2.5 text-[0.65rem] md:text-xs lg:text-sm rounded-lg min-h-8 sm:min-h-9 md:min-h-10 transition-colors',
                         memberIsOwner && isOwner
                           ? 'bg-gray-200 dark:bg-gray-600 cursor-not-allowed'
                           : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200/60 dark:hover:bg-gray-600'
                       )}
                     >
-                      <div className="flex items-center flex-1 gap-2">
-                        <div className="flex flex-col flex-1">
-                          <span className="font-medium">{member.member.name}</span>
-                          <span className="text-[80%] text-gray-500 dark:text-gray-400">
-                            {statusText}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2 sm:gap-3 min-w-8 sm:min-w-10 md:min-w-12 justify-end">
-                        {voteDisplay || (
-                          <div className="w-6 h-8 sm:w-7 sm:h-10 md:w-8 md:h-12"></div>
-                        )}
+                      <div className="flex items-center flex-1 gap-2 min-w-0">
+                        {/* Bolinha de status - posicionada à esquerda, centralizada */}
                         <div
                           className={twMerge(
-                            'w-3 h-3 rounded-full animate-glow-pulse',
+                            'w-2 h-2 rounded-full animate-glow-pulse shrink-0',
                             cardsOpen
                               ? hasVoted
                                 ? 'bg-green-500' // Revelado e votou - verde
@@ -290,8 +279,19 @@ export const UsersList = () => {
                           }
                         ></div>
 
-                        {/* Dropdown de ações (apenas para o owner e não para si mesmo) */}
-                        {isOwner && member.member.id !== user?.id && (
+                        <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+                          <span className="font-medium truncate mr-4">{member.member.name}</span>
+                          <span className="text-[80%] text-gray-500 dark:text-gray-400 truncate">
+                            {statusText}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 sm:gap-2 md:gap-2 min-w-8 sm:min-w-9 md:min-w-10 justify-end">
+                        {voteDisplay || <div className="w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9"></div>}
+
+                        {/* Dropdown de ações - aparece para o owner em todos os membros */}
+                        {isOwner && (
                           <Popover.Root
                             open={openPopover === member.id}
                             onOpenChange={open => setOpenPopover(open ? member.id : null)}
@@ -319,14 +319,31 @@ export const UsersList = () => {
                                 <div className="py-1">
                                   <button
                                     onClick={() => {
-                                      setUserToRemove({
-                                        id: member.member.id,
-                                        name: member.member.name,
-                                      });
-                                      setOpenPopover(null);
+                                      // Só permite remoção se não for o próprio owner
+                                      if (member.member.id !== user?.id) {
+                                        setUserToRemove({
+                                          id: member.member.id,
+                                          name: member.member.name,
+                                        });
+                                        setOpenPopover(null);
+                                      }
                                     }}
-                                    disabled={removingUsers.has(member.member.id)}
-                                    className="cursor-pointer w-full flex items-center gap-2 px-3 py-2 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    disabled={
+                                      removingUsers.has(member.member.id) ||
+                                      member.member.id === user?.id
+                                    }
+                                    className={twMerge(
+                                      'w-full flex items-center gap-2 px-3 py-2 text-xs transition-colors',
+                                      member.member.id === user?.id
+                                        ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                                        : 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer',
+                                      'disabled:opacity-50 disabled:cursor-not-allowed'
+                                    )}
+                                    title={
+                                      member.member.id === user?.id
+                                        ? 'Você não pode remover a si mesmo'
+                                        : 'Remover da sala'
+                                    }
                                   >
                                     <FaTimes className="w-3 h-3" />
                                     Remover da sala

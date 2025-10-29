@@ -256,6 +256,20 @@ export const NavBar = () => {
                 title={isRunning ? 'Clique para pausar' : 'Clique para iniciar'}
               >
                 <div className="flex items-center gap-2">
+                  {/* Ícone Play/Pause */}
+                  {isRunning ? (
+                    // Ícone de Pause
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+                    </svg>
+                  ) : (
+                    // Ícone de Play
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  )}
+                  
+                  {/* Ícone do relógio */}
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
