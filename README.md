@@ -1,4 +1,4 @@
-<img width="1280" height="720" alt="screenshot-wide" src="https://github.com/user-attachments/assets/76c2c946-c9f5-4a87-be0a-66c0eb3093ab" />
+<img width="1139" height="429" alt="og-image" src="https://github.com/user-attachments/assets/945c70d8-d520-484a-ab86-849f72ff457b" />
 
 # 🃏 Scrum Poker - Planning Poker Online
 
