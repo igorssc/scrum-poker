@@ -6,276 +6,293 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.1.16-38B2AC)](https://tailwindcss.com/)
 [![PWA](https://img.shields.io/badge/PWA-Ready-green)](https://web.dev/progressive-web-apps/)
 
-Uma aplicação moderna de **Planning Poker** para equipes ágeis, desenvolvida com Next.js 16, React 19 e TypeScript. Oferece salas colaborativas em tempo real, estimativas com cartas de Planning Poker, busca por proximidade geográfica e funciona como PWA (Progressive Web App).
+A modern **Planning Poker** application for agile teams, built with Next.js 16, React 19, and TypeScript. Features real-time collaborative rooms, Planning Poker card estimation, geographic proximity search, and works as a PWA (Progressive Web App).
 
 <img width="1139" height="429" alt="og-image" src="https://github.com/user-attachments/assets/945c70d8-d520-484a-ab86-849f72ff457b" />
 
-## ✨ Funcionalidades
+## ✨ Features
 
-- 🏠 **Salas Colaborativas** - Crie e participe de salas de estimativa em tempo real
-- 🃏 **Cartas de Planning Poker** - Sistema completo de cartas para estimativa ágil
-- 🌍 **Busca por Proximidade** - Encontre salas próximas geograficamente
-- 🎨 **Temas Dinâmicos** - Modo claro/escuro com sincronização automática
-- 📱 **PWA Completo** - Instale como app nativo no dispositivo
-- 🔄 **Offline-First** - Funciona offline com Service Worker
-- 🎯 **Real-time** - WebSocket para atualizações instantâneas
-- 🎉 **Animações** - Confetti e animações suaves
-- 📍 **QR Code** - Compartilhamento fácil de salas via QR Code
-- 🔔 **Notificações** - Sistema de toast elegante e responsivo
+- 🏠 **Collaborative Rooms** - Create and join real-time estimation rooms
+- 🃏 **Planning Poker Cards** - Complete card system for agile estimation
+- 🌍 **Proximity Search** - Find nearby rooms geographically
+- 🎨 **Dynamic Themes** - Light/dark mode with automatic sync
+- 📱 **Full PWA** - Install as native app on devices
+- 🔄 **Offline-First** - Works offline with Service Worker
+- 🎯 **Real-time** - WebSocket for instant updates
+- 🎉 **Animations** - Confetti and smooth animations
+- 📍 **QR Code** - Easy room sharing via QR Code
+- 🔔 **Notifications** - Elegant and responsive toast system
 
-## 🛠️ Tecnologias Principais
+## 🛠️ Main Technologies
 
 ### **Frontend Core**
-- **[Next.js 16.0.0](https://nextjs.org/)** - Framework React com App Router
-- **[React 19](https://reactjs.org/)** - Biblioteca UI com hooks modernos
-- **[TypeScript 5](https://www.typescriptlang.org/)** - Tipagem estática
+
+- **[Next.js 16.0.0](https://nextjs.org/)** - React framework with App Router
+- **[React 19](https://reactjs.org/)** - UI library with modern hooks
+- **[TypeScript 5](https://www.typescriptlang.org/)** - Static typing
 
 ### **Styling & UI**
-- **[Tailwind CSS 4.1.16](https://tailwindcss.com/)** - Framework CSS utilitário
-- **[Tailwind Merge](https://github.com/dcastil/tailwind-merge)** - Merge de classes Tailwind
-- **[Lucide React](https://lucide.dev/)** - Ícones SVG modernos
-- **[React Icons](https://react-icons.github.io/react-icons/)** - Biblioteca de ícones
+
+- **[Tailwind CSS 4.1.16](https://tailwindcss.com/)** - Utility-first CSS framework
+- **[Tailwind Merge](https://github.com/dcastil/tailwind-merge)** - Merge Tailwind classes
+- **[Lucide React](https://lucide.dev/)** - Modern SVG icons
+- **[React Icons](https://react-icons.github.io/react-icons/)** - Icon library
 
 ### **State Management & Data**
-- **[TanStack Query 5.90.5](https://tanstack.com/query)** - Cache e sincronização de dados
-- **[Zustand 5.0.8](https://zustand-demo.pmnd.rs/)** - State management minimalista
-- **[use-context-selector](https://github.com/dai-shi/use-context-selector)** - Context otimizado
+
+- **[TanStack Query 5.90.5](https://tanstack.com/query)** - Data caching and synchronization
+- **[Zustand 5.0.8](https://zustand-demo.pmnd.rs/)** - Minimalist state management
+- **[use-context-selector](https://github.com/dai-shi/use-context-selector)** - Optimized Context
 
 ### **Real-time & Network**
-- **[Socket.IO Client 4.8.1](https://socket.io/)** - WebSocket para comunicação real-time
-- **[Axios 1.12.2](https://axios-http.com/)** - Cliente HTTP
+
+- **[Socket.IO Client 4.8.1](https://socket.io/)** - WebSocket for real-time communication
+- **[Axios 1.12.2](https://axios-http.com/)** - HTTP client
 
 ### **PWA & Experience**
-- **Service Worker** - Cache inteligente e funcionalidade offline
-- **Web App Manifest** - Configuração PWA com temas dinâmicos
-- **[React Hot Toast 2.6.0](https://react-hot-toast.com/)** - Sistema de notificações
+
+- **Service Worker** - Smart caching and offline functionality
+- **Web App Manifest** - PWA configuration with dynamic themes
+- **[React Hot Toast 2.6.0](https://react-hot-toast.com/)** - Notification system
 
 ### **UI Components**
-- **[Radix UI](https://www.radix-ui.com/)** - Componentes acessíveis
-  - `@radix-ui/react-popover` - Popovers acessíveis
-  - `@radix-ui/react-tooltip` - Tooltips profissionais
+
+- **[Radix UI](https://www.radix-ui.com/)** - Accessible components
+  - `@radix-ui/react-popover` - Accessible popovers
+  - `@radix-ui/react-tooltip` - Professional tooltips
 
 ### **Utilities**
-- **[QRCode 1.5.4](https://github.com/soldair/node-qrcode)** - Geração de QR codes
-- **[Canvas Confetti 1.9.4](https://github.com/catdad/canvas-confetti)** - Animações de confetti
+
+- **[QRCode 1.5.4](https://github.com/soldair/node-qrcode)** - QR code generation
+- **[Canvas Confetti 1.9.4](https://github.com/catdad/canvas-confetti)** - Confetti animations
 
 ### **Development Tools**
-- **[ESLint 9.38.0](https://eslint.org/)** - Linting de código
-- **[Prettier 3.6.2](https://prettier.io/)** - Formatação de código
-- **[PostCSS 8.5.6](https://postcss.org/)** - Processamento CSS
 
-## 🚀 Como Executar
+- **[ESLint 9.38.0](https://eslint.org/)** - Code linting
+- **[Prettier 3.6.2](https://prettier.io/)** - Code formatting
+- **[PostCSS 8.5.6](https://postcss.org/)** - CSS processing
 
-### **Pré-requisitos**
+## 🚀 Getting Started
+
+### **Prerequisites**
+
 - Node.js 18+
-- npm, yarn, pnpm ou bun
+- npm, yarn, pnpm or bun
 
-### **Instalação**
+### **Installation**
 
 ```bash
-# Clone o repositório
+# Clone the repository
 git clone https://github.com/igorssc/scrum-poker.git
 cd scrum-poker
 
-# Instale as dependências
+# Install dependencies
 npm install
-# ou
+# or
 yarn install
-# ou
+# or
 pnpm install
 ```
 
-### **Desenvolvimento**
+### **Development**
 
 ```bash
-# Execute o servidor de desenvolvimento
+# Run the development server
 npm run dev
-# ou
+# or
 yarn dev
-# ou
+# or
 pnpm dev
 
-# O aplicativo estará disponível em http://localhost:3002
+# The app will be available at http://localhost:3002
 ```
 
-### **Produção**
+### **Production**
 
 ```bash
-# Build para produção
+# Build for production
 npm run build
 npm run start
 
-# ou
+# or
 yarn build
 yarn start
 ```
 
-### **Scripts Disponíveis**
+### **Available Scripts**
 
 ```bash
-npm run dev          # Servidor de desenvolvimento (porta 3002)
-npm run build        # Build de produção
-npm run start        # Servidor de produção
-npm run lint         # Verificação de linting
-npm run format       # Formatação do código
-npm run format:check # Verificar formatação
+npm run dev          # Development server (port 3002)
+npm run build        # Production build
+npm run start        # Production server
+npm run lint         # Linting check
+npm run format       # Code formatting
+npm run format:check # Check formatting
 ```
 
-## 🏗️ Arquitetura
+## 🏗️ Architecture
 
-### **Estrutura do Projeto**
+### **Project Structure**
 
 ```
 src/
 ├── app/                    # App Router (Next.js 16)
-│   ├── (game)/            # Grupo de rotas do jogo
+│   ├── (game)/            # Game routes group
 │   ├── api/               # API Routes
-│   │   └── manifest/      # PWA Manifest dinâmico
-│   ├── layout.tsx         # Layout principal
-│   └── page.tsx           # Página inicial
-├── components/            # Componentes React
-│   ├── HomePage.tsx       # Página inicial
-│   ├── RoomClient.tsx     # Cliente da sala
-│   ├── ThemeColorManager.tsx  # Gerenciador de cores PWA
-│   ├── DynamicManifest.tsx    # Manifest dinâmico
-│   ├── PWAInstallBanner.tsx   # Banner de instalação PWA
-│   └── ...               # Outros componentes
+│   │   └── manifest/      # Dynamic PWA Manifest
+│   ├── layout.tsx         # Main layout
+│   └── page.tsx           # Home page
+├── components/            # React Components
+│   ├── HomePage.tsx       # Home page
+│   ├── RoomClient.tsx     # Room client
+│   ├── ThemeColorManager.tsx  # PWA color manager
+│   ├── DynamicManifest.tsx    # Dynamic manifest
+│   ├── PWAInstallBanner.tsx   # PWA install banner
+│   └── ...               # Other components
 ├── context/              # React Context
-│   └── RoomContext.tsx   # Context da sala
+│   └── RoomContext.tsx   # Room context
 ├── hooks/                # Custom Hooks
-│   ├── useWebsocket.ts   # Hook WebSocket
-│   └── useTheme.ts       # Hook de tema
-├── services/             # Serviços
-│   └── api.ts           # Cliente API
-├── utils/                # Utilitários
-└── styles/               # Estilos globais
+│   ├── useWebsocket.ts   # WebSocket hook
+│   └── useTheme.ts       # Theme hook
+├── services/             # Services
+│   └── api.ts           # API client
+├── utils/                # Utilities
+└── styles/               # Global styles
     └── globals.css
 ```
 
-### **Principais Componentes**
+### **Main Components**
 
-- **`RoomClient`** - Gerencia toda a lógica da sala de poker
-- **`ThemeColorManager`** - Controla cores do tema para PWA e mobile
-- **`DynamicManifest`** - Atualiza manifest PWA baseado no tema
-- **`PWAInstallBanner`** - Banner inteligente de instalação PWA
-- **`ServiceWorkerRegistration`** - Registro e atualização do Service Worker
+- **`RoomClient`** - Manages all poker room logic
+- **`ThemeColorManager`** - Controls theme colors for PWA and mobile
+- **`DynamicManifest`** - Updates PWA manifest based on theme
+- **`PWAInstallBanner`** - Smart PWA installation banner
+- **`ServiceWorkerRegistration`** - Service Worker registration and updates
 
 ## 🔗 Backend API
 
-A API backend está disponível em um repositório separado:
+The backend API is available in a separate repository:
 
 **🔗 [Scrum Poker API](https://github.com/igorssc/scrum-poker-api)**
 
-### **Endpoints Principais**
-- WebSocket para comunicação real-time
-- Gerenciamento de salas e usuários
-- Busca por proximidade geográfica
-- Sistema de autenticação de salas
+### **Main Endpoints**
+
+- WebSocket for real-time communication
+- Room and user management
+- Geographic proximity search
+- Room authentication system
 
 ## 🌐 PWA (Progressive Web App)
 
-### **Funcionalidades PWA**
-- ✅ **Installable** - Pode ser instalado como app nativo
-- ✅ **Offline-first** - Funciona offline com Service Worker
-- ✅ **Responsive** - Otimizado para todos os dispositivos
-- ✅ **Theme-aware** - Cores dinâmicas baseadas no tema
-- ✅ **Fast** - Cache inteligente e pré-carregamento
-- ✅ **Engaging** - Notificações e experiência nativa
+### **PWA Features**
+
+- ✅ **Installable** - Can be installed as native app
+- ✅ **Offline-first** - Works offline with Service Worker
+- ✅ **Responsive** - Optimized for all devices
+- ✅ **Theme-aware** - Dynamic colors based on theme
+- ✅ **Fast** - Smart caching and pre-loading
+- ✅ **Engaging** - Notifications and native experience
 
 ### **Service Worker**
-- Cache da página inicial para acesso offline
-- Estratégia de fallback para navegação offline
-- Atualização automática quando nova versão disponível
 
-### **Manifest Dinâmico**
-- Cores adaptáveis ao tema (claro/escuro)
-- Ícones otimizados para diferentes dispositivos
-- Screenshots para app stores
+- Home page caching for offline access
+- Fallback strategy for offline navigation
+- Automatic updates when new version available
 
-## 🎨 Sistema de Temas
+### **Dynamic Manifest**
 
-### **Implementação Dual**
-1. **Meta tags com media queries** - Para navegadores mobile nativos
-2. **JavaScript dinâmico** - Para PWA e atualizações em tempo real
+- Theme-adaptive colors (light/dark)
+- Icons optimized for different devices
+- Screenshots for app stores
 
-### **Cores do Tema**
+## 🎨 Theme System
+
+### **Dual Implementation**
+
+1. **Meta tags with media queries** - For native mobile browsers
+2. **Dynamic JavaScript** - For PWA and real-time updates
+
+### **Theme Colors**
+
 - **Light Mode**: `#8b5cf6` (Purple 500)
 - **Dark Mode**: `#374151` (Gray 700)
 
-## 🔧 Configuração
+## 🔧 Configuration
 
-### **Variáveis de Ambiente**
+### **Environment Variables**
 
-Crie um arquivo `.env.local`:
+Create a `.env.local` file:
 
 ```env
-# URL da API backend
+# Backend API URL
 NEXT_PUBLIC_API_URL=https://api.scrumpoker.dev.br
 
-# URL base do frontend
+# Frontend base URL
 NEXT_PUBLIC_BASE_URL=https://scrumpoker.dev.br
 
-# Google Maps API (opcional, para busca geográfica)
+# Google Maps API (optional, for geographic search)
 NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
 ```
 
-### **Configuração PWA**
+### **PWA Configuration**
 
-O arquivo `next.config.mjs` inclui configurações PWA e otimizações.
+The `next.config.mjs` file includes PWA configurations and optimizations.
 
-## 📱 Compatibilidade
+## 📱 Compatibility
 
 - ✅ **Desktop**: Chrome, Firefox, Safari, Edge
 - ✅ **Mobile**: iOS Safari, Chrome Mobile, Samsung Internet
-- ✅ **PWA**: Todos os navegadores com suporte PWA
-- ✅ **Offline**: Funcionalidade básica offline
+- ✅ **PWA**: All browsers with PWA support
+- ✅ **Offline**: Basic offline functionality
 
 ## 🚀 Deploy
 
-### **Vercel (Recomendado)**
+### **Vercel (Recommended)**
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/igorssc/scrum-poker)
 
-### **Outras Plataformas**
+### **Other Platforms**
+
 - Netlify
 - Railway
 - Heroku
 - Cloudflare Pages
 
-## 🤝 Contribuindo
+## 🤝 Contributing
 
-1. Fork o projeto
-2. Crie uma branch (`git checkout -b feature/nova-funcionalidade`)
-3. Commit suas mudanças (`git commit -m 'Add: nova funcionalidade'`)
-4. Push para a branch (`git push origin feature/nova-funcionalidade`)
-5. Abra um Pull Request
+1. Fork the project
+2. Create a branch (`git checkout -b feature/new-feature`)
+3. Commit your changes (`git commit -m 'Add: new feature'`)
+4. Push to the branch (`git push origin feature/new-feature`)
+5. Open a Pull Request
 
-### **Padrões de Commit**
-- `feat:` - Nova funcionalidade
-- `fix:` - Correção de bug
-- `docs:` - Documentação
-- `style:` - Formatação
-- `refactor:` - Refatoração
-- `test:` - Testes
+### **Commit Patterns**
 
-## 📄 Licença
+- `feat:` - New feature
+- `fix:` - Bug fix
+- `docs:` - Documentation
+- `style:` - Formatting
+- `refactor:` - Refactoring
+- `test:` - Tests
 
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para detalhes.
+## 📄 License
 
-## 👨‍💻 Autor
+This project is under the MIT license. See the [LICENSE](LICENSE) file for details.
+
+## 👨‍💻 Author
 
 **Igor Costa**
+
 - GitHub: [@igorssc](https://github.com/igorssc)
-- Twitter: [@igorssc](https://twitter.com/igorssc)
 - LinkedIn: [Igor Costa](https://linkedin.com/in/igorssc)
 
-## 🌟 Agradecimentos
+## 🌟 Acknowledgments
 
-- [Next.js](https://nextjs.org/) - Framework React incrível
-- [Vercel](https://vercel.com/) - Plataforma de deploy
-- [Tailwind CSS](https://tailwindcss.com/) - Framework CSS utility-first
-- [TanStack Query](https://tanstack.com/query) - Gerenciamento de estado servidor
+- [Next.js](https://nextjs.org/) - Amazing React framework
+- [Vercel](https://vercel.com/) - Deployment platform
+- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
+- [TanStack Query](https://tanstack.com/query) - Server state management
 
 ---
 
-**⭐ Se este projeto te ajudou, considere dar uma estrela no repositório!**
+**⭐ If this project helped you, consider giving it a star on the repository!**
