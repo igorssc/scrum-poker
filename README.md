@@ -1,5 +1,3 @@
-<img width="1139" height="429" alt="og-image" src="https://github.com/user-attachments/assets/945c70d8-d520-484a-ab86-849f72ff457b" />
-
 # 🃏 Scrum Poker - Planning Poker Online
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.0.0-black)](https://nextjs.org/)
@@ -9,6 +7,8 @@
 [![PWA](https://img.shields.io/badge/PWA-Ready-green)](https://web.dev/progressive-web-apps/)
 
 Uma aplicação moderna de **Planning Poker** para equipes ágeis, desenvolvida com Next.js 16, React 19 e TypeScript. Oferece salas colaborativas em tempo real, estimativas com cartas de Planning Poker, busca por proximidade geográfica e funciona como PWA (Progressive Web App).
+
+<img width="1139" height="429" alt="og-image" src="https://github.com/user-attachments/assets/945c70d8-d520-484a-ab86-849f72ff457b" />
 
 ## ✨ Funcionalidades
 
