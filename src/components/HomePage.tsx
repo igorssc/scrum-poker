@@ -1,7 +1,9 @@
 'use client';
 
+import { RoomContext } from '@/context/RoomContext';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import {
   FaArrowRight,
   FaChartBar,
@@ -12,11 +14,26 @@ import {
   FaRocket,
   FaUsers,
 } from 'react-icons/fa';
+import { useContextSelector } from 'use-context-selector';
 import { Button } from './Button';
 import { ThemeToggle } from './ThemeToggle';
 
 export function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
+
+  const { room, user, isHydrated } = useContextSelector(RoomContext, context => ({
+    room: context.room,
+    user: context.user,
+    isHydrated: context.isHydrated,
+  }));
+
+  // Redirecionar para /board se já estiver em uma sala
+  useEffect(() => {
+    if (isHydrated && room && user) {
+      window.location.replace('/board');
+    }
+  }, [isHydrated, room, user, router]);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
