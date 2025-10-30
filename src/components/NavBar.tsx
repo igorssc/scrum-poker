@@ -1,18 +1,18 @@
 'use client';
 
-import { useState } from 'react';
-import { useContextSelector } from 'use-context-selector';
 import { RoomContext } from '@/context/RoomContext';
 import { useRoomCache } from '@/hooks/useRoomCache';
 import { useTheme } from '@/hooks/useTheme';
 import { useTimer } from '@/hooks/useTimer';
+import * as Popover from '@radix-ui/react-popover';
+import { useState } from 'react';
+import { useContextSelector } from 'use-context-selector';
 import { Button } from './Button';
 import { Modal } from './Modal';
+import { ResetTimerModalContent } from './ResetTimerModalContent';
 import { SettingsModalContent } from './SettingsModalContent';
 import { ShareModalContent } from './ShareModalContent';
-import { ResetTimerModalContent } from './ResetTimerModalContent';
 import { ThemeButton } from './ThemeButton';
-import * as Popover from '@radix-ui/react-popover';
 
 export const NavBar = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -207,11 +207,11 @@ export const NavBar = () => {
         {/* Layout Desktop: Horizontal Layout (md+) */}
         <div className="hidden md:flex md:items-center md:justify-between">
           {/* Informações do usuário e sala */}
-          <div className="flex flex-col gap-2">
-            <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">
+          <div className="flex flex-col gap-2 overflow-hidden">
+            <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 truncate pr-6">
               {cachedRoomData?.data?.name || 'Carregando...'}
             </h1>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-gray-600 dark:text-gray-400 truncate pr-6">
               Olá, {userMember?.member.name || 'Usuário'}
               {room?.owner_id === user?.id && (
                 <span className="ml-2 px-2 py-1 text-xs bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded">
@@ -256,27 +256,10 @@ export const NavBar = () => {
                 title={isRunning ? 'Clique para pausar' : 'Clique para iniciar'}
               >
                 <div className="flex items-center gap-2">
-                  {/* Ícone Play/Pause */}
-                  {isRunning ? (
-                    // Ícone de Pause
-                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
-                    </svg>
-                  ) : (
-                    // Ícone de Play
-                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  )}
-                  
-                  {/* Ícone do relógio */}
+                  {/* Ícone de relógio simples */}
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12,6 12,12 16,14" />
                   </svg>
                   <span className="text-xs font-mono">{formattedTime}</span>
                 </div>
