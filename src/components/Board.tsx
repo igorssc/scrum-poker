@@ -7,7 +7,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useContextSelector } from 'use-context-selector';
 import { useWebsocket } from '../hooks/useWebsocket';
-import { AcceptUsers } from './AcceptUsers';
 import { Box } from './Box';
 import { Button } from './Button';
 import { Cards } from './Cards';
@@ -60,7 +59,7 @@ export const Board = () => {
           <Box className="max-w-full lg:flex-1 min-h-0! flex flex-col gap-y-3 sm:gap-y-4 md:gap-y-6 lg:gap-y-8">
             <Cards />
 
-            {isOwner && (
+            {(!data?.data.private || isOwner) && (
               <Flex className="w-full flex-row gap-2 md:gap-4">
                 <Button
                   className="flex-1"
