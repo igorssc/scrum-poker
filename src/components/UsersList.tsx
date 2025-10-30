@@ -141,7 +141,7 @@ export const UsersList = () => {
     <div>
       {/* Container único para ambos os tipos de usuários */}
       {(pendingMembers.length > 0 || organizedMembers.length > 0) && (
-        <Box className="min-h-0! max-w-full p-3 sm:p-4 md:p-4 lg:p-5">
+        <Box className="min-h-0! max-h-fit! max-w-full p-3 sm:p-4 md:p-4 lg:p-5">
           <Flex className="gap-2 sm:gap-3 md:gap-4">
             {/* Usuários Pendentes */}
             {pendingMembers.length > 0 && (
@@ -220,7 +220,7 @@ export const UsersList = () => {
 
             {/* Separador entre pendentes e ativos */}
             {pendingMembers.length > 0 && organizedMembers.length > 0 && (
-              <div className="w-full">
+              <div className="w-full -mt-2">
                 <div className="h-px bg-gray-300 dark:bg-gray-600 my-2"></div>
               </div>
             )}
@@ -358,7 +358,7 @@ export const UsersList = () => {
                             ></div>
 
                             <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
-                              <span className={twMerge('font-medium truncate')}>
+                              <span className={twMerge('font-medium truncate mr-4')}>
                                 {member.member.name}
                               </span>
                               <span className="text-[80%] text-gray-500 dark:text-gray-400 truncate">
