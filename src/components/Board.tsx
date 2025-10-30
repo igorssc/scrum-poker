@@ -52,7 +52,7 @@ export const Board = () => {
       <NavBar />
 
       <main className="flex flex-col gap-3 sm:gap-4 md:gap-6">
-        {(!data?.data.private || room?.owner_id === user?.id) && <AcceptUsers />}
+        {/* {(!data?.data.private || room?.owner_id === user?.id) && <AcceptUsers />} */}
 
         {/* Layout responsivo: coluna em mobile/tablet, lado a lado em lg+ */}
         <div className="flex flex-col lg:flex-row lg:items-start gap-3 sm:gap-4 md:gap-6">

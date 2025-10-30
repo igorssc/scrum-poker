@@ -18,7 +18,7 @@ import { RemoveUserModalContent } from './RemoveUserModalContent';
 
 export const UsersList = () => {
   const { cachedRoomData } = useRoomCache();
-  const { room, user } = useContext(RoomContext);
+  const { room, user, acceptUser, refuseUser } = useContext(RoomContext);
   const [flippingCards, setFlippingCards] = useState<Set<string>>(new Set());
   const [previousCardsOpen, setPreviousCardsOpen] = useState<boolean | undefined>(undefined);
   const [removingUsers, setRemovingUsers] = useState<Set<string>>(new Set());
@@ -139,59 +139,155 @@ export const UsersList = () => {
 
   return (
     <div>
-      {/* Membros Logados */}
-      {organizedMembers.length > 0 && (
+      {/* Container único para ambos os tipos de usuários */}
+      {(pendingMembers.length > 0 || organizedMembers.length > 0) && (
         <Box className="min-h-0! max-w-full p-3 sm:p-4 md:p-4 lg:p-5">
           <Flex className="gap-2 sm:gap-3 md:gap-4">
-            <h3 className="text-xs md:text-sm xl:text-md font-medium text-center">
-              Membros Ativos ({organizedMembers.length})
-            </h3>
+            {/* Usuários Pendentes */}
+            {pendingMembers.length > 0 && (
+              <div className="w-full">
+                <h3 className="text-xs md:text-sm xl:text-md font-medium text-center mb-3 sm:mb-4 md:mb-4 lg:mb-5">
+                  Usuários Pendentes ({pendingMembers.length})
+                </h3>
+                <div className="w-full space-y-2 mb-4">
+                  {pendingMembers.map(member => (
+                    <div key={member.id}>
+                      <div className="group flex items-center justify-between p-2 sm:p-2.5 md:p-2.5 text-[0.65rem] md:text-xs lg:text-sm rounded-lg min-h-8 sm:min-h-9 md:min-h-10 transition-colors bg-orange-50 dark:bg-orange-800/10 border border-orange-200 dark:border-orange-800/50">
+                        <div className="flex items-center flex-1 gap-2 min-w-0">
+                          {/* Bolinha laranja para usuários pendentes */}
+                          <div
+                            className="w-2 h-2 rounded-full animate-glow-pulse shrink-0 bg-orange-500"
+                            title="Aguardando aprovação"
+                          ></div>
 
-            <div className="w-full space-y-2">
-              {organizedMembers.map((member, index) => {
-                const hasVoted = !!member.vote;
-                const isFlipping = flippingCards.has(member.id);
-                const memberIsOwner = room?.owner_id === member?.member?.id;
+                          <div className="flex flex-col flex-1 min-w-0 overflow-hidden mr-4">
+                            <span className="font-medium truncate">{member.member.name}</span>
+                            <span className="text-[80%] text-orange-600 dark:text-orange-300 truncate">
+                              Aguardando aprovação
+                            </span>
+                          </div>
+                        </div>
 
-                // Verificar se é um novo grupo de voto (apenas quando cartas estão abertas)
-                const previousMember = index > 0 ? organizedMembers[index - 1] : null;
-                const isNewVoteGroup =
-                  cardsOpen &&
-                  // Primeiro membro com voto
-                  ((member.vote && (index === 0 || !previousMember?.vote)) ||
-                    // Mudança de voto entre membros que votaram
-                    (member.vote &&
-                      previousMember?.vote &&
-                      getCardValue(member.vote) !== getCardValue(previousMember.vote)) ||
-                    // Primeiro membro sem voto (após membros que votaram)
-                    (!member.vote && previousMember?.vote));
-
-                // Determinar o que mostrar baseado no estado das cartas
-                let voteDisplay = null;
-                let statusText = cardsOpen ? '' : 'Aguardando voto';
-
-                if (hasVoted) {
-                  if (cardsOpen) {
-                    // Cartas reveladas - mostrar a carta real ou animação de flip
-                    voteDisplay = (
-                      <div className="flex items-center gap-1.5">
-                        <div
-                          className={`relative w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9 ${isFlipping ? 'flip-container' : ''}`}
-                        >
-                          {isFlipping ? (
-                            <>
-                              {/* Verso da carta - primeira metade da animação */}
-                              <div className="flip-card-front">
-                                <Image
-                                  alt="Card back"
-                                  src="/assets/cards/nature/verse.svg"
-                                  width={24}
-                                  height={36}
-                                  className="w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9 rounded"
+                        {/* Botões de Aceitar/Recusar - apenas para o owner */}
+                        {isOwner && (
+                          <div className="flex items-center gap-2 shrink-0">
+                            <button
+                              onClick={() => acceptUser(member.member.id)}
+                              className="cursor-pointer p-1.5 rounded-full bg-green-200 hover:bg-green-300 dark:bg-green-800/50 dark:hover:bg-green-700/60 transition-colors"
+                              title="Aceitar usuário"
+                            >
+                              <svg
+                                className="w-3 h-3 text-green-700 dark:text-green-300"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M5 13l4 4L19 7"
                                 />
-                              </div>
-                              {/* Carta real - segunda metade da animação */}
-                              <div className="flip-card-back">
+                              </svg>
+                            </button>
+                            <button
+                              onClick={() => refuseUser(member.member.id)}
+                              className="cursor-pointer p-1.5 rounded-full bg-red-200 hover:bg-red-300 dark:bg-red-800/50 dark:hover:bg-red-700/60 transition-colors"
+                              title="Recusar usuário"
+                            >
+                              <svg
+                                className="w-3 h-3 text-red-700 dark:text-red-300"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M6 18L18 6M6 6l12 12"
+                                />
+                              </svg>
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Separador entre pendentes e ativos */}
+            {pendingMembers.length > 0 && organizedMembers.length > 0 && (
+              <div className="w-full">
+                <div className="h-px bg-gray-300 dark:bg-gray-600 my-2"></div>
+              </div>
+            )}
+
+            {/* Usuários Ativos */}
+            {organizedMembers.length > 0 && (
+              <div className="w-full">
+                <h3 className="text-xs md:text-sm xl:text-md font-medium text-center mb-3 sm:mb-4 md:mb-4 lg:mb-5">
+                  Usuários Ativos ({organizedMembers.length})
+                </h3>
+
+                <div className="w-full space-y-2">
+                  {organizedMembers.map((member, index) => {
+                    const hasVoted = !!member.vote;
+                    const isFlipping = flippingCards.has(member.id);
+                    const isCurrentUser = member.member.id === user?.id;
+
+                    // Verificar se é um novo grupo de voto (apenas quando cartas estão abertas)
+                    const previousMember = index > 0 ? organizedMembers[index - 1] : null;
+                    const isNewVoteGroup =
+                      cardsOpen &&
+                      // Primeiro membro com voto
+                      ((member.vote && (index === 0 || !previousMember?.vote)) ||
+                        // Mudança de voto entre membros que votaram
+                        (member.vote &&
+                          previousMember?.vote &&
+                          getCardValue(member.vote) !== getCardValue(previousMember.vote)) ||
+                        // Primeiro membro sem voto (após membros que votaram)
+                        (!member.vote && previousMember?.vote));
+
+                    // Determinar o que mostrar baseado no estado das cartas
+                    let voteDisplay = null;
+                    let statusText = cardsOpen ? '' : 'Aguardando voto';
+
+                    if (hasVoted) {
+                      if (cardsOpen) {
+                        // Cartas reveladas - mostrar a carta real ou animação de flip
+                        voteDisplay = (
+                          <div className="flex items-center gap-1.5">
+                            <div
+                              className={`relative w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9 ${isFlipping ? 'flip-container' : ''}`}
+                            >
+                              {isFlipping ? (
+                                <>
+                                  {/* Verso da carta - primeira metade da animação */}
+                                  <div className="flip-card-front">
+                                    <Image
+                                      alt="Card back"
+                                      src="/assets/cards/nature/verse.svg"
+                                      width={24}
+                                      height={36}
+                                      className="w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9 rounded"
+                                    />
+                                  </div>
+                                  {/* Carta real - segunda metade da animação */}
+                                  <div className="flip-card-back">
+                                    <Image
+                                      alt={`Card ${member.vote}`}
+                                      src={path.join('assets', 'cards', member.vote)}
+                                      width={24}
+                                      height={36}
+                                      className="w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9 rounded"
+                                    />
+                                  </div>
+                                </>
+                              ) : (
+                                // Após o flip, mostrar a carta real
                                 <Image
                                   alt={`Card ${member.vote}`}
                                   src={path.join('assets', 'cards', member.vote)}
@@ -199,166 +295,158 @@ export const UsersList = () => {
                                   height={36}
                                   className="w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9 rounded"
                                 />
-                              </div>
-                            </>
-                          ) : (
-                            // Após o flip, mostrar a carta real
+                              )}
+                            </div>
+                          </div>
+                        );
+                        statusText = ``;
+                      } else {
+                        // Cartas não reveladas - mostrar o verso
+                        voteDisplay = (
+                          <div className="relative w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9">
                             <Image
-                              alt={`Card ${member.vote}`}
-                              src={path.join('assets', 'cards', member.vote)}
+                              alt="Card back"
+                              src="/assets/cards/nature/verse.svg"
                               width={24}
                               height={36}
                               className="w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9 rounded"
                             />
-                          )}
-                        </div>
-                      </div>
-                    );
-                    statusText = ``;
-                  } else {
-                    // Cartas não reveladas - mostrar o verso
-                    voteDisplay = (
-                      <div className="relative w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9">
-                        <Image
-                          alt="Card back"
-                          src="/assets/cards/nature/verse.svg"
-                          width={24}
-                          height={36}
-                          className="w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9 rounded"
-                        />
-                      </div>
-                    );
-                    statusText = 'Já votou';
-                  }
-                }
+                          </div>
+                        );
+                        statusText = 'Já votou';
+                      }
+                    }
 
-                return (
-                  <div key={member.id}>
-                    {/* Separador de grupo de voto */}
-                    {isNewVoteGroup && (
-                      <div
-                        className={`flex items-center gap-2 mb-1.5 md:mb-2 ${index > 0 ? 'mt-1.5 md:mt-2' : ''}`}
-                      >
-                        <div className="h-px bg-gray-300 dark:bg-gray-600 flex-1"></div>
-                        <span className="text-xs font-medium text-gray-700 dark:text-gray-400 px-2">
-                          {member.vote ? getCardValue(member.vote) : 'Não votaram'}
-                        </span>
-                        <div className="h-px bg-gray-300 dark:bg-gray-600 flex-1"></div>
-                      </div>
-                    )}
-
-                    <div
-                      className={twMerge(
-                        'group flex items-center justify-between p-2 sm:p-2.5 md:p-2.5 text-[0.65rem] md:text-xs lg:text-sm rounded-lg min-h-8 sm:min-h-9 md:min-h-10 transition-colors',
-                        memberIsOwner && isOwner
-                          ? 'bg-gray-200 dark:bg-gray-600 cursor-not-allowed'
-                          : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200/60 dark:hover:bg-gray-600'
-                      )}
-                    >
-                      <div className="flex items-center flex-1 gap-2 min-w-0">
-                        {/* Bolinha de status - posicionada à esquerda, centralizada */}
-                        <div
-                          className={twMerge(
-                            'w-2 h-2 rounded-full animate-glow-pulse shrink-0',
-                            cardsOpen
-                              ? hasVoted
-                                ? 'bg-green-500' // Revelado e votou - verde
-                                : 'bg-gray-400' // Revelado e não votou - cinza
-                              : hasVoted
-                                ? 'bg-green-500' // Não revelado mas votou - verde
-                                : 'bg-yellow-500' // Não revelado e não votou - amarelo (aguardando)
-                          )}
-                          title={
-                            cardsOpen
-                              ? hasVoted
-                                ? 'Votou'
-                                : 'Não votou'
-                              : hasVoted
-                                ? 'Já votou'
-                                : 'Aguardando voto'
-                          }
-                        ></div>
-
-                        <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
-                          <span className="font-medium truncate mr-4">{member.member.name}</span>
-                          <span className="text-[80%] text-gray-500 dark:text-gray-400 truncate">
-                            {statusText}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-1.5 sm:gap-2 md:gap-2 min-w-8 sm:min-w-9 md:min-w-10 justify-end">
-                        {voteDisplay || <div className="w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9"></div>}
-
-                        {/* Dropdown de ações - aparece para o owner em todos os membros */}
-                        {isOwner && (
-                          <Popover.Root
-                            open={openPopover === member.id}
-                            onOpenChange={open => setOpenPopover(open ? member.id : null)}
+                    return (
+                      <div key={member.id}>
+                        {/* Separador de grupo de voto */}
+                        {isNewVoteGroup && (
+                          <div
+                            className={`flex items-center gap-2 mb-1.5 md:mb-2 ${index > 0 ? 'mt-1.5 md:mt-2' : ''}`}
                           >
-                            <Popover.Trigger asChild>
-                              <button
-                                disabled={removingUsers.has(member.member.id)}
-                                className="cursor-pointer p-1 text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300 transition-all duration-200 disabled:opacity-30 shrink-0 rounded-full"
-                                title="Opções do usuário"
-                              >
-                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                  <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
-                                </svg>
-                              </button>
-                            </Popover.Trigger>
-
-                            <Popover.Portal>
-                              <Popover.Content
-                                className="w-40 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 overflow-hidden"
-                                side="bottom"
-                                align="end"
-                                sideOffset={8}
-                                onOpenAutoFocus={e => e.preventDefault()}
-                              >
-                                <div className="py-1">
-                                  <button
-                                    onClick={() => {
-                                      // Só permite remoção se não for o próprio owner
-                                      if (member.member.id !== user?.id) {
-                                        setUserToRemove({
-                                          id: member.member.id,
-                                          name: member.member.name,
-                                        });
-                                        setOpenPopover(null);
-                                      }
-                                    }}
-                                    disabled={
-                                      removingUsers.has(member.member.id) ||
-                                      member.member.id === user?.id
-                                    }
-                                    className={twMerge(
-                                      'w-full flex items-center gap-2 px-3 py-2 text-xs transition-colors',
-                                      member.member.id === user?.id
-                                        ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
-                                        : 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer',
-                                      'disabled:opacity-50 disabled:cursor-not-allowed'
-                                    )}
-                                    title={
-                                      member.member.id === user?.id
-                                        ? 'Você não pode remover a si mesmo'
-                                        : 'Remover da sala'
-                                    }
-                                  >
-                                    <FaTimes className="w-3 h-3" />
-                                    Remover da sala
-                                  </button>
-                                </div>
-                              </Popover.Content>
-                            </Popover.Portal>
-                          </Popover.Root>
+                            <div className="h-px bg-gray-300 dark:bg-gray-600 flex-1"></div>
+                            <span className="text-xs font-medium text-gray-700 dark:text-gray-400 px-2">
+                              {member.vote ? getCardValue(member.vote) : 'Não votaram'}
+                            </span>
+                            <div className="h-px bg-gray-300 dark:bg-gray-600 flex-1"></div>
+                          </div>
                         )}
+
+                        <div className="group flex items-center justify-between p-2 sm:p-2.5 md:p-2.5 text-[0.65rem] md:text-xs lg:text-sm rounded-lg min-h-8 sm:min-h-9 md:min-h-10 transition-colors bg-gray-100 dark:bg-gray-700 hover:bg-gray-200/60 dark:hover:bg-gray-600">
+                          <div className="flex items-center flex-1 gap-2 min-w-0">
+                            {/* Bolinha de status - posicionada à esquerda, centralizada */}
+                            <div
+                              className={twMerge(
+                                'w-2 h-2 rounded-full animate-glow-pulse shrink-0',
+                                cardsOpen
+                                  ? hasVoted
+                                    ? 'bg-green-500' // Revelado e votou - verde
+                                    : 'bg-gray-400' // Revelado e não votou - cinza
+                                  : hasVoted
+                                    ? 'bg-green-500' // Não revelado mas votou - verde
+                                    : 'bg-yellow-500' // Não revelado e não votou - amarelo (aguardando)
+                              )}
+                              title={
+                                cardsOpen
+                                  ? hasVoted
+                                    ? 'Votou'
+                                    : 'Não votou'
+                                  : hasVoted
+                                    ? 'Já votou'
+                                    : 'Aguardando voto'
+                              }
+                            ></div>
+
+                            <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+                              <span className={twMerge('font-medium truncate')}>
+                                {member.member.name}
+                              </span>
+                              <span className="text-[80%] text-gray-500 dark:text-gray-400 truncate">
+                                {statusText}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-1.5 sm:gap-2 md:gap-2 min-w-8 sm:min-w-9 md:min-w-10 justify-end">
+                            {voteDisplay || (
+                              <div className="w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9"></div>
+                            )}
+
+                            {/* Dropdown de ações - aparece para o owner em todos os membros */}
+                            {isOwner && (
+                              <Popover.Root
+                                open={openPopover === member.id}
+                                onOpenChange={open => setOpenPopover(open ? member.id : null)}
+                              >
+                                <Popover.Trigger asChild>
+                                  <button
+                                    disabled={removingUsers.has(member.member.id)}
+                                    className="cursor-pointer p-1 text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300 transition-all duration-200 disabled:opacity-30 shrink-0 rounded-full"
+                                    title="Opções do usuário"
+                                  >
+                                    <svg
+                                      className="w-4 h-4"
+                                      fill="currentColor"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+                                    </svg>
+                                  </button>
+                                </Popover.Trigger>
+
+                                <Popover.Portal>
+                                  <Popover.Content
+                                    className="w-40 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 overflow-hidden"
+                                    side="bottom"
+                                    align="end"
+                                    sideOffset={8}
+                                    onOpenAutoFocus={e => e.preventDefault()}
+                                  >
+                                    <div className="py-1">
+                                      <button
+                                        onClick={() => {
+                                          // Só permite remoção se não for o próprio owner
+                                          if (member.member.id !== user?.id) {
+                                            setUserToRemove({
+                                              id: member.member.id,
+                                              name: member.member.name,
+                                            });
+                                            setOpenPopover(null);
+                                          }
+                                        }}
+                                        disabled={
+                                          removingUsers.has(member.member.id) ||
+                                          member.member.id === user?.id
+                                        }
+                                        className={twMerge(
+                                          'w-full flex items-center gap-2 px-3 py-2 text-xs transition-colors',
+                                          member.member.id === user?.id
+                                            ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                                            : 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer',
+                                          'disabled:opacity-50 disabled:cursor-not-allowed'
+                                        )}
+                                        title={
+                                          member.member.id === user?.id
+                                            ? 'Você não pode remover a si mesmo'
+                                            : 'Remover da sala'
+                                        }
+                                      >
+                                        <FaTimes className="w-3 h-3" />
+                                        Remover da sala
+                                      </button>
+                                    </div>
+                                  </Popover.Content>
+                                </Popover.Portal>
+                              </Popover.Root>
+                            )}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </Flex>
         </Box>
       )}
