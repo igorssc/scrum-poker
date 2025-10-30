@@ -18,7 +18,7 @@ import { RemoveUserModalContent } from './RemoveUserModalContent';
 
 export const UsersList = () => {
   const { cachedRoomData } = useRoomCache();
-  const { room, user, acceptUser, refuseUser } = useContext(RoomContext);
+  const { room, user, acceptUser, refuseUser, isAcceptingUser, isRefusingUser } = useContext(RoomContext);
   const [flippingCards, setFlippingCards] = useState<Set<string>>(new Set());
   const [previousCardsOpen, setPreviousCardsOpen] = useState<boolean | undefined>(undefined);
   const [removingUsers, setRemovingUsers] = useState<Set<string>>(new Set());
@@ -173,41 +173,51 @@ export const UsersList = () => {
                           <div className="flex items-center gap-2 shrink-0">
                             <button
                               onClick={() => acceptUser(member.member.id)}
-                              className="cursor-pointer p-1.5 rounded-full bg-green-200 hover:bg-green-300 dark:bg-green-800/50 dark:hover:bg-green-700/60 transition-colors"
+                              disabled={isAcceptingUser || isRefusingUser}
+                              className="cursor-pointer p-1.5 rounded-full bg-green-200 hover:bg-green-300 dark:bg-green-800/50 dark:hover:bg-green-700/60 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                               title="Aceitar usuário"
                             >
-                              <svg
-                                className="w-3 h-3 text-green-700 dark:text-green-300"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M5 13l4 4L19 7"
-                                />
-                              </svg>
+                              {isAcceptingUser ? (
+                                <div className="w-3 h-3 border border-green-700 dark:border-green-300 border-t-transparent rounded-full animate-spin"></div>
+                              ) : (
+                                <svg
+                                  className="w-3 h-3 text-green-700 dark:text-green-300"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M5 13l4 4L19 7"
+                                  />
+                                </svg>
+                              )}
                             </button>
                             <button
                               onClick={() => refuseUser(member.member.id)}
-                              className="cursor-pointer p-1.5 rounded-full bg-red-200 hover:bg-red-300 dark:bg-red-800/50 dark:hover:bg-red-700/60 transition-colors"
+                              disabled={isAcceptingUser || isRefusingUser}
+                              className="cursor-pointer p-1.5 rounded-full bg-red-200 hover:bg-red-300 dark:bg-red-800/50 dark:hover:bg-red-700/60 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                               title="Recusar usuário"
                             >
-                              <svg
-                                className="w-3 h-3 text-red-700 dark:text-red-300"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M6 18L18 6M6 6l12 12"
-                                />
-                              </svg>
+                              {isRefusingUser ? (
+                                <div className="w-3 h-3 border border-red-700 dark:border-red-300 border-t-transparent rounded-full animate-spin"></div>
+                              ) : (
+                                <svg
+                                  className="w-3 h-3 text-red-700 dark:text-red-300"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M6 18L18 6M6 6l12 12"
+                                  />
+                                </svg>
+                              )}
                             </button>
                           </div>
                         )}

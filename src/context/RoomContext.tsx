@@ -56,6 +56,9 @@ type RoomContextProps = {
   logout: (props?: LogoutProps) => Promise<void>;
   isHydrated: boolean;
   tabId: string;
+  isAcceptingUser: boolean;
+  isRefusingUser: boolean;
+  isLoggingOut: boolean;
 };
 
 export const RoomContext = createContext<RoomContextProps>({} as RoomContextProps);
@@ -65,6 +68,9 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserProps | null>(null);
 
   const [waitingLogin, setWaitingLogin] = useState(false);
+  const [isAcceptingUser, setIsAcceptingUser] = useState(false);
+  const [isRefusingUser, setIsRefusingUser] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const [isHydrated, setIsHydrated] = useState(false);
 
@@ -224,8 +230,9 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const acceptUser = async (userId: string) => {
-    if (room && user) {
+    if (room && user && !isAcceptingUser) {
       try {
+        setIsAcceptingUser(true);
         await api.post(`rooms/${room.id}/sign-in/accept`, {
           owner_id: user.id,
           user_id: userId,
@@ -234,13 +241,16 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
       } catch (error) {
         handleApiError(error, 'Erro ao aceitar usuário');
         throw error;
+      } finally {
+        setIsAcceptingUser(false);
       }
     }
   };
 
   const refuseUser = async (userId: string) => {
-    if (room && user) {
+    if (room && user && !isRefusingUser) {
       try {
+        setIsRefusingUser(true);
         await api.post(`rooms/${room.id}/sign-in/refuse`, {
           owner_id: user.id,
           user_id: userId,
@@ -249,6 +259,8 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
       } catch (error) {
         handleApiError(error, 'Erro ao recusar usuário');
         throw error;
+      } finally {
+        setIsRefusingUser(false);
       }
     }
   };
@@ -262,7 +274,10 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
   const logout = async (props?: LogoutProps) => {
     const { redirect = '/' } = props || {};
 
+    if (isLoggingOut) return;
+
     try {
+      setIsLoggingOut(true);
       if (room && user) {
         await api.post(`rooms/${room.id}/sign-out`, {
           user_action_id: user.id,
@@ -283,6 +298,8 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
       setUser(null);
       setWaitingLogin(false);
       channel.postMessage({ type: 'logout-scrum-poker', redirect, tabId });
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 
@@ -302,6 +319,9 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
         tabId,
         setWaitingLogin,
         getRoomsByLocation,
+        isAcceptingUser,
+        isRefusingUser,
+        isLoggingOut,
       }}
     >
       {children}
