@@ -67,9 +67,10 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
     },
   });
 
+  const isOwner = room?.owner_id === user?.id;
+
   // Permissões para campos
-  const canEditRoom = !isPrivate || room?.owner_id === user?.id;
-  const canEditPrivate = room?.owner_id === user?.id;
+  const canEditRoom = isOwner || cachedRoomData?.data?.who_can_edit.includes(user?.id || '');
 
   // Decide o que salvar
   const handleSaveAll = async () => {
@@ -77,18 +78,20 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
     setError(null);
     try {
       // Permissões: se sala pública, qualquer usuário pode editar nome/tema/localização; se privada, só owner
-      const canEditRoom = !isPrivate || room?.owner_id === user?.id;
-      if (canEditRoom && (roomName !== room?.name || theme !== room?.theme || lat !== room?.lat || lng !== room?.lng)) {
+      if (
+        canEditRoom &&
+        (roomName !== room?.name || theme !== room?.theme || lat !== room?.lat || lng !== room?.lng)
+      ) {
         const updateData: any = {};
         if (roomName !== room?.name) updateData.name = roomName;
         if (theme !== room?.theme) updateData.theme = theme;
         if (lat !== room?.lat) updateData.lat = lat;
         if (lng !== room?.lng) updateData.lng = lng;
-        
+
         await updateRoom(updateData);
       }
-      // Só owner pode mudar privacidade
-      if (room?.owner_id === user?.id && isPrivate !== !!room?.private) {
+      // Só usuários com permissão podem mudar privacidade
+      if (canEditRoom && isPrivate !== !!room?.private) {
         await updateRoom({
           private: isPrivate,
         });
@@ -160,10 +163,10 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
                     className={twMerge(
                       'relative inline-flex h-5 w-9 sm:h-6 sm:w-11 items-center rounded-full transition-colors',
                       isPrivate ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-700',
-                      room?.owner_id !== user?.id ? 'opacity-60 cursor-not-allowed' : ''
+                      !canEditRoom ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'
                     )}
-                    onClick={() => room?.owner_id === user?.id && setIsPrivate(v => !v)}
-                    disabled={room?.owner_id !== user?.id}
+                    onClick={() => canEditRoom && setIsPrivate(v => !v)}
+                    disabled={!canEditRoom}
                     aria-pressed={isPrivate}
                   >
                     <span
@@ -175,7 +178,12 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
                       )}
                     />
                   </button>
-                  <span className="text-[0.65rem] sm:text-xs text-gray-600 dark:text-gray-400">
+                  <span
+                    className={twMerge(
+                      'text-[0.65rem] sm:text-xs text-gray-600 dark:text-gray-400',
+                      !canEditRoom ? 'opacity-60' : ''
+                    )}
+                  >
                     {isPrivate ? 'Privada' : 'Pública'}
                   </span>
                 </div>
@@ -191,9 +199,9 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
               </div>
 
               {/* Localização da sala */}
-              <LocationSection 
-                room={room} 
-                user={user} 
+              <LocationSection
+                room={room}
+                user={user}
                 lat={lat}
                 lng={lng}
                 mode="edit"

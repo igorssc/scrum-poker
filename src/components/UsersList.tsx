@@ -18,7 +18,8 @@ import { RemoveUserModalContent } from './RemoveUserModalContent';
 
 export const UsersList = () => {
   const { cachedRoomData } = useRoomCache();
-  const { room, user, acceptUser, refuseUser, isAcceptingUser, isRefusingUser } = useContext(RoomContext);
+  const { room, user, acceptUser, refuseUser, isAcceptingUser, isRefusingUser } =
+    useContext(RoomContext);
   const [flippingCards, setFlippingCards] = useState<Set<string>>(new Set());
   const [previousCardsOpen, setPreviousCardsOpen] = useState<boolean | undefined>(undefined);
   const [removingUsers, setRemovingUsers] = useState<Set<string>>(new Set());
@@ -68,6 +69,9 @@ export const UsersList = () => {
 
   // Verificar se o usuário atual é o owner
   const isOwner = room?.owner_id === user?.id;
+
+  const userCanAcceptActions =
+    isOwner || cachedRoomData.data?.who_can_aprove_entries.includes(user?.id || '');
 
   // Função para confirmar remoção do usuário
   const confirmRemoveUser = async () => {
@@ -169,7 +173,7 @@ export const UsersList = () => {
                         </div>
 
                         {/* Botões de Aceitar/Recusar - apenas para o owner */}
-                        {isOwner && (
+                        {userCanAcceptActions && (
                           <div className="flex items-center gap-2 shrink-0">
                             <button
                               onClick={() => acceptUser(member.member.id)}
@@ -382,8 +386,8 @@ export const UsersList = () => {
                               <div className="w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9"></div>
                             )}
 
-                            {/* Dropdown de ações - aparece para o owner em todos os membros */}
-                            {isOwner && (
+                            {/* Dropdown de ações - aparece para os usuários com permissão em todos os membros */}
+                            {userCanAcceptActions && (
                               <Popover.Root
                                 open={openPopover === member.id}
                                 onOpenChange={open => setOpenPopover(open ? member.id : null)}
@@ -415,8 +419,11 @@ export const UsersList = () => {
                                     <div className="py-1">
                                       <button
                                         onClick={() => {
-                                          // Só permite remoção se não for o próprio owner
-                                          if (member.member.id !== user?.id) {
+                                          // Só permite remoção se não for o próprio owner ou o próprio usuário
+                                          if (
+                                            member.member.id !== user?.id &&
+                                            room?.owner_id !== member.member.id
+                                          ) {
                                             setUserToRemove({
                                               id: member.member.id,
                                               name: member.member.name,
