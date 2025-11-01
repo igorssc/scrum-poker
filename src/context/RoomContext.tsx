@@ -159,7 +159,6 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
         roomData.lng = longitude;
       } catch (locationError) {
         // Se falhar ao obter localização, cria sala sem coordenadas
-
       }
 
       const { data } = await api.post<RoomPropsProtocols>('rooms', roomData);
@@ -234,7 +233,7 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
       try {
         setIsAcceptingUser(true);
         await api.post(`rooms/${room.id}/sign-in/accept`, {
-          owner_id: user.id,
+          user_action_id: user.id,
           user_id: userId,
           access: room.access,
         });
@@ -252,7 +251,7 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
       try {
         setIsRefusingUser(true);
         await api.post(`rooms/${room.id}/sign-in/refuse`, {
-          owner_id: user.id,
+          user_action_id: user.id,
           user_id: userId,
           access: room.access,
         });
