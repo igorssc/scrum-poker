@@ -10,6 +10,7 @@ import { useContextSelector } from 'use-context-selector';
 import { Button } from './Button';
 import { Input } from './Input';
 import { LocationSection } from './LocationSection';
+import { MultiSelect, MultiSelectOption } from './MultiSelect';
 import { Select } from './Select';
 
 type SettingsModalContentProps = {
@@ -32,6 +33,11 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
   const [userName, setUserName] = useState(userMember?.member.name || '');
   const [lat, setLat] = useState<number | undefined>(room?.lat);
   const [lng, setLng] = useState<number | undefined>(room?.lng);
+  const [whoCanEdit, setWhoCanEdit] = useState<string[]>(room?.who_can_edit || []);
+  const [whoCanOpenCards, setWhoCanOpenCards] = useState<string[]>(room?.who_can_open_cards || []);
+  const [whoCanApproveEntries, setWhoCanApproveEntries] = useState<string[]>(
+    room?.who_can_aprove_entries || []
+  );
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
@@ -46,10 +52,38 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
     setUserName(userMember?.member.name || '');
     setLat(room?.lat);
     setLng(room?.lng);
-  }, [room?.name, room?.private, room?.theme, room?.lat, room?.lng, userMember?.member.name]);
+    setWhoCanEdit(room?.who_can_edit || []);
+    setWhoCanOpenCards(room?.who_can_open_cards || []);
+    setWhoCanApproveEntries(room?.who_can_aprove_entries || []);
+  }, [
+    room?.name,
+    room?.private,
+    room?.theme,
+    room?.lat,
+    room?.lng,
+    room?.who_can_edit,
+    room?.who_can_open_cards,
+    room?.who_can_aprove_entries,
+    userMember?.member.name,
+  ]);
 
   // Temas fake
   const themeOptions = [{ value: 'nature', label: 'Natureza (Padrão)' }];
+
+  // Opções dos membros para os MultiSelects
+  const memberOptions: MultiSelectOption[] = (room?.members || [])
+    .filter(member => member.status === 'LOGGED') // Apenas membros logados
+    .map(member => ({
+      value: member.member.id,
+      label: `${member.member.name}${member.member.id === room?.owner_id ? ' (Proprietário)' : ''}`,
+      disabled: member.member.id === room?.owner_id || member.member.id === user?.id, // Owner sempre está incluído
+    }));
+
+  // Garantir que o owner sempre esteja incluído nos valores
+  const ensureOwnerIncluded = (values: string[]) => {
+    const ownerId = room?.owner_id;
+    return ownerId && !values.includes(ownerId) ? [...values, ownerId] : values;
+  };
 
   // PATCH usuário
   const patchUserMutation = useMutation({
@@ -70,28 +104,72 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
   const isOwner = room?.owner_id === user?.id;
 
   // Permissões para campos
-  const canEditRoom = isOwner || cachedRoomData?.data?.who_can_edit.includes(user?.id || '');
+  const userCanEditRoom = isOwner || cachedRoomData?.data?.who_can_edit.includes(user?.id || '');
+  const userCanRevealAndClearCards =
+    isOwner || cachedRoomData?.data?.who_can_open_cards.includes(user?.id || '');
+  const userCanApproveEntries =
+    isOwner || cachedRoomData?.data?.who_can_aprove_entries.includes(user?.id || '');
 
   // Decide o que salvar
   const handleSaveAll = async () => {
     setSaving(true);
     setError(null);
     try {
+      // Garantir que o owner sempre esteja incluído nas permissões
+      const ownerId = room?.owner_id;
+      const finalWhoCanEdit =
+        ownerId && !whoCanEdit.includes(ownerId) ? [...whoCanEdit, ownerId] : whoCanEdit;
+      const finalWhoCanOpenCards =
+        ownerId && !whoCanOpenCards.includes(ownerId)
+          ? [...whoCanOpenCards, ownerId]
+          : whoCanOpenCards;
+      const finalWhoCanApproveEntries =
+        ownerId && !whoCanApproveEntries.includes(ownerId)
+          ? [...whoCanApproveEntries, ownerId]
+          : whoCanApproveEntries;
+
       // Permissões: se sala pública, qualquer usuário pode editar nome/tema/localização; se privada, só owner
       if (
-        canEditRoom &&
-        (roomName !== room?.name || theme !== room?.theme || lat !== room?.lat || lng !== room?.lng)
+        userCanEditRoom &&
+        (roomName !== room?.name ||
+          theme !== room?.theme ||
+          lat !== room?.lat ||
+          lng !== room?.lng ||
+          JSON.stringify(finalWhoCanEdit.sort()) !==
+            JSON.stringify((room?.who_can_edit || []).sort()) ||
+          JSON.stringify(finalWhoCanOpenCards.sort()) !==
+            JSON.stringify((room?.who_can_open_cards || []).sort()) ||
+          JSON.stringify(finalWhoCanApproveEntries.sort()) !==
+            JSON.stringify((room?.who_can_aprove_entries || []).sort()))
       ) {
         const updateData: any = {};
         if (roomName !== room?.name) updateData.name = roomName;
         if (theme !== room?.theme) updateData.theme = theme;
         if (lat !== room?.lat) updateData.lat = lat;
         if (lng !== room?.lng) updateData.lng = lng;
+        if (
+          JSON.stringify(finalWhoCanEdit.sort()) !==
+          JSON.stringify((room?.who_can_edit || []).sort())
+        ) {
+          updateData.who_can_edit = finalWhoCanEdit;
+        }
+        if (
+          JSON.stringify(finalWhoCanOpenCards.sort()) !==
+          JSON.stringify((room?.who_can_open_cards || []).sort())
+        ) {
+          updateData.who_can_open_cards = finalWhoCanOpenCards;
+        }
+        if (
+          JSON.stringify(finalWhoCanApproveEntries.sort()) !==
+          JSON.stringify((room?.who_can_aprove_entries || []).sort())
+        ) {
+          updateData.who_can_aprove_entries = finalWhoCanApproveEntries;
+        }
 
         await updateRoom(updateData);
       }
       // Só usuários com permissão podem mudar privacidade
-      if (canEditRoom && isPrivate !== !!room?.private) {
+      if (userCanEditRoom && isPrivate !== !!room?.private) {
         await updateRoom({
           private: isPrivate,
         });
@@ -134,7 +212,7 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
                 type="text"
                 value={roomName}
                 onChange={e => setRoomName(e.target.value)}
-                disabled={!canEditRoom}
+                disabled={!userCanEditRoom}
               />
 
               {/* Tema da sala */}
@@ -143,14 +221,53 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
                 options={themeOptions}
                 value={theme}
                 onChange={setTheme}
-                disabled={!canEditRoom || themeOptions.length < 2}
+                disabled={!userCanEditRoom || themeOptions.length < 2}
               />
+
+                  {/* Quem pode editar configurações */}
+                  <MultiSelect
+                    label="Quem pode editar configurações da sala:"
+                    options={memberOptions}
+                    value={ensureOwnerIncluded(whoCanEdit)}
+                    onChange={setWhoCanEdit}
+                    disabled={!userCanEditRoom}
+                    placeholder="Selecione os membros..."
+                    showAllOption={true}
+                  />
+
+                  {/* Quem pode controlar cartas */}
+                  <MultiSelect
+                    label="Quem pode controlar cartas (revelar/limpar):"
+                    options={memberOptions}
+                    value={ensureOwnerIncluded(whoCanOpenCards)}
+                    onChange={setWhoCanOpenCards}
+                    disabled={!userCanEditRoom}
+                    placeholder="Selecione os membros..."
+                    showAllOption={true}
+                  />
+
+                  {/* Quem pode aprovar/recusar/remover membros */}
+                  <MultiSelect
+                    label="Quem pode aprovar/recusar/remover membros:"
+                    options={memberOptions}
+                    value={ensureOwnerIncluded(whoCanApproveEntries)}
+                    onChange={setWhoCanApproveEntries}
+                    disabled={!userCanEditRoom}
+                    placeholder="Selecione os membros..."
+                    showAllOption={true}
+                  />              <div className="text-[0.6rem] sm:text-[0.65rem] text-gray-500 dark:text-gray-400 mt-2 lg:mt-3 leading-relaxed">
+                <p>
+                  <strong>Nota:</strong> O proprietário da sala sempre possui todas as permissões e
+                  não pode ser removido.
+                </p>
+              </div>
+
               {/* Privacidade */}
               <div className="flex items-center justify-between gap-2 sm:gap-3">
                 <label
                   className={twMerge(
                     'text-[0.65rem] sm:text-xs text-gray-600 dark:text-gray-400 font-medium',
-                    !canEditRoom
+                    !userCanEditRoom
                       ? 'text-gray-400 dark:text-gray-500'
                       : 'text-gray-700 dark:text-gray-300'
                   )}
@@ -163,10 +280,10 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
                     className={twMerge(
                       'relative inline-flex h-5 w-9 sm:h-6 sm:w-11 items-center rounded-full transition-colors',
                       isPrivate ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-700',
-                      !canEditRoom ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'
+                      !userCanEditRoom ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'
                     )}
-                    onClick={() => canEditRoom && setIsPrivate(v => !v)}
-                    disabled={!canEditRoom}
+                    onClick={() => userCanEditRoom && setIsPrivate(v => !v)}
+                    disabled={!userCanEditRoom}
                     aria-pressed={isPrivate}
                   >
                     <span
@@ -181,7 +298,7 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
                   <span
                     className={twMerge(
                       'text-[0.65rem] sm:text-xs text-gray-600 dark:text-gray-400',
-                      !canEditRoom ? 'opacity-60' : ''
+                      !userCanEditRoom ? 'opacity-60' : ''
                     )}
                   >
                     {isPrivate ? 'Privada' : 'Pública'}

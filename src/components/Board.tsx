@@ -37,7 +37,7 @@ export const Board = () => {
   const isOwner = room?.owner_id === user?.id;
 
   const userCanRevealAndClearCards =
-    isOwner || cachedRoomData?.data?.who_can_aprove_entries.includes(user?.id || '');
+    isOwner || cachedRoomData?.data?.who_can_open_cards.includes(user?.id || '');
 
   useEffect(() => {
     const roomId = room?.id;
