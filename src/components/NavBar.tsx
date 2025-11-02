@@ -3,7 +3,7 @@
 import { RoomContext } from '@/context/RoomContext';
 import { useRoomCache } from '@/hooks/useRoomCache';
 import { useTheme } from '@/hooks/useTheme';
-import { useTimer } from '@/hooks/useTimer';
+import { useServerTimer } from '@/hooks/useServerTimer';
 import * as Popover from '@radix-ui/react-popover';
 import { useState } from 'react';
 import { useContextSelector } from 'use-context-selector';
@@ -35,7 +35,7 @@ export const NavBar = () => {
     toggle: toggleTimer,
     reset: resetTimer,
     seconds: secondsTimer,
-  } = useTimer();
+  } = useServerTimer();
 
   // Encontrar os dados do usuário atual nos membros da sala
   const userMember = cachedRoomData?.data?.members?.find(member => member.member.id === user?.id);

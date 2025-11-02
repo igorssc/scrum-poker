@@ -15,4 +15,6 @@ export type RoomProps = {
   who_can_edit: string[];
   who_can_open_cards: string[];
   who_can_aprove_entries: string[];
+  start_timer?: string | null;
+  stop_timer?: string | null;
 };
