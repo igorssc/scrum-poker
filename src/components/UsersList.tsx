@@ -433,11 +433,13 @@ export const UsersList = () => {
                                         }}
                                         disabled={
                                           removingUsers.has(member.member.id) ||
-                                          member.member.id === user?.id
+                                          member.member.id === user?.id ||
+                                          room?.owner_id === member.member.id
                                         }
                                         className={twMerge(
                                           'w-full flex items-center gap-2 px-3 py-2 text-xs transition-colors',
-                                          member.member.id === user?.id
+                                          member.member.id === user?.id ||
+                                            room?.owner_id === member.member.id
                                             ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
                                             : 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer',
                                           'disabled:opacity-50 disabled:cursor-not-allowed'
