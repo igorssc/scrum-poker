@@ -379,7 +379,7 @@ export const NavBar = () => {
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
         title="Configurações da Sala"
-        className="max-w-xl"
+        className="max-w-2xl"
       >
         <SettingsModalContent onClose={() => setIsSettingsOpen(false)} />
       </Modal>

@@ -1,8 +1,8 @@
 'use client';
 
 import { ReactNode, useEffect } from 'react';
-import { Button } from './Button';
 import { twMerge } from 'tailwind-merge';
+import { Button } from './Button';
 
 type ModalProps = {
   isOpen: boolean;
@@ -57,7 +57,7 @@ export const Modal = ({ isOpen, onClose, title, children, className }: ModalProp
       >
         {/* Header */}
         <div className="flex items-center justify-between py-4 md:py-6 lg:py-8 px-2 md:px-4 lg:px-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-sm md:text-md xl:text-lg font-semibold text-gray-900 dark:text-gray-100">
+          <h2 className="text-sm md:text-md xl:text-lg font-semibold text-gray-900 dark:text-gray-100 truncate mr-4">
             {title}
           </h2>
           <Button
