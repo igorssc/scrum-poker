@@ -1,8 +1,8 @@
 'use client';
 
+import { ChevronDown } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { ChevronDown } from 'lucide-react';
 
 export interface MultiSelectOption {
   value: string;
@@ -53,10 +53,12 @@ export const MultiSelect = ({
       // Se clicou em "Todos", seleciona/deseleciona todos os disponíveis
       const enabledOptions = options.filter(opt => !opt.disabled);
       const allEnabled = enabledOptions.every(opt => value.includes(opt.value));
-      
+
       if (allEnabled) {
         // Deseleciona todos (mantém apenas os disabled)
-        const disabledValues = options.filter(opt => opt.disabled && value.includes(opt.value)).map(opt => opt.value);
+        const disabledValues = options
+          .filter(opt => opt.disabled && value.includes(opt.value))
+          .map(opt => opt.value);
         onChange(disabledValues);
       } else {
         // Seleciona todos
@@ -78,13 +80,15 @@ export const MultiSelect = ({
 
   const selectedOptions = options.filter(option => value.includes(option.value));
   const enabledOptions = options.filter(opt => !opt.disabled);
-  const allEnabledSelected = enabledOptions.length > 0 && enabledOptions.every(opt => value.includes(opt.value));
-  
-  const displayText = selectedOptions.length === 0 
-    ? placeholder 
-    : allEnabledSelected && showAllOption && options.length >= 3
-    ? 'Todos'
-    : selectedOptions.map(opt => opt.label).join(', ');
+  const allEnabledSelected =
+    enabledOptions.length > 0 && enabledOptions.every(opt => value.includes(opt.value));
+
+  const displayText =
+    selectedOptions.length === 0
+      ? placeholder
+      : allEnabledSelected && showAllOption && options.length >= 3
+        ? 'Todos'
+        : selectedOptions.map(opt => opt.label).join(', ');
 
   return (
     <div className={twMerge('flex flex-col gap-1.5 sm:gap-2', className)}>
@@ -154,7 +158,9 @@ export const MultiSelect = ({
                     )}
                   >
                     <span className="truncate">Todos</span>
-                    {options.filter(opt => !opt.disabled).every(opt => value.includes(opt.value)) && (
+                    {options
+                      .filter(opt => !opt.disabled)
+                      .every(opt => value.includes(opt.value)) && (
                       <svg
                         className="w-3 h-3 sm:w-4 sm:h-4 text-purple-600 dark:text-purple-400 shrink-0 ml-2"
                         fill="none"
@@ -172,38 +178,38 @@ export const MultiSelect = ({
                   </button>
                 )}
                 {options.map(option => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => toggleOption(option.value)}
-                  disabled={option.disabled}
-                  className={twMerge(
-                    'w-full px-3 py-2 text-[0.65rem] sm:text-xs text-left transition-colors duration-200',
-                    'flex items-center justify-between',
-                    !option.disabled && 'hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer',
-                    option.disabled && 'cursor-not-allowed bg-gray-50 dark:bg-gray-700/50',
-                    value.includes(option.value)
-                      ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300'
-                      : 'text-gray-900 dark:text-gray-100'
-                  )}
-                >
-                  <span className="truncate">{option.label}</span>
-                  {value.includes(option.value) && (
-                    <svg
-                      className="w-3 h-3 sm:w-4 sm:h-4 text-purple-600 dark:text-purple-400 shrink-0 ml-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  )}
-                </button>
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => toggleOption(option.value)}
+                    disabled={option.disabled}
+                    className={twMerge(
+                      'w-full px-3 py-2 text-[0.65rem] sm:text-xs text-left transition-colors duration-200',
+                      'flex items-center justify-between',
+                      !option.disabled && 'hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer',
+                      option.disabled && 'cursor-not-allowed bg-gray-50 dark:bg-gray-700/50',
+                      value.includes(option.value)
+                        ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300'
+                        : 'text-gray-900 dark:text-gray-100'
+                    )}
+                  >
+                    <span className="truncate">{option.label}</span>
+                    {value.includes(option.value) && (
+                      <svg
+                        className="w-3 h-3 sm:w-4 sm:h-4 text-purple-600 dark:text-purple-400 shrink-0 ml-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    )}
+                  </button>
                 ))}
               </>
             )}

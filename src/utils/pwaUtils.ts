@@ -35,14 +35,14 @@ export const refreshPWAManifest = async (theme: 'light' | 'dark') => {
       try {
         const registration = await navigator.serviceWorker.ready;
         await registration.update();
-        
+
         // Força recarga do manifest no service worker
         const sw = registration.active;
         if (sw) {
           sw.postMessage({
             type: 'MANIFEST_UPDATE',
             theme,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           });
         }
       } catch (error) {
@@ -62,12 +62,14 @@ export const detectTheme = (): 'light' | 'dark' => {
   const isDark =
     document.documentElement.classList.contains('dark') ||
     window.matchMedia('(prefers-color-scheme: dark)').matches;
-  
+
   return isDark ? 'dark' : 'light';
 };
 
 export const isPWAInstalled = (): boolean => {
-  return window.matchMedia('(display-mode: standalone)').matches ||
-         (window.navigator as any).standalone === true ||
-         document.referrer.includes('android-app://');
+  return (
+    window.matchMedia('(display-mode: standalone)').matches ||
+    (window.navigator as any).standalone === true ||
+    document.referrer.includes('android-app://')
+  );
 };

@@ -22,21 +22,24 @@ export const AcceptUsers = () => {
   }));
 
   // Extrair usuários PENDING diretamente do cache do React Query
-  const users = cachedRoomData?.data.members
-    ?.filter(member => member.status === 'PENDING')
-    .map(member => ({
-      id: member.member.id,
-      name: member.member.name,
-    })) || [];
+  const users =
+    cachedRoomData?.data.members
+      ?.filter(member => member.status === 'PENDING')
+      .map(member => ({
+        id: member.member.id,
+        name: member.member.name,
+      })) || [];
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
   const [hasOverflow, setHasOverflow] = useState(false);
-  
+
   // Estados de loading para cada usuário com ação específica
-  const [loadingUsers, setLoadingUsers] = useState<Map<string, 'accept' | 'refuse' | null>>(new Map());
+  const [loadingUsers, setLoadingUsers] = useState<Map<string, 'accept' | 'refuse' | null>>(
+    new Map()
+  );
 
   // Funções para gerenciar loading
   const setUserLoading = (userId: string, action: 'accept' | 'refuse' | null) => {
@@ -57,7 +60,7 @@ export const AcceptUsers = () => {
   // Handlers para aceitar/recusar usuários
   const handleAcceptUser = async (userId: string) => {
     if (isDragging || isUserLoading(userId)) return;
-    
+
     setUserLoading(userId, 'accept');
     try {
       await acceptUser(userId);
@@ -70,7 +73,7 @@ export const AcceptUsers = () => {
 
   const handleRefuseUser = async (userId: string) => {
     if (isDragging || isUserLoading(userId)) return;
-    
+
     setUserLoading(userId, 'refuse');
     try {
       await refuseUser(userId);

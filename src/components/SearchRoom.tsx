@@ -50,7 +50,11 @@ export const SearchRoom = () => {
       setHasSearched(true);
     } catch (error: any) {
       // Se o erro é relacionado à permissão de geolocalização
-      if (error?.code === 1 || error?.message?.includes('permission') || error?.message?.includes('denied')) {
+      if (
+        error?.code === 1 ||
+        error?.message?.includes('permission') ||
+        error?.message?.includes('denied')
+      ) {
         toast.error('Permissão de localização negada. Não foi possível buscar salas próximas.');
       } else {
         handleApiError(error, 'Erro ao buscar salas próximas');

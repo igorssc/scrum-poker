@@ -40,7 +40,7 @@ export const usePWABanner = () => {
         // Se foi dispensado, verifica se já passou o tempo
         if (bannerState.dismissed) {
           const timePassed = now - bannerState.dismissedAt;
-          
+
           if (timePassed >= DISMISS_DURATION) {
             // Já passou 1 dia, mostra novamente
             setShowBanner(true);

@@ -8,7 +8,7 @@ import { useParams, useSearchParams } from 'next/navigation';
 export default function Room() {
   const params = useParams();
   const searchParams = useSearchParams();
-  
+
   const roomId = params.id as string;
   const access = searchParams.get('access') || undefined;
 

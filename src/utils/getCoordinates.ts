@@ -11,7 +11,7 @@ export const getCoordinates = (): Promise<Coordinates> => {
       const options = {
         enableHighAccuracy: true,
         timeout: 10000, // 10 segundos
-        maximumAge: 60000 // Cache por 1 minuto
+        maximumAge: 60000, // Cache por 1 minuto
       };
 
       navigator.geolocation.getCurrentPosition(

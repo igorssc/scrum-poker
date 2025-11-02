@@ -13,18 +13,15 @@ export const ServiceWorkerRegistration = () => {
             updateViaCache: 'none', // Força verificação de atualizações
           })
           .then(registration => {
-
-            
             // Força verificação de atualizações imediatamente
             registration.update();
-            
+
             // Verifica se há atualizações
             registration.addEventListener('updatefound', () => {
               const newWorker = registration.installing;
               if (newWorker) {
                 newWorker.addEventListener('statechange', () => {
                   if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-
                     // Força ativação imediata da nova versão
                     newWorker.postMessage({ type: 'SKIP_WAITING' });
                   }
@@ -32,13 +29,10 @@ export const ServiceWorkerRegistration = () => {
               }
             });
           })
-          .catch(error => {
-
-          });
+          .catch(error => {});
 
         // Listener para quando o SW toma controle
         navigator.serviceWorker.addEventListener('controllerchange', () => {
-
           // Não recarrega automaticamente para evitar loops
         });
       });

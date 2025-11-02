@@ -7,13 +7,13 @@ export const ThemeColorManager = () => {
     const updateThemeColor = () => {
       // Detecta tema de forma mais direta
       const isDark = document.documentElement.classList.contains('dark');
-      
+
       // Cores otimizadas para header do navegador
       const colors = {
         light: '#8b5cf6', // purple-500 - bem visível no light
-        dark: '#374151'   // gray-700 - bem visível no dark
+        dark: '#374151', // gray-700 - bem visível no dark
       };
-      
+
       const themeColor = isDark ? colors.dark : colors.light;
 
       // Strategy 1: Update existing meta tag first (mobile browsers prefer this)
@@ -32,7 +32,7 @@ export const ThemeColorManager = () => {
         const newMeta = document.createElement('meta');
         newMeta.name = 'theme-color';
         newMeta.content = themeColor;
-        
+
         // Insert at the very beginning of head for mobile priority
         if (document.head.firstChild) {
           document.head.insertBefore(newMeta, document.head.firstChild);
@@ -69,8 +69,6 @@ export const ThemeColorManager = () => {
         const statusBarStyle = isDark ? 'black-translucent' : 'default';
         appleMeta.setAttribute('content', statusBarStyle);
       }
-
-
     };
 
     // Atualização inicial com retry agressivo
@@ -99,17 +97,19 @@ export const ThemeColorManager = () => {
     window.addEventListener('focus', handleFocus);
 
     // Observer otimizado - só observa mudanças de classe
-    const observer = new MutationObserver((mutations) => {
+    const observer = new MutationObserver(mutations => {
       let shouldUpdate = false;
-      
-      mutations.forEach((mutation) => {
-        if (mutation.type === 'attributes' && 
-            mutation.attributeName === 'class' &&
-            mutation.target === document.documentElement) {
+
+      mutations.forEach(mutation => {
+        if (
+          mutation.type === 'attributes' &&
+          mutation.attributeName === 'class' &&
+          mutation.target === document.documentElement
+        ) {
           shouldUpdate = true;
         }
       });
-      
+
       if (shouldUpdate) {
         updateThemeColor();
       }

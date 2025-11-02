@@ -20,11 +20,13 @@ export const DynamicManifest = () => {
     setTimeout(updateManifest, 500); // Delay para garantir que tema foi aplicado
 
     // Observer para mudanças no tema
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.type === 'attributes' && 
-            mutation.attributeName === 'class' &&
-            mutation.target === document.documentElement) {
+    const observer = new MutationObserver(mutations => {
+      mutations.forEach(mutation => {
+        if (
+          mutation.type === 'attributes' &&
+          mutation.attributeName === 'class' &&
+          mutation.target === document.documentElement
+        ) {
           setTimeout(updateManifest, 100);
         }
       });

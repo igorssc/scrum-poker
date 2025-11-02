@@ -31,13 +31,9 @@ export const useWebsocket = () => {
       socket.connect();
     }
 
-    const handleConnect = () => {
-
-    };
+    const handleConnect = () => {};
 
     const handleDisconnect = (reason: string) => {
-
-
       // Reconecta automaticamente se a desconexão não foi intencional
       if (reason === 'io server disconnect') {
         // Reconecta após um delay
@@ -53,9 +49,7 @@ export const useWebsocket = () => {
       console.error('WebSocket connection error:', error);
     };
 
-    const handleReconnect = (attemptNumber: number) => {
-
-    };
+    const handleReconnect = (attemptNumber: number) => {};
 
     socket.on('connect', handleConnect);
     socket.on('disconnect', handleDisconnect);

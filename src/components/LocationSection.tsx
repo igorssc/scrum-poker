@@ -15,13 +15,13 @@ type LocationSectionProps = {
   mode?: 'view' | 'edit'; // 'view' = atualiza automaticamente via API, 'edit' = controlado pelo pai
 };
 
-export const LocationSection = ({ 
-  room, 
-  user, 
-  lat: controlledLat, 
-  lng: controlledLng, 
+export const LocationSection = ({
+  room,
+  user,
+  lat: controlledLat,
+  lng: controlledLng,
   onLocationChange,
-  mode = 'view' 
+  mode = 'view',
 }: LocationSectionProps) => {
   const [locationLoading, setLocationLoading] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
@@ -58,17 +58,17 @@ export const LocationSection = ({
         headers: {} as Record<string, string>,
         extractAddress: (data: any) => {
           if (!data.results || data.results.length === 0) return null;
-          
+
           const result = data.results[0];
           const components = result.address_components;
-          
+
           const parts = [];
           let streetNumber = '';
           let route = '';
           let neighborhood = '';
           let city = '';
           let state = '';
-          
+
           // Extrai componentes específicos
           components.forEach((component: any) => {
             const types = component.types;
@@ -78,24 +78,27 @@ export const LocationSection = ({
               route = component.long_name;
             } else if (types.includes('sublocality') || types.includes('neighborhood')) {
               neighborhood = component.long_name;
-            } else if (types.includes('administrative_area_level_2') || types.includes('locality')) {
+            } else if (
+              types.includes('administrative_area_level_2') ||
+              types.includes('locality')
+            ) {
               city = component.long_name;
             } else if (types.includes('administrative_area_level_1')) {
               state = component.short_name;
             }
           });
-          
+
           // Monta endereço priorizando rua e número
           if (route && streetNumber) {
             parts.push(`${route}, ${streetNumber}`);
           } else if (route) {
             parts.push(route);
           }
-          
+
           if (neighborhood) parts.push(neighborhood);
           if (city) parts.push(city);
           if (state) parts.push(state);
-          
+
           return parts.length > 0 ? parts.join(', ') : result.formatted_address;
         },
       },
