@@ -218,14 +218,16 @@ export const NavBar = () => {
             <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 truncate pr-6">
               {cachedRoomData?.data?.name || 'Carregando...'}
             </h1>
-            <p className="text-sm text-gray-600 dark:text-gray-400 truncate pr-6">
-              Olá, {userMember?.member.name || 'Usuário'}
+            <div className="flex gap-1 pr-6">
+              <p className="text-sm text-gray-600 dark:text-gray-400 truncate pr-6">
+                Olá, {userMember?.member.name || 'Usuário'}
+              </p>
               {room?.owner_id === user?.id && (
-                <span className="ml-2 px-2 py-1 text-xs bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded">
+                <span className="px-2 py-1 text-xs bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded w-fit">
                   Proprietário
                 </span>
               )}
-            </p>
+            </div>
           </div>
 
           {/* Botões de ação */}
