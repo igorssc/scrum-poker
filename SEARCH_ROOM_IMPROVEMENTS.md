@@ -3,11 +3,13 @@
 ## Funcionalidades Adicionadas
 
 ### 🏷️ **Nome da Sala Truncado**
+
 - Implementado `truncate` no nome da sala para evitar quebra de layout
 - Layout responsivo que se adapta a diferentes tamanhos de tela
 - Nome permanece legível mesmo em salas com nomes muito longos
 
 ### 📍 **Exibição da Distância**
+
 - **Função de Cálculo**: Implementada fórmula de Haversine para calcular distância precisa entre coordenadas
 - **Formatação Inteligente**:
   - Distâncias < 1km: mostradas em metros (ex: "350m")
@@ -15,6 +17,7 @@
 - **Ícone Visual**: Ícone de localização para identificação rápida
 
 ### ⏱️ **Tempo de Atividade**
+
 - Calcula tempo desde criação da sala usando `created_at`
 - **Formatação Dinâmica**:
   - Menos de 1 minuto: "agora"
@@ -32,19 +35,19 @@
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
   const R = 6371; // Raio da Terra em km
   // ... fórmula matemática precisa
-}
+};
 
 // Formatação de distância
-const formatDistance = (distanceKm) => {
+const formatDistance = distanceKm => {
   if (distanceKm < 1) return `${Math.round(distanceKm * 1000)}m`;
   return `${distanceKm.toFixed(1)}km`;
-}
+};
 
 // Cálculo de tempo ativo
-const getActiveTime = (createdAt) => {
+const getActiveTime = createdAt => {
   // Calcula diferença entre agora e created_at
   // Retorna formatação apropriada
-}
+};
 ```
 
 ### **Layout Responsivo:**
@@ -65,17 +68,20 @@ const getActiveTime = (createdAt) => {
 ## Melhorias Visuais
 
 ### **Layout Estruturado:**
+
 - Nome da sala como título principal (truncado)
 - Informações secundárias (distância e tempo) em linha separada
 - Ícones SVG para identificação visual rápida
 - Espaçamento otimizado para diferentes telas
 
 ### **Hierarquia Visual:**
+
 - Nome da sala: texto médio, cor principal
 - Distância e tempo: texto menor, cor secundária
 - Hover states mantidos para interatividade
 
 ### **Responsividade:**
+
 - Textos adaptáveis: `text-[0.6rem] sm:text-[0.65rem]`
 - Ícones escalonáveis: `w-2.5 h-2.5 sm:w-3 sm:h-3`
 - Layout flexível que se adapta ao conteúdo
@@ -83,6 +89,7 @@ const getActiveTime = (createdAt) => {
 ## Resultado
 
 Agora cada sala na busca exibe:
+
 1. ✅ **Nome truncado** para evitar quebra de layout
 2. ✅ **Distância precisa** calculada em tempo real
 3. ✅ **Tempo de atividade** formatado de forma intuitiva
