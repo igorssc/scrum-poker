@@ -5,6 +5,7 @@ import { useRoomCache } from '@/hooks/useRoomCache';
 import api from '@/services/api';
 import { handleApiError, showSuccessToast } from '@/utils/errorHandler';
 import * as Popover from '@radix-ui/react-popover';
+import { useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import path from 'path';
 import { useEffect, useState } from 'react';
@@ -20,6 +21,7 @@ export const UsersList = () => {
   const { cachedRoomData } = useRoomCache();
   const { room, user, acceptUser, refuseUser, isAcceptingUser, isRefusingUser } =
     useContext(RoomContext);
+  const queryClient = useQueryClient();
   const [flippingCards, setFlippingCards] = useState<Set<string>>(new Set());
   const [previousCardsOpen, setPreviousCardsOpen] = useState<boolean | undefined>(undefined);
   const [removingUsers, setRemovingUsers] = useState<Set<string>>(new Set());
@@ -84,6 +86,22 @@ export const UsersList = () => {
         user_id: userToRemove.id,
         user_action_id: user.id,
       });
+
+      queryClient.setQueryData(['room', room.id], (oldData: any) => {
+        if (!oldData) return oldData;
+        return {
+          ...oldData,
+          data: {
+            ...oldData.data,
+            members: oldData.data.members.filter(
+              (member: any) => member.member.id !== userToRemove.id
+            ),
+          },
+        };
+      });
+
+      queryClient.invalidateQueries({ queryKey: ['room', room.id] });
+
       showSuccessToast('Usuário removido com sucesso!');
     } catch (error) {
       handleApiError(error, 'Erro ao remover usuário');

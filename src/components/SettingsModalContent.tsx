@@ -166,16 +166,63 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
         }
 
         await updateRoom(updateData);
+
+        // Atualizar cache manualmente com os novos dados da sala
+        queryClient.setQueryData(['room', room?.id], (oldData: any) => {
+          if (!oldData) return oldData;
+          return {
+            ...oldData,
+            data: {
+              ...oldData.data,
+              ...updateData,
+            },
+          };
+        });
       }
       // Só usuários com permissão podem mudar privacidade
       if (userCanEditRoom && isPrivate !== !!room?.private) {
         await updateRoom({
           private: isPrivate,
         });
+
+        // Atualizar cache manualmente com a nova configuração de privacidade
+        queryClient.setQueryData(['room', room?.id], (oldData: any) => {
+          if (!oldData) return oldData;
+          return {
+            ...oldData,
+            data: {
+              ...oldData.data,
+              private: isPrivate,
+            },
+          };
+        });
       }
       // Qualquer usuário pode alterar seu nome
       if (userName !== userMember?.member.name) {
         await patchUserMutation.mutateAsync({ name: userName });
+
+        // Atualizar cache manualmente com o novo nome do usuário
+        queryClient.setQueryData(['room', room?.id], (oldData: any) => {
+          if (!oldData) return oldData;
+          return {
+            ...oldData,
+            data: {
+              ...oldData.data,
+              members: oldData.data.members.map((member: any) => {
+                if (member.member.id === user?.id) {
+                  return {
+                    ...member,
+                    member: {
+                      ...member.member,
+                      name: userName,
+                    },
+                  };
+                }
+                return member;
+              }),
+            },
+          };
+        });
       }
       onClose();
     } catch (err: any) {

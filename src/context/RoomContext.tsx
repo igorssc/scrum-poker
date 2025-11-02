@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
 import { usePathname } from 'next/navigation';
 import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react';
@@ -75,6 +76,7 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
   const [isHydrated, setIsHydrated] = useState(false);
 
   const pathname = usePathname();
+  const queryClient = useQueryClient();
 
   const channel = new BroadcastChannel('channel-scrum-poker');
 
@@ -237,6 +239,28 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
           user_id: userId,
           access: room.access,
         });
+
+        // Atualizar cache manualmente - mudar status do usuário para LOGGED
+        queryClient.setQueryData(['room', room.id], (oldData: any) => {
+          if (!oldData) return oldData;
+          return {
+            ...oldData,
+            data: {
+              ...oldData.data,
+              members: oldData.data.members.map((member: any) => {
+                if (member.member.id === userId) {
+                  return {
+                    ...member,
+                    status: 'LOGGED',
+                  };
+                }
+                return member;
+              }),
+            },
+          };
+        });
+
+        queryClient.invalidateQueries({ queryKey: ['room', room.id] });
       } catch (error) {
         handleApiError(error, 'Erro ao aceitar usuário');
         throw error;
@@ -255,6 +279,22 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
           user_id: userId,
           access: room.access,
         });
+
+        // Atualizar cache manualmente - remover o usuário da lista de membros
+        queryClient.setQueryData(['room', room.id], (oldData: any) => {
+          if (!oldData) return oldData;
+          return {
+            ...oldData,
+            data: {
+              ...oldData.data,
+              members: oldData.data.members.filter(
+                (member: any) => member.member.id !== userId
+              ),
+            },
+          };
+        });
+
+        queryClient.invalidateQueries({ queryKey: ['room', room.id] });
       } catch (error) {
         handleApiError(error, 'Erro ao recusar usuário');
         throw error;

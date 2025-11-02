@@ -42,6 +42,18 @@ export const useRoomActions = () => {
       return res.json();
     },
     onSuccess: () => {
+      // Atualizar cache manualmente - revelar as cartas
+      queryClient.setQueryData(['room', room?.id], (oldData: any) => {
+        if (!oldData) return oldData;
+        return {
+          ...oldData,
+          data: {
+            ...oldData.data,
+            cards_open: true,
+          },
+        };
+      });
+
       queryClient.invalidateQueries({ queryKey: ['room', room?.id] });
     },
   });
@@ -58,6 +70,22 @@ export const useRoomActions = () => {
       return res.json();
     },
     onSuccess: () => {
+      // Atualizar cache manualmente - limpar todos os votos e fechar cartas
+      queryClient.setQueryData(['room', room?.id], (oldData: any) => {
+        if (!oldData) return oldData;
+        return {
+          ...oldData,
+          data: {
+            ...oldData.data,
+            cards_open: false,
+            members: oldData.data.members.map((member: any) => ({
+              ...member,
+              vote: null,
+            })),
+          },
+        };
+      });
+
       queryClient.invalidateQueries({ queryKey: ['room', room?.id] });
     },
   });
@@ -73,7 +101,26 @@ export const useRoomActions = () => {
       if (!res.ok) throw new Error('Erro ao votar');
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: (_, vote) => {
+      queryClient.setQueryData(['room', room?.id], (oldData: any) => {
+        if (!oldData) return oldData;
+        return {
+          ...oldData,
+          data: {
+            ...oldData.data,
+            members: oldData.data.members.map((member: any) => {
+              if (member.member.id === user?.id) {
+                return {
+                  ...member,
+                  vote: vote,
+                };
+              }
+              return member;
+            }),
+          },
+        };
+      });
+
       queryClient.invalidateQueries({ queryKey: ['room', room?.id] });
     },
   });
