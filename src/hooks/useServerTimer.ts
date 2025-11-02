@@ -25,22 +25,23 @@ export const useServerTimer = () => {
       setAccumulatedTime(0);
       lastStartTime.current = null;
     } else if (startTimer && !stopTimer) {
-      // Timer está rodando
+      // Timer está rodando (primeira vez ou retomado após pausa)
       const startDate = new Date(startTimer);
-      lastStartTime.current = startDate;
+      const currentDate = new Date();
+      const totalElapsed = Math.floor((currentDate.getTime() - startDate.getTime()) / 1000);
       
-      // Calcular tempo acumulado se havia uma parada anterior
-      // Neste caso simples, assumimos que start_timer é sempre do início da sessão atual
-      setAccumulatedTime(0);
+      setSeconds(Math.max(0, totalElapsed));
+      setAccumulatedTime(0); // Não precisa acumular pois o start_timer é mantido
+      lastStartTime.current = startDate;
       setIsRunning(true);
     } else if (startTimer && stopTimer) {
-      // Timer foi pausado
+      // Timer foi pausado - mostra tempo até a pausa
       const startDate = new Date(startTimer);
       const stopDate = new Date(stopTimer);
-      const sessionTime = Math.floor((stopDate.getTime() - startDate.getTime()) / 1000);
+      const pausedTime = Math.floor((stopDate.getTime() - startDate.getTime()) / 1000);
       
-      setSeconds(Math.max(0, sessionTime));
-      setAccumulatedTime(sessionTime);
+      setSeconds(Math.max(0, pausedTime));
+      setAccumulatedTime(0);
       setIsRunning(false);
       lastStartTime.current = null;
     }
@@ -49,17 +50,12 @@ export const useServerTimer = () => {
   // Atualizar timer localmente quando está rodando
   useEffect(() => {
     if (isRunning && lastStartTime.current) {
-      // Calcular tempo inicial baseado no servidor
-      const startDate = lastStartTime.current;
-      const currentDate = new Date();
-      const initialElapsed = Math.floor((currentDate.getTime() - startDate.getTime()) / 1000);
-      setSeconds(accumulatedTime + initialElapsed);
-      
-      // Iniciar intervalo para atualizar a cada segundo
+      // Iniciar intervalo para atualizar a cada segundo baseado no start_timer original
       intervalRef.current = setInterval(() => {
         const now = new Date();
+        const startDate = lastStartTime.current!;
         const elapsed = Math.floor((now.getTime() - startDate.getTime()) / 1000);
-        setSeconds(accumulatedTime + elapsed);
+        setSeconds(Math.max(0, elapsed));
       }, 1000);
     } else {
       if (intervalRef.current) {
@@ -73,7 +69,7 @@ export const useServerTimer = () => {
         clearInterval(intervalRef.current);
       }
     };
-  }, [isRunning, accumulatedTime]);
+  }, [isRunning]);
 
   // Função para iniciar/pausar timer no servidor
   const toggle = async () => {
@@ -81,14 +77,28 @@ export const useServerTimer = () => {
       const startTimer = cachedRoomData?.data?.start_timer;
       const stopTimer = cachedRoomData?.data?.stop_timer;
 
-      if (!startTimer || stopTimer) {
-        // Iniciar timer - usar timestamp atual
+      if (!startTimer) {
+        // Timer nunca foi iniciado - iniciar pela primeira vez
         await updateRoom({
           start_timer: new Date().toISOString(),
           stop_timer: null,
         });
+      } else if (startTimer && stopTimer) {
+        // Timer está pausado - retomar calculando novo start_timer
+        const startDate = new Date(startTimer);
+        const stopDate = new Date(stopTimer);
+        const pausedTime = Math.floor((stopDate.getTime() - startDate.getTime()) / 1000);
+        
+        // Calcular qual deveria ser o start_timer para manter o tempo pausado
+        const now = new Date();
+        const newStartTime = new Date(now.getTime() - (pausedTime * 1000));
+        
+        await updateRoom({
+          start_timer: newStartTime.toISOString(),
+          stop_timer: null,
+        });
       } else {
-        // Pausar timer - definir stop_timer
+        // Timer está rodando - pausar definindo stop_timer
         await updateRoom({
           stop_timer: new Date().toISOString(),
         });
