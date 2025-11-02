@@ -2,8 +2,8 @@
 
 import { RoomContext } from '@/context/RoomContext';
 import { useRoomCache } from '@/hooks/useRoomCache';
-import { useTheme } from '@/hooks/useTheme';
 import { useServerTimer } from '@/hooks/useServerTimer';
+import { useTheme } from '@/hooks/useTheme';
 import * as Popover from '@radix-ui/react-popover';
 import { useState } from 'react';
 import { useContextSelector } from 'use-context-selector';
@@ -39,6 +39,11 @@ export const NavBar = () => {
 
   // Encontrar os dados do usuário atual nos membros da sala
   const userMember = cachedRoomData?.data?.members?.find(member => member.member.id === user?.id);
+
+  const isOwner = room?.owner_id === user?.id;
+
+  const userCanStartAndStopTimer =
+    isOwner || cachedRoomData?.data?.who_can_open_cards.includes(user?.id || '');
 
   return (
     <>
@@ -227,7 +232,7 @@ export const NavBar = () => {
           <div className="flex gap-2">
             <div className="flex items-center gap-2">
               {/* Botão de Reset - aparece apenas quando timer está rodando */}
-              {secondsTimer > 0 && (
+              {secondsTimer > 0 && userCanStartAndStopTimer && (
                 <button
                   onClick={() => setIsResetConfirmOpen(true)}
                   className="p-2 rounded-lg cursor-pointer transition-colors"
@@ -255,7 +260,14 @@ export const NavBar = () => {
                 className={`light:bg-linear-to-r from-purple-300 via-purple-400 to-purple-500 focus:ring-purple-600 focus:ring-1 ${
                   isRunning ? 'animate-pulse' : ''
                 }`}
-                title={isRunning ? 'Clique para pausar' : 'Clique para iniciar'}
+                title={
+                  !userCanStartAndStopTimer
+                    ? 'Você não pode iniciar ou parar o timer'
+                    : isRunning
+                      ? 'Clique para pausar'
+                      : 'Clique para iniciar'
+                }
+                disabled={!userCanStartAndStopTimer}
               >
                 <div className="flex items-center gap-2">
                   {/* Ícone de relógio simples */}

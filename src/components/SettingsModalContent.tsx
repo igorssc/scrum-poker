@@ -234,9 +234,9 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
                 showAllOption={true}
               />
 
-              {/* Quem pode controlar cartas */}
+              {/* Quem pode controlar votação */}
               <MultiSelect
-                label="Quem pode controlar cartas (revelar/limpar):"
+                label="Quem pode controlar votação:"
                 options={memberOptions}
                 value={ensureOwnerIncluded(whoCanOpenCards)}
                 onChange={setWhoCanOpenCards}
@@ -245,9 +245,9 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
                 showAllOption={true}
               />
 
-              {/* Quem pode aprovar/recusar/remover membros */}
+              {/* Quem pode controlar membros */}
               <MultiSelect
-                label="Quem pode aprovar/recusar/remover membros:"
+                label="Quem pode controlar membros:"
                 options={memberOptions}
                 value={ensureOwnerIncluded(whoCanApproveEntries)}
                 onChange={setWhoCanApproveEntries}
@@ -255,9 +255,21 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
                 placeholder="Selecione os membros..."
                 showAllOption={true}
               />
-              <div className="text-[0.6rem] sm:text-[0.65rem] text-gray-500 dark:text-gray-400 mt-2 lg:mt-3 leading-relaxed">
+              <div className="flex flex-col text-[0.6rem] sm:text-[0.65rem] text-gray-500 dark:text-gray-400 mt-2 lg:mt-3 leading-relaxed">
                 <p>
                   O proprietário da sala sempre possui todas as permissões e não pode ser removido.
+                </p>
+                <p>
+                  Quem controla edição da sala pode alterar o nome, tema e localização, além de
+                  alternar entre sala privada e pública.
+                </p>
+                <p>
+                  Quem controla a votação pode revelar e limpar as cartas votadas, além de iniciar e
+                  pausar o timer.
+                </p>
+                <p>
+                  Quem controla membros pode aprovar ou recusar entradas em salas privadas, além de
+                  remover membros atuais.
                 </p>
               </div>
 

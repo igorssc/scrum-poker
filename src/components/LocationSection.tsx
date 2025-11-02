@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { useRoomCache } from '../hooks/useRoomCache';
 
 type LocationSectionProps = {
   room: any;
@@ -28,9 +29,11 @@ export const LocationSection = ({
   const [address, setAddress] = useState<string | null>(null);
   const [addressLoading, setAddressLoading] = useState(false);
   const queryClient = useQueryClient();
+  const { cachedRoomData } = useRoomCache();
 
   const isPrivate = !!room?.private;
-  const canEditRoom = !isPrivate || room?.owner_id === user?.id;
+  const isOwner = room?.owner_id === user?.id;
+  const canEditRoom = isOwner || cachedRoomData?.data?.who_can_edit.includes(user?.id || '');
 
   // Usa coordenadas controladas se fornecidas, senão usa do room
   const currentLat = controlledLat ?? room?.lat;
