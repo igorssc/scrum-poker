@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { ChevronDown } from 'lucide-react';
 
 export interface MultiSelectOption {
   value: string;
@@ -104,7 +105,7 @@ export const MultiSelect = ({
           onClick={() => !disabled && setIsOpen(!isOpen)}
           disabled={disabled}
           className={twMerge(
-            'w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-[0.65rem] sm:text-xs rounded-lg text-left transition-colors',
+            'relative block w-full px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 text-[0.65rem] sm:text-xs rounded-lg transition-colors',
             'border border-gray-300 focus:border-purple-500 focus:outline-none',
             'bg-white text-gray-900 placeholder-gray-500',
             'dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600',
@@ -114,32 +115,22 @@ export const MultiSelect = ({
               : 'cursor-pointer'
           )}
         >
-          <div className="flex items-center justify-between">
-            <span
-              className={twMerge(
-                'truncate',
-                selectedOptions.length === 0 && 'text-gray-500 dark:text-gray-400'
-              )}
-            >
-              {displayText}
-            </span>
-            <svg
-              className={twMerge(
-                'w-3 h-3 sm:w-4 sm:h-4 text-gray-400 transition-transform duration-200 shrink-0 ml-2',
-                isOpen && 'rotate-180'
-              )}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </div>
+          <span
+            className={twMerge(
+              'truncate block pr-8 text-left',
+              selectedOptions.length === 0 && 'text-gray-500 dark:text-gray-400'
+            )}
+          >
+            {displayText}
+          </span>
+          <span
+            className={twMerge(
+              'absolute right-2.5 sm:right-3 md:right-4 top-1/2 transform -translate-y-1/2 transition-transform duration-200',
+              isOpen && 'rotate-180'
+            )}
+          >
+            <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 dark:text-gray-500" />
+          </span>
         </button>
 
         {isOpen && !disabled && (

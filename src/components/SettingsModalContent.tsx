@@ -128,7 +128,6 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
           ? [...whoCanApproveEntries, ownerId]
           : whoCanApproveEntries;
 
-      // Permissões: se sala pública, qualquer usuário pode editar nome/tema/localização; se privada, só owner
       if (
         userCanEditRoom &&
         (roomName !== room?.name ||
@@ -224,41 +223,41 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
                 disabled={!userCanEditRoom || themeOptions.length < 2}
               />
 
-                  {/* Quem pode editar configurações */}
-                  <MultiSelect
-                    label="Quem pode editar configurações da sala:"
-                    options={memberOptions}
-                    value={ensureOwnerIncluded(whoCanEdit)}
-                    onChange={setWhoCanEdit}
-                    disabled={!userCanEditRoom}
-                    placeholder="Selecione os membros..."
-                    showAllOption={true}
-                  />
+              {/* Quem pode editar configurações */}
+              <MultiSelect
+                label="Quem pode editar configurações da sala:"
+                options={memberOptions}
+                value={ensureOwnerIncluded(whoCanEdit)}
+                onChange={setWhoCanEdit}
+                disabled={!isOwner}
+                placeholder="Selecione os membros..."
+                showAllOption={true}
+              />
 
-                  {/* Quem pode controlar cartas */}
-                  <MultiSelect
-                    label="Quem pode controlar cartas (revelar/limpar):"
-                    options={memberOptions}
-                    value={ensureOwnerIncluded(whoCanOpenCards)}
-                    onChange={setWhoCanOpenCards}
-                    disabled={!userCanEditRoom}
-                    placeholder="Selecione os membros..."
-                    showAllOption={true}
-                  />
+              {/* Quem pode controlar cartas */}
+              <MultiSelect
+                label="Quem pode controlar cartas (revelar/limpar):"
+                options={memberOptions}
+                value={ensureOwnerIncluded(whoCanOpenCards)}
+                onChange={setWhoCanOpenCards}
+                disabled={!isOwner}
+                placeholder="Selecione os membros..."
+                showAllOption={true}
+              />
 
-                  {/* Quem pode aprovar/recusar/remover membros */}
-                  <MultiSelect
-                    label="Quem pode aprovar/recusar/remover membros:"
-                    options={memberOptions}
-                    value={ensureOwnerIncluded(whoCanApproveEntries)}
-                    onChange={setWhoCanApproveEntries}
-                    disabled={!userCanEditRoom}
-                    placeholder="Selecione os membros..."
-                    showAllOption={true}
-                  />              <div className="text-[0.6rem] sm:text-[0.65rem] text-gray-500 dark:text-gray-400 mt-2 lg:mt-3 leading-relaxed">
+              {/* Quem pode aprovar/recusar/remover membros */}
+              <MultiSelect
+                label="Quem pode aprovar/recusar/remover membros:"
+                options={memberOptions}
+                value={ensureOwnerIncluded(whoCanApproveEntries)}
+                onChange={setWhoCanApproveEntries}
+                disabled={!isOwner}
+                placeholder="Selecione os membros..."
+                showAllOption={true}
+              />
+              <div className="text-[0.6rem] sm:text-[0.65rem] text-gray-500 dark:text-gray-400 mt-2 lg:mt-3 leading-relaxed">
                 <p>
-                  <strong>Nota:</strong> O proprietário da sala sempre possui todas as permissões e
-                  não pode ser removido.
+                  O proprietário da sala sempre possui todas as permissões e não pode ser removido.
                 </p>
               </div>
 
