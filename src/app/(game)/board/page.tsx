@@ -86,7 +86,7 @@ function BoardContent() {
 
   if (isLookingForRoom)
     return (
-      <div className="relative min-h-[calc(100dvh-2rem)] flex content-center items-center max-w-[90%]">
+      <div className="relative min-h-[calc(100dvh-3rem-4rem)] mb-16 flex content-center items-center max-w-[90%]">
         <ThemeToggle className="fixed top-3 right-3 sm:top-4 sm:right-4 z-50" />
         <HomeButton className="fixed top-4 left-4 z-50" />
         <Box allowOverflow className="w-160 max-h-[80dvh] sm:max-h-[800px]">
@@ -99,7 +99,7 @@ function BoardContent() {
 
   if (!room)
     return (
-      <div className="relative min-h-[calc(100dvh-2rem)] flex content-center items-center max-w-[90%]">
+      <div className="relative min-h-[calc(100dvh-3rem-4rem)] mb-16 flex content-center items-center max-w-[90%]">
         <ThemeToggle className="fixed top-3 right-3 sm:top-4 sm:right-4 z-50" />
         <HomeButton className="fixed top-4 left-4 z-50" />
         <Box allowOverflow className="w-160">
@@ -111,7 +111,7 @@ function BoardContent() {
     );
 
   return (
-    <div className="relative min-h-[calc(100dvh-2rem)] flex content-center items-center max-w-[90%]">
+    <div className="relative min-h-[calc(100dvh-3rem-4rem)] mb-16 flex content-center items-center max-w-[90%]">
       <Board />
     </div>
   );

@@ -1,8 +1,9 @@
+import { Footer } from '@/components/Footer';
 import { Glass } from '@/components/Glass';
-import { SampleCards } from '@/components/SampleCards';
 import '@/styles/globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { SampleCards } from '../../components/SampleCards';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -16,8 +17,13 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <SampleCards>
-      <Glass>{children}</Glass>
-    </SampleCards>
+    <div className="min-h-screen flex flex-col">
+      <div className="flex-1 relative h-full bg-amber-300">
+        <SampleCards>
+          <Glass>{children}</Glass>
+        </SampleCards>
+        <Footer variant="minimal" />
+      </div>
+    </div>
   );
 }

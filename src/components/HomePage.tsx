@@ -16,6 +16,7 @@ import {
 } from 'react-icons/fa';
 import { useContextSelector } from 'use-context-selector';
 import { Button } from './Button';
+import { Footer } from './Footer';
 import { ThemeToggle } from './ThemeToggle';
 
 export function HomePage() {
@@ -390,23 +391,7 @@ export function HomePage() {
         </div>
       </section>{' '}
       {/* Footer */}
-      <footer className="py-12 bg-gray-900 dark:bg-gray-800 text-gray-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-white mb-4 font-sinera">
-              Scrum Poker
-            </h3>
-            <p className="text-xs sm:text-sm md:text-sm lg:text-base mb-8">
-              A ferramenta gratuita e online para planning poker que sua equipe precisa.
-            </p>
-            <div className="border-t border-gray-700 pt-8">
-              <p className="text-xs sm:text-sm md:text-sm lg:text-base">
-                © 2024 Scrum Poker. Feito com ❤️ para a comunidade ágil.
-              </p>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

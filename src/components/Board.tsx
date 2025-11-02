@@ -62,7 +62,7 @@ export const Board = () => {
         {/* Layout responsivo: coluna em mobile/tablet, lado a lado em lg+ */}
         <div className="flex flex-col lg:flex-row lg:items-start gap-3 sm:gap-4 md:gap-6">
           {/* Cards Section */}
-          <Box className="max-w-full lg:flex-1 min-h-0! flex flex-col gap-y-3 sm:gap-y-4 md:gap-y-6 lg:gap-y-8">
+          <Box className="max-w-full lg:flex-1 min-h-0! max-h-fit flex flex-col gap-y-3 sm:gap-y-4 md:gap-y-6 lg:gap-y-8">
             <Cards />
 
             {userCanRevealAndClearCards && (
