@@ -53,11 +53,11 @@ export const NavBar = () => {
           <div className="flex items-center justify-between">
             {/* Informações da sala e usuário */}
             <div className="flex flex-col min-w-0 flex-1 gap-2 sm:gap-2">
-              <h1 className="text-sm sm:text-base font-bold text-gray-900 dark:text-gray-100 truncate">
+              <h1 className="text-sm sm:text-base font-bold text-gray-900 dark:text-gray-100 truncate mr-4">
                 {cachedRoomData?.data?.name || 'Carregando...'}
               </h1>
-              <div className="flex items-center gap-2 min-w-0">
-                <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
+              <div className="flex items-center gap-2 min-w-0 pr-4">
+                <p className="text-xs text-gray-600 dark:text-gray-400 truncate mr-2">
                   {userMember?.member.name || 'Usuário'}
                 </p>
                 {room?.owner_id === user?.id && (
