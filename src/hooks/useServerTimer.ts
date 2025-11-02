@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { handleApiError } from '@/utils/errorHandler';
 import { useRoomCache } from './useRoomCache';
 import { useRoomActions } from './useRoomActions';
 
@@ -93,7 +94,7 @@ export const useServerTimer = () => {
         });
       }
     } catch (error) {
-      console.error('Erro ao atualizar timer:', error);
+      handleApiError(error, 'Erro ao atualizar timer');
     }
   };
 
@@ -105,7 +106,7 @@ export const useServerTimer = () => {
         stop_timer: null,
       });
     } catch (error) {
-      console.error('Erro ao resetar timer:', error);
+      handleApiError(error, 'Erro ao resetar timer');
     }
   };
 

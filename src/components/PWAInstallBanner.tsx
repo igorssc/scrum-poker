@@ -1,5 +1,6 @@
 'use client';
 
+import { handleApiError } from '@/utils/errorHandler';
 import { usePWABanner } from '@/hooks/usePWABanner';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
 import { useState } from 'react';
@@ -29,7 +30,7 @@ export const PWAInstallBanner = () => {
       }
       // Se result === 'dismissed' (cancelou), não faz nada - banner continua visível
     } catch (error) {
-      console.error('Erro na instalação:', error);
+      handleApiError(error, 'Erro na instalação do aplicativo');
     } finally {
       setIsInstalling(false);
     }
