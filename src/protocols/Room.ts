@@ -17,4 +17,5 @@ export type RoomProps = {
   who_can_aprove_entries: string[];
   start_timer?: string | null;
   stop_timer?: string | null;
+  auto_grant_permissions: boolean;
 };

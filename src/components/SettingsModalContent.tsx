@@ -38,6 +38,7 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
   const [whoCanApproveEntries, setWhoCanApproveEntries] = useState<string[]>(
     room?.who_can_aprove_entries || []
   );
+  const [autoGrantPermissions, setAutoGrantPermissions] = useState(!!room?.auto_grant_permissions);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
@@ -55,6 +56,7 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
     setWhoCanEdit(room?.who_can_edit || []);
     setWhoCanOpenCards(room?.who_can_open_cards || []);
     setWhoCanApproveEntries(room?.who_can_aprove_entries || []);
+    setAutoGrantPermissions(!!room?.auto_grant_permissions);
   }, [
     room?.name,
     room?.private,
@@ -64,6 +66,7 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
     room?.who_can_edit,
     room?.who_can_open_cards,
     room?.who_can_aprove_entries,
+    room?.auto_grant_permissions,
     userMember?.member.name,
   ]);
 
@@ -134,6 +137,7 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
           theme !== room?.theme ||
           lat !== room?.lat ||
           lng !== room?.lng ||
+          autoGrantPermissions !== !!room?.auto_grant_permissions ||
           JSON.stringify(finalWhoCanEdit.sort()) !==
             JSON.stringify((room?.who_can_edit || []).sort()) ||
           JSON.stringify(finalWhoCanOpenCards.sort()) !==
@@ -146,6 +150,9 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
         if (theme !== room?.theme) updateData.theme = theme;
         if (lat !== room?.lat) updateData.lat = lat;
         if (lng !== room?.lng) updateData.lng = lng;
+        if (autoGrantPermissions !== !!room?.auto_grant_permissions) {
+          updateData.auto_grant_permissions = autoGrantPermissions;
+        }
         if (
           JSON.stringify(finalWhoCanEdit.sort()) !==
           JSON.stringify((room?.who_can_edit || []).sort())
@@ -243,7 +250,7 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
       >
         <div className="min-h-0">
           <div className="pt-3 sm:pt-4 md:pt-5 lg:pt-6 pb-1 sm:pb-1.5 md:pb-2">
-            <div className="flex flex-col gap-4 lg:gap-6">
+            <div className="flex flex-col gap-3 lg:gap-4">
               {/* Nome do usuário */}
               <Input
                 label="Seu nome:"
@@ -270,16 +277,80 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
                 disabled={!userCanEditRoom || themeOptions.length < 2}
               />
 
+              {/* Toggle para permissões automáticas */}
+              <div className="flex items-center justify-between gap-2 sm:gap-3">
+                <label
+                  className={twMerge(
+                    'text-[0.65rem] sm:text-xs text-gray-600 dark:text-gray-400 font-medium',
+                    !isOwner
+                      ? 'text-gray-400 dark:text-gray-500'
+                      : 'text-gray-700 dark:text-gray-300'
+                  )}
+                >
+                  Dar todas as permissões para todos os usuários:
+                </label>
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <button
+                    type="button"
+                    className={twMerge(
+                      'relative inline-flex h-5 w-9 sm:h-6 sm:w-11 items-center rounded-full transition-colors',
+                      autoGrantPermissions ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-700',
+                      !isOwner ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'
+                    )}
+                    onClick={() => isOwner && setAutoGrantPermissions(v => !v)}
+                    disabled={!isOwner}
+                    aria-pressed={autoGrantPermissions}
+                  >
+                    <span
+                      className={twMerge(
+                        'inline-block h-4 w-4 sm:h-5 sm:w-5 transform rounded-full bg-white transition-transform',
+                        autoGrantPermissions
+                          ? 'translate-x-4 sm:translate-x-5'
+                          : 'translate-x-0.5 sm:translate-x-1'
+                      )}
+                    />
+                  </button>
+                  <span
+                    className={twMerge(
+                      'text-[0.65rem] sm:text-xs text-gray-600 dark:text-gray-400',
+                      !isOwner ? 'opacity-60' : ''
+                    )}
+                  >
+                    {autoGrantPermissions ? 'Ativo' : 'Inativo'}
+                  </span>
+                </div>
+              </div>
+
+              <div className="text-[0.6rem] sm:text-[0.65rem] text-gray-500 dark:text-gray-400 leading-relaxed">
+                <p>
+                  Quando ativo, todos os usuários atuais e futuros receberão automaticamente todas
+                  as permissões (editar sala, controlar votação e controlar membros). O proprietário
+                  sempre possui todas as permissões.
+                </p>
+              </div>
+
+              <div className="text-[0.6rem] sm:text-[0.65rem] text-gray-500 dark:text-gray-400 mb-1 leading-relaxed">
+                <p>
+                  O proprietário da sala sempre possui todas as permissões e não pode ser removido.
+                </p>
+              </div>
+
               {/* Quem pode editar configurações */}
               <MultiSelect
                 label="Quem pode editar configurações da sala:"
                 options={memberOptions}
                 value={ensureOwnerIncluded(whoCanEdit)}
                 onChange={setWhoCanEdit}
-                disabled={!isOwner}
+                disabled={!isOwner || autoGrantPermissions}
                 placeholder="Selecione os membros..."
                 showAllOption={true}
               />
+              <div className="text-[0.6rem] sm:text-[0.65rem] text-gray-500 dark:text-gray-400 mt-0.5 leading-relaxed">
+                <p>
+                  Quem controla edição da sala pode alterar o nome, tema e localização, além de
+                  alternar entre sala privada e pública.
+                </p>
+              </div>
 
               {/* Quem pode controlar votação */}
               <MultiSelect
@@ -287,10 +358,16 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
                 options={memberOptions}
                 value={ensureOwnerIncluded(whoCanOpenCards)}
                 onChange={setWhoCanOpenCards}
-                disabled={!isOwner}
+                disabled={!isOwner || autoGrantPermissions}
                 placeholder="Selecione os membros..."
                 showAllOption={true}
               />
+              <div className="text-[0.6rem] sm:text-[0.65rem] text-gray-500 dark:text-gray-400 mt-0.5 leading-relaxed">
+                <p>
+                  Quem controla a votação pode revelar e limpar as cartas votadas, além de iniciar e
+                  pausar o timer.
+                </p>
+              </div>
 
               {/* Quem pode controlar membros */}
               <MultiSelect
@@ -298,22 +375,11 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
                 options={memberOptions}
                 value={ensureOwnerIncluded(whoCanApproveEntries)}
                 onChange={setWhoCanApproveEntries}
-                disabled={!isOwner}
+                disabled={!isOwner || autoGrantPermissions}
                 placeholder="Selecione os membros..."
                 showAllOption={true}
               />
-              <div className="flex flex-col text-[0.6rem] sm:text-[0.65rem] text-gray-500 dark:text-gray-400 mt-2 lg:mt-3 leading-relaxed">
-                <p>
-                  O proprietário da sala sempre possui todas as permissões e não pode ser removido.
-                </p>
-                <p>
-                  Quem controla edição da sala pode alterar o nome, tema e localização, além de
-                  alternar entre sala privada e pública.
-                </p>
-                <p>
-                  Quem controla a votação pode revelar e limpar as cartas votadas, além de iniciar e
-                  pausar o timer.
-                </p>
+              <div className="text-[0.6rem] sm:text-[0.65rem] text-gray-500 dark:text-gray-400 mt-0.5 leading-relaxed">
                 <p>
                   Quem controla membros pode aprovar ou recusar entradas em salas privadas, além de
                   remover membros atuais.
@@ -364,7 +430,7 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
                 </div>
               </div>
 
-              <div className="text-[0.6rem] sm:text-[0.65rem] text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
+              <div className="text-[0.6rem] sm:text-[0.65rem] text-gray-500 dark:text-gray-400 mt-0.5 leading-relaxed">
                 <p>
                   <strong>Salas privadas</strong> requerem aprovação do proprietário para entrada e
                   apenas ele pode modificar configurações; <strong>salas públicas</strong> permitem
