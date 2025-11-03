@@ -1,8 +1,11 @@
 'use client';
 
+import { RoomContext } from '@/context/RoomContext';
+import { useRoomCache } from '@/hooks/useRoomCache';
 import React from 'react';
 import { FaCheck, FaEdit, FaRedo, FaTimes } from 'react-icons/fa';
 import { twMerge } from 'tailwind-merge';
+import { useContextSelector } from 'use-context-selector';
 import { Box } from './Box';
 import { Button } from './Button';
 import { Input } from './Input';
@@ -81,6 +84,18 @@ export default function CurrentIssue({
   onShowResetModal,
   formatTime,
 }: CurrentIssueProps) {
+  // Verificar permissões do usuário
+  const { user } = useContextSelector(RoomContext, context => ({
+    user: context.user,
+  }));
+  const { cachedRoomData } = useRoomCache();
+
+  const room = cachedRoomData?.data;
+  const isOwner = room?.owner_id === user?.id;
+  const userCanOpenCards = isOwner || room?.who_can_open_cards?.includes(user?.id || '');
+
+  // Se o usuário não tem permissão, desabilita as ações
+  const canPerformActions = userCanOpenCards;
   const getSectorLabel = (sector: Sector): string => {
     const labels = {
       backend: 'Backend',
@@ -113,6 +128,18 @@ export default function CurrentIssue({
   const getTimerColorClasses = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
 
+    // Se não tem permissão, usar estilo desabilitado mas ainda pulsando
+    if (!canPerformActions) {
+      return {
+        text: 'text-gray-400 dark:text-gray-500',
+        border: 'border-gray-300 dark:border-gray-600',
+        bg: 'bg-gray-100 dark:bg-gray-800',
+        hover: '', // Sem hover quando desabilitado
+        pulse: seconds > 0 && isRunning ? 'animate-pulse' : '',
+        cursor: 'cursor-not-allowed',
+      };
+    }
+
     if (minutes >= 20) {
       // Vermelho após 20 minutos
       return {
@@ -121,6 +148,7 @@ export default function CurrentIssue({
         bg: 'bg-red-50 dark:bg-red-900/20',
         hover: 'hover:bg-red-100 dark:hover:bg-red-900/40',
         pulse: isRunning ? 'animate-pulse' : '',
+        cursor: 'cursor-pointer',
       };
     } else if (minutes >= 10) {
       // Amarelo após 10 minutos
@@ -130,6 +158,7 @@ export default function CurrentIssue({
         bg: 'bg-yellow-50 dark:bg-yellow-900/20',
         hover: 'hover:bg-yellow-100 dark:hover:bg-yellow-900/40',
         pulse: isRunning ? 'animate-pulse' : '',
+        cursor: 'cursor-pointer',
       };
     } else {
       // Cor normal (cinza) - pulsa apenas se o timer não estiver zerado E estiver rodando
@@ -139,6 +168,7 @@ export default function CurrentIssue({
         bg: 'bg-gray-50 dark:bg-gray-700',
         hover: 'hover:bg-gray-100 dark:hover:bg-gray-600',
         pulse: seconds > 0 && isRunning ? 'animate-pulse' : '',
+        cursor: 'cursor-pointer',
       };
     }
   };
@@ -191,8 +221,8 @@ export default function CurrentIssue({
               )}
             </div>
 
-            {/* Botão Limpar - sempre visível quando há issue */}
-            {currentIssue && !isEditing && (
+            {/* Botão Limpar - sempre visível quando há issue e usuário tem permissão */}
+            {currentIssue && !isEditing && canPerformActions && (
               <div className="flex justify-end">
                 <Button
                   onClick={onFinalize}
@@ -205,7 +235,7 @@ export default function CurrentIssue({
             )}
           </div>
 
-          {isEditing ? (
+          {isEditing && canPerformActions ? (
             <div className="space-y-3">
               {/* Campos de edição */}
               <div className="flex flex-col sm:flex-row gap-2 min-w-0">
@@ -261,7 +291,14 @@ export default function CurrentIssue({
             </div>
           ) : (
             <div className="flex items-stretch gap-2 sm:h-8 min-w-0">
-              <div className="flex-1 p-2.5 max-sm:py-1.5 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700/80 rounded border border-gray-200 dark:border-gray-600 flex items-center min-w-0 overflow-hidden">
+              <div
+                className={twMerge(
+                  'flex-1 p-2.5 max-sm:py-1.5 bg-gray-50 dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600 flex items-center min-w-0 overflow-hidden',
+                  canPerformActions
+                    ? 'hover:bg-gray-100 dark:hover:bg-gray-700/80'
+                    : 'cursor-not-allowed'
+                )}
+              >
                 {currentIssue ? (
                   <div className="flex items-center justify-between gap-2 w-full min-w-0">
                     <div className="flex items-center gap-2 flex-1 min-w-0 overflow-hidden">
@@ -274,15 +311,17 @@ export default function CurrentIssue({
                         {currentIssue}
                       </span>
                     </div>
-                    <button
-                      onClick={onStartEdit}
-                      className="cursor-pointer p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors shrink-0"
-                      title="Editar issue"
-                    >
-                      <FaEdit className="w-3 h-3 text-gray-500 dark:text-gray-400" />
-                    </button>
+                    {canPerformActions && (
+                      <button
+                        onClick={onStartEdit}
+                        className="cursor-pointer p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors shrink-0"
+                        title="Editar issue"
+                      >
+                        <FaEdit className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+                      </button>
+                    )}
                   </div>
-                ) : (
+                ) : canPerformActions ? (
                   <button
                     onClick={onStartEdit}
                     className="flex items-center justify-between w-full cursor-pointer transition-colors rounded p-1 -m-1"
@@ -296,6 +335,15 @@ export default function CurrentIssue({
                       Clique aqui para definir a issue
                     </span>
                   </button>
+                ) : (
+                  <span
+                    className={twMerge(
+                      'text-xs text-gray-400 dark:text-gray-500 italic flex-1 min-w-0 text-left p-1'
+                    )}
+                    title="Você não tem permissão para definir issues"
+                  >
+                    Apenas usuários com permissão podem definir issues
+                  </span>
                 )}
               </div>
 
@@ -304,17 +352,30 @@ export default function CurrentIssue({
                 <div className="flex items-stretch gap-2 shrink-0">
                   {/* Display do Timer - clicável para play/pause */}
                   <button
-                    onClick={!isRunning ? onStartTimer : onPauseTimer}
-                    disabled={(!onStartTimer && !isRunning) || (!onPauseTimer && isRunning)}
+                    onClick={
+                      canPerformActions ? (!isRunning ? onStartTimer : onPauseTimer) : undefined
+                    }
+                    disabled={
+                      !canPerformActions ||
+                      (!onStartTimer && !isRunning) ||
+                      (!onPauseTimer && isRunning)
+                    }
                     className={twMerge(
-                      'flex items-center gap-1.5 px-2.5 py-1.5 rounded min-w-14 justify-center transition-colors disabled:cursor-not-allowed cursor-pointer',
+                      'flex items-center gap-1.5 px-2.5 py-1.5 rounded min-w-14 justify-center transition-colors disabled:cursor-not-allowed',
                       getTimerColorClasses(time).bg,
                       getTimerColorClasses(time).border,
                       getTimerColorClasses(time).hover,
                       getTimerColorClasses(time).pulse,
+                      getTimerColorClasses(time).cursor,
                       'border'
                     )}
-                    title={isRunning ? 'Pausar timer' : 'Iniciar timer'}
+                    title={
+                      !canPerformActions
+                        ? 'Você não tem permissão para controlar o timer'
+                        : isRunning
+                          ? 'Pausar timer'
+                          : 'Iniciar timer'
+                    }
                   >
                     <ClockIcon isActive={isRunning} />
                     <span
@@ -328,7 +389,7 @@ export default function CurrentIssue({
                   </button>
 
                   {/* Reset Button - à direita */}
-                  {time > 0 && (
+                  {time > 0 && canPerformActions && (
                     <button
                       onClick={() => onShowResetModal(true)}
                       className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors cursor-pointer"
