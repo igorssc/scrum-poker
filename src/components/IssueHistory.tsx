@@ -420,7 +420,102 @@ export default function IssueHistory({
     yPos += 6;
     doc.text(`Total de issues: ${filteredHistory.length}`, 25, yPos);
 
-    yPos += 15; // Espaço reduzido entre card de filtros e issues
+    yPos += 15;
+
+    // Análise dinâmica das votações
+    const generateVotingAnalysis = () => {
+      // Coleta de dados dos votos
+      const allVotes: { userName: string; card: string; wasWinner: boolean; isEmpate: boolean }[] = [];
+      const userStats: Record<string, { total: number; wins: number; empates: number; consensus: number }> = {};
+
+      filteredHistory.forEach(item => {
+        item.votingRounds.forEach(round => {
+          const isEmpate = round.consensus === 'Empate';
+          round.votes.forEach(vote => {
+            const wasWinner = round.winnerCards?.includes(vote.card) || false;
+            allVotes.push({
+              userName: vote.userName,
+              card: vote.card,
+              wasWinner,
+              isEmpate
+            });
+
+            if (!userStats[vote.userName]) {
+              userStats[vote.userName] = { total: 0, wins: 0, empates: 0, consensus: 0 };
+            }
+
+            userStats[vote.userName].total++;
+            if (wasWinner && !isEmpate) {
+              userStats[vote.userName].wins++;
+            } else if (wasWinner && isEmpate) {
+              userStats[vote.userName].empates++;
+            }
+            if (wasWinner) {
+              userStats[vote.userName].consensus++;
+            }
+          });
+        });
+      });
+
+      // Análise dos dados
+      const users = Object.keys(userStats);
+      const userPerformances = users.map(userName => ({
+        name: userName,
+        ...userStats[userName],
+        winRate: userStats[userName].total > 0 ? (userStats[userName].wins / userStats[userName].total) * 100 : 0,
+        consensusRate: userStats[userName].total > 0 ? (userStats[userName].consensus / userStats[userName].total) * 100 : 0
+      })).sort((a, b) => b.consensusRate - a.consensusRate);
+
+      return { userPerformances, totalVotes: allVotes.length, totalUsers: users.length };
+    };
+
+    if (filteredHistory.length > 0) {
+      const analysis = generateVotingAnalysis();
+      
+      // Card de análise
+      const analysisHeight = 45;
+      checkPageBreak(analysisHeight);
+      drawCard(15, yPos - 5, pageWidth - 30, analysisHeight, [240, 248, 255]); // Cor azul clara
+
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(0, 0, 0);
+      doc.text('Analise de Performance da Equipe', 20, yPos + 5);
+
+      yPos += 15;
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(60, 60, 60);
+
+      if (analysis.userPerformances.length > 0) {
+        const bestPerformer = analysis.userPerformances[0];
+        const worstPerformer = analysis.userPerformances[analysis.userPerformances.length - 1];
+        const avgConsensusRate = analysis.userPerformances.reduce((sum, user) => sum + user.consensusRate, 0) / analysis.userPerformances.length;
+
+        doc.text(`Melhor alinhamento: ${bestPerformer.name} (${bestPerformer.consensusRate.toFixed(1)}% de consenso)`, 25, yPos);
+        yPos += 6;
+        
+        if (analysis.userPerformances.length > 1) {
+          doc.text(`Menor alinhamento: ${worstPerformer.name} (${worstPerformer.consensusRate.toFixed(1)}% de consenso)`, 25, yPos);
+          yPos += 6;
+        }
+        
+        doc.text(`Media da equipe: ${avgConsensusRate.toFixed(1)}% de consenso em ${analysis.totalVotes} votos`, 25, yPos);
+        yPos += 6;
+
+        // Classificação dos usuários
+        const aboveAvg = analysis.userPerformances.filter(u => u.consensusRate > avgConsensusRate);
+        const belowAvg = analysis.userPerformances.filter(u => u.consensusRate < avgConsensusRate);
+        
+        if (aboveAvg.length > 0) {
+          doc.text(`Acima da media: ${aboveAvg.map(u => u.name).join(', ')}`, 25, yPos);
+        }
+      } else {
+        doc.text('Nao ha dados suficientes para analise', 25, yPos);
+      }
+
+      yPos += 15;
+    }
 
     // Renderizar cada issue como um card
     filteredHistory.forEach((item, index) => {
