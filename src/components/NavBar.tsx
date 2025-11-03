@@ -61,7 +61,7 @@ export const NavBar = () => {
                   {userMember?.member.name || 'Usuário'}
                 </p>
                 {room?.owner_id === user?.id && (
-                  <span className="px-1.5 py-0.5 text-xs bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded whitespace-nowrap">
+                  <span className="px-1.5 py-0.5 text-[0.65rem] bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded-full whitespace-nowrap">
                     Proprietário
                   </span>
                 )}
@@ -236,7 +236,7 @@ export const NavBar = () => {
               </h1>
             </div>
             <div
-              className={`flex gap-1 ${
+              className={`flex gap-1 items-center justify-center ${
                 (userMember?.member.name || 'Usuário').length > 15 ? 'pr-6' : 'pr-2'
               }`}
             >
@@ -248,7 +248,7 @@ export const NavBar = () => {
                 Olá, {userMember?.member.name || 'Usuário'}
               </p>
               {room?.owner_id === user?.id && (
-                <span className="px-2 py-1 text-xs bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded w-fit">
+                <span className="px-2 py-0.5 text-[0.65rem] bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded-full w-fit">
                   Proprietário
                 </span>
               )}
