@@ -271,7 +271,7 @@ export function IssueManager({
             <div className="space-y-2">
               {/* Desktop: Input e Select na mesma linha */}
               <div className="flex flex-col sm:flex-row gap-2 items-end">
-                <div className="flex-1">
+                <div className="flex-1 w-full">
                   <Input
                     value={tempIssue}
                     onChange={e => setTempIssue(e.target.value)}
@@ -298,7 +298,7 @@ export function IssueManager({
                 </div>
               </div>
               {/* Botões discretos alinhados à direita */}
-              <div className="flex justify-end gap-1 pt-2">
+              <div className="flex justify-center sm:justify-end gap-1 pt-2">
                 <button
                   onClick={handleCancel}
                   className={twMerge(
@@ -320,8 +320,8 @@ export function IssueManager({
               </div>
             </div>
           ) : (
-            <div className="flex items-stretch gap-2 h-8 min-w-0">
-              <div className="flex-1 p-2.5 bg-gray-50 dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600 flex items-center min-w-0 overflow-hidden">
+            <div className="flex max-sm:flex-col items-stretch gap-2 sm:h-8 min-w-0">
+              <div className="flex-1 p-2.5 max-sm:py-1.5 bg-gray-50 dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600 flex items-center min-w-0 overflow-hidden">
                 {currentIssue ? (
                   <div className="flex items-center justify-between gap-2 w-full min-w-0">
                     <div className="flex items-center gap-2 flex-1 min-w-0 overflow-hidden">
@@ -367,7 +367,7 @@ export function IssueManager({
                 <Button
                   onClick={handleFinalize}
                   variant="primary"
-                  className={twMerge('text-[0.625rem] px-2 py-0 flex items-center')}
+                  className={twMerge('text-[0.625rem] px-2 py-0 flex items-center max-sm:h-8')}
                 >
                   Finalizar Issue
                 </Button>
@@ -379,7 +379,7 @@ export function IssueManager({
         {/* Histórico */}
         {historyItems.length > 0 && (
           <div className="border-t border-gray-200 dark:border-gray-700 pt-3">
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-3 max-sm:flex-col max-sm:gap-2">
               <button
                 onClick={() => setIsHistoryExpanded(!isHistoryExpanded)}
                 className="flex items-center gap-2 group cursor-pointer"
@@ -415,8 +415,8 @@ export function IssueManager({
               {isHistoryExpanded && (
                 <div className={twMerge('flex items-center gap-2 text-[0.625rem]')}>
                   {/* Filtro e Ordenação em linha */}
-                  <div className="flex items-center gap-1.5">
-                    <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1.5 flex-1 min-w-0 overflow-x-auto">
+                    <div className="flex items-center gap-1 shrink-0">
                       <Select
                         value={sectorFilter}
                         onChange={value => setSectorFilter(value as Sector | 'all')}
@@ -427,9 +427,9 @@ export function IssueManager({
                       />
                     </div>
 
-                    <div className="w-px h-4 bg-gray-300 dark:bg-gray-600"></div>
+                    <div className="w-px h-4 bg-gray-300 dark:bg-gray-600 shrink-0"></div>
 
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 shrink-0">
                       <Select
                         value={sortBy}
                         onChange={value =>
@@ -448,7 +448,7 @@ export function IssueManager({
                       />
                       <button
                         onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                        className="p-[0.68rem] hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors flex items-center cursor-pointer"
+                        className="p-[0.68rem] hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors flex items-center cursor-pointer shrink-0"
                         title={`Ordenar ${sortOrder === 'asc' ? 'decrescente' : 'crescente'}`}
                       >
                         {sortOrder === 'asc' ? (
@@ -461,10 +461,10 @@ export function IssueManager({
                   </div>
 
                   {/* Separador e Toggle de Detalhes */}
-                  <div className="w-px h-4 bg-gray-300 dark:bg-gray-600"></div>
+                  <div className="w-px h-4 bg-gray-300 dark:bg-gray-600 shrink-0"></div>
                   <button
                     onClick={() => setShowDetailedHistory(!showDetailedHistory)}
-                    className="p-[0.68rem] hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors flex items-center cursor-pointer"
+                    className="p-[0.68rem] hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors flex items-center cursor-pointer shrink-0"
                     title={showDetailedHistory ? 'Visualização resumida' : 'Visualização detalhada'}
                   >
                     {showDetailedHistory ? (
@@ -537,7 +537,7 @@ export function IssueManager({
                     {/* Detalhes da Votação */}
                     {showDetailedHistory && item.votes && item.votes.length > 0 && (
                       <div className="border-t border-gray-200 dark:border-gray-600 pt-2">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1">
+                        <div className="grid grid-cols-2 lg:grid-cols-3 gap-1">
                           {item.votes.map((vote, index) => (
                             <div
                               key={index}
