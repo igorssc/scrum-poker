@@ -1,12 +1,15 @@
 'use client';
 
-import { HistoryItem, Sector, VotingRound } from '@/types/voting';
+import { HistoryItem, Sector } from '@/types/voting';
 import * as Popover from '@radix-ui/react-popover';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import React from 'react';
 import {
   FaChevronDown,
   FaChevronUp,
   FaClock,
+  FaDownload,
   FaFilter,
   FaHistory,
   FaSort,
@@ -31,6 +34,7 @@ const FilterAndSortControls = ({
   onToggleSortOrder,
   showDetailedHistory,
   onToggleDetailedHistory,
+  onDownloadPDF,
 }: {
   sectorFilter: Sector | 'all';
   onSectorFilterChange: React.Dispatch<React.SetStateAction<Sector | 'all'>>;
@@ -43,6 +47,7 @@ const FilterAndSortControls = ({
   onToggleSortOrder: () => void;
   showDetailedHistory: boolean;
   onToggleDetailedHistory: () => void;
+  onDownloadPDF: () => void;
 }) => {
   const hasFilterApplied = sectorFilter !== 'all';
   const hasSortApplied = sortBy !== 'date' || sortOrder !== 'desc';
@@ -188,6 +193,18 @@ const FilterAndSortControls = ({
           <FaStream className="w-3 h-3 text-gray-500 dark:text-gray-400" />
         )}
       </button>
+
+      {/* Separador */}
+      <div className="w-px h-4 bg-gray-300 dark:bg-gray-600 shrink-0"></div>
+
+      {/* Download PDF */}
+      <button
+        onClick={onDownloadPDF}
+        className="p-[0.68rem] hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors flex items-center cursor-pointer shrink-0"
+        title="Baixar histórico em PDF"
+      >
+        <FaDownload className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+      </button>
     </div>
   );
 };
@@ -300,6 +317,132 @@ export default function IssueHistory({
   // Aplicar ordenação
   const filteredHistory = sortHistory(filteredItems, sortBy, sortOrder);
 
+  // Função para gerar PDF
+  const handleDownloadPDF = () => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.width;
+
+    const sortOptions = [
+      { value: 'date', label: 'Data' },
+      { value: 'name', label: 'Nome' },
+      { value: 'time', label: 'Tempo' },
+      { value: 'sector', label: 'Setor' },
+      { value: 'score', label: 'Pontuação' },
+    ];
+
+    // Cabeçalho
+    doc.setFontSize(18);
+    doc.text('Histórico de Votações - Scrum Poker', pageWidth / 2, 20, { align: 'center' });
+
+    // Data de geração
+    doc.setFontSize(10);
+    doc.text(`Gerado em: ${formatDate(new Date())}`, pageWidth / 2, 30, { align: 'center' });
+
+    // Filtros aplicados
+    let yPos = 45;
+    doc.setFontSize(12);
+    doc.text('Filtros e Ordenação:', 20, yPos);
+
+    yPos += 10;
+    doc.setFontSize(10);
+    doc.text(
+      `Setor: ${sectorFilter === 'all' ? 'Todos' : getSectorLabel(sectorFilter as Sector)}`,
+      25,
+      yPos
+    );
+    yPos += 8;
+    doc.text(
+      `Ordenação: ${sortOptions.find((opt: any) => opt.value === sortBy)?.label} (${sortOrder === 'asc' ? 'Crescente' : 'Decrescente'})`,
+      25,
+      yPos
+    );
+    yPos += 8;
+    doc.text(`Visualização: ${showDetailedHistory ? 'Detalhada' : 'Resumida'}`, 25, yPos);
+    yPos += 8;
+    doc.text(`Total de issues: ${filteredHistory.length}`, 25, yPos);
+
+    yPos += 20;
+
+    // Preparar dados para a tabela
+    const tableData: any[] = [];
+
+    filteredHistory.forEach(item => {
+      if (showDetailedHistory) {
+        // Linha principal da issue
+        tableData.push([
+          item.topic,
+          getSectorLabel(item.sector),
+          formatDate(item.finalizedAt || item.createdAt),
+          item.totalDuration ? formatTime(item.totalDuration) : '-',
+          item.finalConsensus || '-',
+          `${item.votingRounds.length} votação${item.votingRounds.length !== 1 ? 'ões' : ''}`,
+        ]);
+
+        // Detalhes das votações
+        item.votingRounds.forEach((round, index) => {
+          const roundData = [
+            `  └ Votação ${index + 1}`,
+            '',
+            formatDate(round.votedAt),
+            round.duration ? formatTime(round.duration) : '-',
+            round.consensus || '-',
+            `${round.votes.length} votos`,
+          ];
+          tableData.push(roundData);
+
+          // Votos da rodada
+          if (round.votes.length > 0) {
+            const votesStr = round.votes.map(vote => `${vote.userName}: ${vote.card}`).join(', ');
+            tableData.push([`    Votos: ${votesStr}`, '', '', '', '', '']);
+          }
+        });
+      } else {
+        // Versão resumida
+        tableData.push([
+          item.topic,
+          getSectorLabel(item.sector),
+          formatDate(item.finalizedAt || item.createdAt),
+          item.totalDuration ? formatTime(item.totalDuration) : '-',
+          item.finalConsensus || '-',
+          `${item.votingRounds.length} votação${item.votingRounds.length !== 1 ? 'ões' : ''}`,
+        ]);
+      }
+    });
+
+    // Gerar tabela
+    autoTable(doc, {
+      head: [['Issue', 'Setor', 'Data', 'Duração', 'Consenso', 'Votações']],
+      body: tableData,
+      startY: yPos,
+      styles: {
+        fontSize: 8,
+        cellPadding: 3,
+      },
+      headStyles: {
+        fillColor: [99, 102, 241], // purple-500
+        textColor: 255,
+        fontSize: 9,
+        fontStyle: 'bold',
+      },
+      alternateRowStyles: {
+        fillColor: [249, 250, 251], // gray-50
+      },
+      columnStyles: {
+        0: { cellWidth: 50 }, // Issue
+        1: { cellWidth: 25 }, // Setor
+        2: { cellWidth: 30 }, // Data
+        3: { cellWidth: 20 }, // Duração
+        4: { cellWidth: 20 }, // Consenso
+        5: { cellWidth: 25 }, // Votações
+      },
+      margin: { left: 20, right: 20 },
+    });
+
+    // Salvar PDF
+    const fileName = `historico-votacoes-${new Date().toISOString().split('T')[0]}.pdf`;
+    doc.save(fileName);
+  };
+
   if (historyItems.length === 0) {
     return null;
   }
@@ -351,6 +494,7 @@ export default function IssueHistory({
                 onToggleSortOrder={onToggleSortOrder}
                 showDetailedHistory={showDetailedHistory}
                 onToggleDetailedHistory={onToggleDetailedHistory}
+                onDownloadPDF={handleDownloadPDF}
               />
             )}
           </div>
@@ -461,7 +605,7 @@ export default function IssueHistory({
                               )}
                             </div>
                           )}
-                          
+
                           {/* Votos da rodada */}
                           <div className="grid grid-cols-2 lg:grid-cols-3 gap-1">
                             {round.votes.map((vote, voteIndex) => (
@@ -498,8 +642,13 @@ export default function IssueHistory({
                         <span
                           className={twMerge('text-[0.625rem] text-gray-500 dark:text-gray-400')}
                         >
-                          {item.votingRounds.length} votação{item.votingRounds.length !== 1 ? 'ões' : ''} • {' '}
-                          {item.votingRounds.reduce((total, round) => total + round.votes.length, 0)} votos
+                          {item.votingRounds.length} votação
+                          {item.votingRounds.length !== 1 ? 'ões' : ''} •{' '}
+                          {item.votingRounds.reduce(
+                            (total, round) => total + round.votes.length,
+                            0
+                          )}{' '}
+                          votos
                         </span>
                         {item.votingRounds.length > 1 && (
                           <span className="text-[10px] text-blue-600 dark:text-blue-400 truncate">
