@@ -329,12 +329,6 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
                 </p>
               </div>
 
-              <div className="text-[0.6rem] sm:text-[0.65rem] text-gray-500 dark:text-gray-400 mb-1 leading-relaxed">
-                <p>
-                  O proprietário da sala sempre possui todas as permissões e não pode ser removido.
-                </p>
-              </div>
-
               {/* Quem pode editar configurações */}
               <MultiSelect
                 label="Quem pode editar configurações da sala:"
