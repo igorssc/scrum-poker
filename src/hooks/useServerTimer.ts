@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
 import { handleApiError } from '@/utils/errorHandler';
-import { useRoomCache } from './useRoomCache';
+import { useEffect, useRef, useState } from 'react';
 import { useRoomActions } from './useRoomActions';
+import { useRoomCache } from './useRoomCache';
 
 export const useServerTimer = () => {
   const [seconds, setSeconds] = useState(0);
@@ -9,7 +9,7 @@ export const useServerTimer = () => {
   const [accumulatedTime, setAccumulatedTime] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const lastStartTime = useRef<Date | null>(null);
-  
+
   const { cachedRoomData } = useRoomCache();
   const { updateRoom } = useRoomActions();
 
@@ -29,7 +29,7 @@ export const useServerTimer = () => {
       const startDate = new Date(startTimer);
       const currentDate = new Date();
       const totalElapsed = Math.floor((currentDate.getTime() - startDate.getTime()) / 1000);
-      
+
       setSeconds(Math.max(0, totalElapsed));
       setAccumulatedTime(0); // Não precisa acumular pois o start_timer é mantido
       lastStartTime.current = startDate;
@@ -39,7 +39,7 @@ export const useServerTimer = () => {
       const startDate = new Date(startTimer);
       const stopDate = new Date(stopTimer);
       const pausedTime = Math.floor((stopDate.getTime() - startDate.getTime()) / 1000);
-      
+
       setSeconds(Math.max(0, pausedTime));
       setAccumulatedTime(0);
       setIsRunning(false);
@@ -54,7 +54,9 @@ export const useServerTimer = () => {
       intervalRef.current = setInterval(() => {
         const now = new Date();
         const startDate = lastStartTime.current!;
-        const elapsed = Math.floor((now.getTime() - startDate.getTime()) / 1000);
+        const elapsed = Math.floor(
+          (now.getTime() - (startDate.getTime() || new Date().getTime())) / 1000
+        );
         setSeconds(Math.max(0, elapsed));
       }, 1000);
     } else {
@@ -88,11 +90,11 @@ export const useServerTimer = () => {
         const startDate = new Date(startTimer);
         const stopDate = new Date(stopTimer);
         const pausedTime = Math.floor((stopDate.getTime() - startDate.getTime()) / 1000);
-        
+
         // Calcular qual deveria ser o start_timer para manter o tempo pausado
         const now = new Date();
-        const newStartTime = new Date(now.getTime() - (pausedTime * 1000));
-        
+        const newStartTime = new Date(now.getTime() - pausedTime * 1000);
+
         await updateRoom({
           start_timer: newStartTime.toISOString(),
           stop_timer: null,
@@ -111,8 +113,9 @@ export const useServerTimer = () => {
   // Função para resetar timer no servidor
   const reset = async () => {
     try {
+      const now = new Date();
       await updateRoom({
-        start_timer: null,
+        start_timer: new Date(now.getTime() - 1000).toISOString(),
         stop_timer: null,
       });
     } catch (error) {
