@@ -278,33 +278,34 @@ export const Board = () => {
               <Cards />
 
               {userCanRevealAndClearCards && (
-                <Flex className="w-full flex-row gap-2 md:gap-4">
-                  <Button
-                    className="flex-1"
-                    onClick={clearVotes}
-                    isLoading={isClearingVotes}
-                    variant="tertiary"
-                    disabled={isRevealingCards || isClearingVotes || !data?.data.cards_open}
-                  >
-                    Limpar votos
-                  </Button>
-                  <Button
-                    className="flex-1"
-                    onClick={revealCards}
-                    isLoading={isRevealingCards}
-                    variant="tertiary"
-                    disabled={isRevealingCards || isClearingVotes || data?.data.cards_open}
-                  >
-                    Revelar cartas
-                  </Button>
-                </Flex>
+                <>
+                  <Flex className="w-full flex-row gap-2 md:gap-4">
+                    <Button
+                      className="flex-1"
+                      onClick={clearVotes}
+                      isLoading={isClearingVotes}
+                      variant="tertiary"
+                      disabled={isRevealingCards || isClearingVotes || !data?.data.cards_open}
+                    >
+                      Limpar votos
+                    </Button>
+                    <Button
+                      className="flex-1"
+                      onClick={revealCards}
+                      isLoading={isRevealingCards}
+                      variant="tertiary"
+                      disabled={isRevealingCards || isClearingVotes || data?.data.cards_open}
+                    >
+                      Revelar cartas
+                    </Button>
+                  </Flex>
+                  <p className="text-[0.65rem] text-gray-400 leading-relaxed">
+                    Ao revelar as cartas, se uma issue está definida, é criado automaticamente um
+                    registro histórico contendo o resultado da votação, tempo decorrido e
+                    participação dos membros.
+                  </p>
+                </>
               )}
-
-              <p className="text-[0.65rem] text-gray-400 leading-relaxed">
-                Ao revelar as cartas, se uma issue está definida, é criado automaticamente um
-                registro histórico contendo o resultado da votação, tempo decorrido e participação
-                dos membros.
-              </p>
             </Box>
 
             {/* Users List - aparece aqui em md para baixo */}

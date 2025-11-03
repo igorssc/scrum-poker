@@ -72,7 +72,7 @@ const FilterAndSortControls = ({
             className="relative p-[0.68rem] hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors flex items-center cursor-pointer shrink-0"
             title="Filtrar por setor"
           >
-            <FaFilter className="w-3 h-2 text-gray-500 dark:text-gray-400" />
+            <FaFilter className="w-3 h-2.5 text-gray-500 dark:text-gray-400" />
             {hasFilterApplied && (
               <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-purple-500 rounded-full"></div>
             )}
@@ -114,7 +114,7 @@ const FilterAndSortControls = ({
             className="relative p-[0.68rem] hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors flex items-center cursor-pointer shrink-0"
             title="Ordenar"
           >
-            <FaSort className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+            <FaSort className="w-3 h-3.5 text-gray-500 dark:text-gray-400" />
             {hasSortApplied && (
               <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-purple-500 rounded-full"></div>
             )}
