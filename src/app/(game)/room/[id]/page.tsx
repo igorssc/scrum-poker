@@ -13,7 +13,7 @@ export default function Room() {
   const access = searchParams.get('access') || undefined;
 
   return (
-    <div className="relative min-h-[calc(100dvh-3rem-4rem)] mb-16 flex content-center items-center max-w-[90%]">
+    <div className="relative min-h-[calc(100dvh-3rem-4rem)] mb-16 flex content-center items-center max-w-[calc(100%-1.5rem)] md:max-w-[90%]">
       <ThemeToggle className="fixed top-4 right-4 z-50" />
       <HomeButton className="fixed top-4 left-4 z-50" />
       <RoomClient roomId={roomId} access={access} />

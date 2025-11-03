@@ -37,6 +37,10 @@ interface HistoryItem {
 }
 
 export const Board = () => {
+  // Estados para a issue atual
+  const [currentIssue, setCurrentIssue] = useState<string>('');
+  const [currentSector, setCurrentSector] = useState<Sector>('backend');
+
   // Mock data inicial para demonstração
   const [votingHistory, setVotingHistory] = useState<HistoryItem[]>([
     {
@@ -103,6 +107,9 @@ export const Board = () => {
     isOwner || cachedRoomData?.data?.who_can_open_cards.includes(user?.id || '');
 
   const handleFinalizeTopic = (topic: string, sector: Sector) => {
+    // Atualizar a issue atual
+    setCurrentIssue(topic);
+    setCurrentSector(sector);
     // Mock votes para demonstração
     const mockVotes: Vote[] = [
       { userId: '1', userName: 'João Silva', card: Math.random() > 0.5 ? '5' : '8' },
@@ -169,7 +176,7 @@ export const Board = () => {
         <div className="flex flex-col lg:flex-row lg:items-start gap-3 sm:gap-4 md:gap-6">
           {/* Cards Section */}
           <div className="w-full lg:max-w-[calc(100%-21.5rem)] flex flex-col gap-3 sm:gap-4 md:gap-6">
-            <Box className="max-w-full lg:flex-1 min-h-0! max-h-fit flex flex-col gap-y-3 sm:gap-y-4 md:gap-y-6 lg:gap-y-8">
+            <Box className="max-w-full lg:flex-1 min-h-0! max-h-fit flex flex-col gap-y-3 sm:gap-y-4 md:gap-y-6 lg:gap-y-8 p-3 sm:p-4 md:p-4 lg:p-5">
               <Cards />
 
               {userCanRevealAndClearCards && (
@@ -203,11 +210,14 @@ export const Board = () => {
 
             {/* Issue Manager - Tema, Timer e Histórico */}
             <IssueManager
-              items={votingHistory}
-              onFinalizeIssue={handleFinalizeTopic}
+              currentIssue={currentIssue || ''}
+              currentSector={currentSector || 'backend'}
+              historyItems={votingHistory}
               time={secondsTimer}
               isRunning={isRunning}
-              onToggleTimer={toggleTimer}
+              onFinalizeIssue={handleFinalizeTopic}
+              onStartTimer={toggleTimer}
+              onPauseTimer={toggleTimer}
               onResetTimer={resetTimer}
             />
           </div>

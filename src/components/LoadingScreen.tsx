@@ -12,7 +12,7 @@ export const LoadingScreen = () => {
   };
 
   return (
-    <div className="relative min-h-[calc(100dvh-3rem-4rem)] mb-16 flex content-center items-center max-w-[90%]">
+    <div className="relative min-h-[calc(100dvh-3rem-4rem)] mb-16 flex content-center items-center max-w-[calc(100%-1.5rem)] md:max-w-[90%]">
       <Box className="w-160 min-h-60! md:h-80">
         <Flex className="pt-20 md:pt-[110px] flex-col gap-14 md:gap-20">
           <Loading />
