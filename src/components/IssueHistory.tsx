@@ -428,7 +428,7 @@ export default function IssueHistory({
         ? 40 +
           item.votingRounds.length * 25 +
           item.votingRounds.reduce((sum, round) => sum + Math.ceil(round.votes.length / 3) * 8, 0)
-        : 35;
+        : 50; // Altura otimizada para modo resumido
 
       checkPageBreak(cardHeight);
 
@@ -477,18 +477,33 @@ export default function IssueHistory({
         drawTag(votacoesText, tagX, yPos, [99, 102, 241]); // purple-500
       }
 
-      // Informações da issue (data e duração) - espaçamento maior após as tags
-      yPos += 15;
-      doc.setFontSize(9);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(100, 100, 100);
-      doc.text(`Data: ${formatDate(item.finalizedAt || item.createdAt)}`, 20, yPos);
+      // Informações da issue (data e duração) - espaçamento adequado para o modo
+      if (showDetailedHistory) {
+        yPos += 15;
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Data: ${formatDate(item.finalizedAt || item.createdAt)}`, 20, yPos);
 
-      if (item.totalDuration) {
-        doc.text(`Duracao: ${formatTime(item.totalDuration)}`, 80, yPos);
+        if (item.totalDuration) {
+          doc.text(`Duracao: ${formatTime(item.totalDuration)}`, 80, yPos);
+        }
+
+        yPos += 10;
+      } else {
+        // No modo resumido, posicionar mais abaixo para ficar próximo do fim da caixa
+        yPos += 15;
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Data: ${formatDate(item.finalizedAt || item.createdAt)}`, 20, yPos);
+
+        if (item.totalDuration) {
+          doc.text(`Duracao: ${formatTime(item.totalDuration)}`, 80, yPos);
+        }
+
+        yPos += 8;
       }
-
-      yPos += 10;
 
       // Detalhes das votações (se modo detalhado)
       if (showDetailedHistory && item.votingRounds.length > 0) {
@@ -571,8 +586,8 @@ export default function IssueHistory({
           (total, round) => total + round.votes.length,
           0
         );
-        // Manter texto dentro da margem da caixa (20 a pageWidth-45)
-        doc.text(`${item.votingRounds.length} votacao(s) - ${totalVotes} votos total`, 30, yPos);
+        // Alinhar com os demais elementos do card (posição x: 20)
+        doc.text(`${item.votingRounds.length} votacao(s) - ${totalVotes} votos total`, 20, yPos);
         yPos += 8;
       }
 
