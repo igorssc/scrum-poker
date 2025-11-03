@@ -1,11 +1,14 @@
 'use client';
 
+import * as Popover from '@radix-ui/react-popover';
 import React from 'react';
 import {
   FaChevronDown,
   FaChevronUp,
   FaClock,
+  FaFilter,
   FaHistory,
+  FaSort,
   FaSortAmountDown,
   FaSortAmountUp,
   FaStream,
@@ -15,9 +18,180 @@ import {
 } from 'react-icons/fa';
 import { twMerge } from 'tailwind-merge';
 import { Box } from './Box';
-import { Select } from './Select';
 
 type Sector = 'backend' | 'front-web' | 'front-app';
+
+// Componente dos controles de filtro e ordenação
+const FilterAndSortControls = ({
+  sectorFilter,
+  onSectorFilterChange,
+  filterOptions,
+  sortBy,
+  sortOrder,
+  onSortByChange,
+  onToggleSortOrder,
+  showDetailedHistory,
+  onToggleDetailedHistory,
+}: {
+  sectorFilter: Sector | 'all';
+  onSectorFilterChange: React.Dispatch<React.SetStateAction<Sector | 'all'>>;
+  filterOptions: { value: string; label: string }[];
+  sortBy: 'date' | 'time' | 'sector' | 'score' | 'name';
+  sortOrder: 'asc' | 'desc';
+  onSortByChange: React.Dispatch<
+    React.SetStateAction<'date' | 'time' | 'sector' | 'score' | 'name'>
+  >;
+  onToggleSortOrder: () => void;
+  showDetailedHistory: boolean;
+  onToggleDetailedHistory: () => void;
+}) => {
+  const hasFilterApplied = sectorFilter !== 'all';
+  const hasSortApplied = sortBy !== 'date' || sortOrder !== 'desc';
+
+  const sortOptions = [
+    { value: 'date', label: 'Data' },
+    { value: 'name', label: 'Nome' },
+    { value: 'time', label: 'Tempo' },
+    { value: 'sector', label: 'Setor' },
+    { value: 'score', label: 'Pontuação' },
+  ];
+
+  return (
+    <div className="flex items-center gap-2 text-[0.625rem]">
+      {/* Filtro Popover */}
+      <Popover.Root>
+        <Popover.Trigger asChild>
+          <button
+            className="relative p-[0.68rem] hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors flex items-center cursor-pointer shrink-0"
+            title="Filtrar por setor"
+          >
+            <FaFilter className="w-3 h-2 text-gray-500 dark:text-gray-400" />
+            {hasFilterApplied && (
+              <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-purple-500 rounded-full"></div>
+            )}
+          </button>
+        </Popover.Trigger>
+        <Popover.Portal>
+          <Popover.Content
+            className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl min-w-32 z-50"
+            side="bottom"
+            align="center"
+            sideOffset={4}
+          >
+            {filterOptions.map(option => (
+              <Popover.Close asChild key={option.value}>
+                <button
+                  onClick={() => onSectorFilterChange(option.value as Sector | 'all')}
+                  className={twMerge(
+                    'w-full px-3 py-2 text-left text-xs hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors first:rounded-t-lg last:rounded-b-lg',
+                    sectorFilter === option.value
+                      ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300'
+                      : 'text-gray-700 dark:text-gray-300'
+                  )}
+                >
+                  {option.label}
+                </button>
+              </Popover.Close>
+            ))}
+          </Popover.Content>
+        </Popover.Portal>
+      </Popover.Root>
+
+      {/* Separador */}
+      <div className="w-px h-4 bg-gray-300 dark:bg-gray-600 shrink-0"></div>
+
+      {/* Ordenação Popover */}
+      <Popover.Root>
+        <Popover.Trigger asChild>
+          <button
+            className="relative p-[0.68rem] hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors flex items-center cursor-pointer shrink-0"
+            title="Ordenar"
+          >
+            <FaSort className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+            {hasSortApplied && (
+              <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-purple-500 rounded-full"></div>
+            )}
+          </button>
+        </Popover.Trigger>
+        <Popover.Portal>
+          <Popover.Content
+            className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl min-w-40 z-50"
+            side="bottom"
+            align="center"
+            sideOffset={4}
+          >
+            {/* Botões Asc/Desc */}
+            <div className="flex border-b border-gray-200 dark:border-gray-700">
+              <button
+                onClick={() => {
+                  if (sortOrder !== 'asc') onToggleSortOrder();
+                }}
+                className={twMerge(
+                  'flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs transition-colors rounded-tl-lg',
+                  sortOrder === 'asc'
+                    ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300'
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+                )}
+              >
+                <FaSortAmountUp className="w-2.5 h-2.5" />
+                <span>Asc</span>
+              </button>
+              <button
+                onClick={() => {
+                  if (sortOrder !== 'desc') onToggleSortOrder();
+                }}
+                className={twMerge(
+                  'flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs transition-colors rounded-tr-lg',
+                  sortOrder === 'desc'
+                    ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300'
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+                )}
+              >
+                <FaSortAmountDown className="w-2.5 h-2.5" />
+                <span>Desc</span>
+              </button>
+            </div>
+
+            {/* Opções de Ordenação */}
+            {sortOptions.map(option => (
+              <Popover.Close asChild key={option.value}>
+                <button
+                  onClick={() =>
+                    onSortByChange(option.value as 'date' | 'time' | 'sector' | 'score' | 'name')
+                  }
+                  className={twMerge(
+                    'w-full px-3 py-2 text-left text-xs hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors last:rounded-b-lg',
+                    sortBy === option.value
+                      ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300'
+                      : 'text-gray-700 dark:text-gray-300'
+                  )}
+                >
+                  {option.label}
+                </button>
+              </Popover.Close>
+            ))}
+          </Popover.Content>
+        </Popover.Portal>
+      </Popover.Root>
+
+      {/* Separador */}
+      <div className="w-px h-4 bg-gray-300 dark:bg-gray-600 shrink-0"></div>
+
+      {/* Toggle de Detalhes */}
+      <button
+        onClick={onToggleDetailedHistory}
+        className="p-[0.68rem] hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors flex items-center cursor-pointer shrink-0"
+        title={showDetailedHistory ? 'Visualização resumida' : 'Visualização detalhada'}
+      >
+        {showDetailedHistory ? (
+          <FaTable className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+        ) : (
+          <FaStream className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+        )}
+      </button>
+    </div>
+  );
+};
 
 interface HistoryItem {
   id: string;
@@ -144,7 +318,10 @@ export default function IssueHistory({
   }
 
   return (
-    <Box className="w-full max-w-full h-fit min-h-fit! p-3 sm:p-4 md:p-4 lg:p-5">
+    <Box
+      className="w-full max-w-full h-fit min-h-fit! p-3 sm:p-4 md:p-4 lg:p-5"
+      allowOverflow={true}
+    >
       <div className="w-full flex flex-col gap-4 min-w-0">
         <div className="dark:border-gray-700">
           <div className="flex items-center justify-between mb-3 max-sm:flex-col max-sm:gap-2">
@@ -168,82 +345,26 @@ export default function IssueHistory({
                     ? historyItems.length
                     : `${filteredHistory.length}/${historyItems.length}`}
                 </span>
-                {(sectorFilter !== 'all' || sortBy !== 'date' || sortOrder !== 'desc') && (
-                  <span
-                    className="w-1.5 h-1.5 bg-purple-500 rounded-full"
-                    title="Filtros/Ordenação aplicados"
-                  />
-                )}
               </div>
               {isHistoryExpanded ? (
-                <FaChevronUp className="w-2.5 h-2.5 text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors" />
+                <FaChevronUp className="w-3 h-3 text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors" />
               ) : (
-                <FaChevronDown className="w-2.5 h-2.5 text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors" />
+                <FaChevronDown className="w-3 h-3 text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors" />
               )}
             </button>
 
             {isHistoryExpanded && (
-              <div className={twMerge('flex items-center gap-2 text-[0.625rem]')}>
-                {/* Filtro e Ordenação em linha */}
-                <div className="flex items-center gap-1.5 flex-1 min-w-0 overflow-x-auto">
-                  <div className="flex items-center gap-1 shrink-0">
-                    <Select
-                      value={sectorFilter}
-                      onChange={value => onSectorFilterChange(value as Sector | 'all')}
-                      placeholder="Filtrar"
-                      options={filterOptions}
-                      size="sm"
-                      variant="discrete"
-                    />
-                  </div>
-
-                  <div className="w-px h-4 bg-gray-300 dark:bg-gray-600 shrink-0"></div>
-
-                  <div className="flex items-center gap-1 shrink-0">
-                    <Select
-                      value={sortBy}
-                      onChange={value =>
-                        onSortByChange(value as 'date' | 'time' | 'sector' | 'score' | 'name')
-                      }
-                      placeholder="Ordenar"
-                      options={[
-                        { value: 'date', label: 'Data' },
-                        { value: 'name', label: 'Nome' },
-                        { value: 'time', label: 'Tempo' },
-                        { value: 'sector', label: 'Setor' },
-                        { value: 'score', label: 'Pontuação' },
-                      ]}
-                      size="sm"
-                      variant="discrete"
-                    />
-                    <button
-                      onClick={onToggleSortOrder}
-                      className="p-[0.68rem] hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors flex items-center cursor-pointer shrink-0"
-                      title={`Ordenar ${sortOrder === 'asc' ? 'decrescente' : 'crescente'}`}
-                    >
-                      {sortOrder === 'asc' ? (
-                        <FaSortAmountUp className="w-2.5 h-2.5 text-gray-500 dark:text-gray-400" />
-                      ) : (
-                        <FaSortAmountDown className="w-2.5 h-2.5 text-gray-500 dark:text-gray-400" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Separador e Toggle de Detalhes */}
-                <div className="w-px h-4 bg-gray-300 dark:bg-gray-600 shrink-0"></div>
-                <button
-                  onClick={onToggleDetailedHistory}
-                  className="p-[0.68rem] hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors flex items-center cursor-pointer shrink-0"
-                  title={showDetailedHistory ? 'Visualização resumida' : 'Visualização detalhada'}
-                >
-                  {showDetailedHistory ? (
-                    <FaTable className="w-2.5 h-2.5 text-gray-500 dark:text-gray-400" />
-                  ) : (
-                    <FaStream className="w-2.5 h-2.5 text-gray-500 dark:text-gray-400" />
-                  )}
-                </button>
-              </div>
+              <FilterAndSortControls
+                sectorFilter={sectorFilter}
+                onSectorFilterChange={onSectorFilterChange}
+                filterOptions={filterOptions}
+                sortBy={sortBy}
+                sortOrder={sortOrder}
+                onSortByChange={onSortByChange}
+                onToggleSortOrder={onToggleSortOrder}
+                showDetailedHistory={showDetailedHistory}
+                onToggleDetailedHistory={onToggleDetailedHistory}
+              />
             )}
           </div>
 
@@ -255,53 +376,65 @@ export default function IssueHistory({
                   className="p-2.5 bg-gray-50 dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600"
                 >
                   {/* Header da Issue */}
-                  <div className="flex items-start justify-between mb-2 min-w-0">
-                    <div className="flex-1 min-w-0 overflow-hidden">
-                      <div className="flex items-center gap-2 mb-1 min-w-0">
-                        <p className="text-xs font-medium text-gray-900 dark:text-white truncate flex-1 min-w-0">
-                          {item.topic}
-                        </p>
-                        <span
-                          className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[8px] font-medium shrink-0 ${getSectorTagColor(item.sector)}`}
-                        >
-                          <FaTag className="w-1.5 h-1.5" />
-                          {getSectorLabel(item.sector)}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span
-                          className={twMerge(
-                            'text-[0.625rem] text-gray-500 dark:text-gray-400 shrink-0'
-                          )}
-                        >
-                          {formatDate(item.finalizedAt)}
-                        </span>
-                        {item.duration && (
+                  <div className="mb-2">
+                    <div className="flex items-center gap-2 mb-1 min-w-0">
+                      <p className="text-xs font-medium text-gray-900 dark:text-white truncate flex-1 min-w-0">
+                        {item.topic}
+                      </p>
+                      <span
+                        className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[8px] font-medium shrink-0 ${getSectorTagColor(item.sector)}`}
+                      >
+                        <FaTag className="w-1.5 h-1.5" />
+                        {getSectorLabel(item.sector)}
+                      </span>
+
+                      {/* Resultado da Votação na mesma linha - só mostra troféu se não for empate */}
+                      {item.consensus && item.consensus !== 'Empate' && (
+                        <div className="flex items-center gap-1 shrink-0">
+                          <FaTrophy className="w-3 h-3 text-yellow-500" />
                           <span
                             className={twMerge(
-                              'text-[0.625rem] text-gray-500 dark:text-gray-400 flex items-center gap-1 shrink-0'
+                              'text-xs font-medium text-gray-900 dark:text-white bg-yellow-100 dark:bg-yellow-900/30 px-1.5 py-0.5 rounded text-[0.625rem] border border-yellow-200 dark:border-yellow-800'
                             )}
                           >
-                            <FaClock className="w-2 h-2" />
-                            {formatTime(item.duration)}
+                            {item.consensus}
                           </span>
-                        )}
-                      </div>
+                        </div>
+                      )}
+
+                      {/* Resultado da Votação na mesma linha - empate sem troféu */}
+                      {item.consensus === 'Empate' && (
+                        <div className="flex items-center gap-1 shrink-0">
+                          <span
+                            className={twMerge(
+                              'text-xs font-medium text-gray-900 dark:text-white bg-amber-100 dark:bg-amber-900/30 px-1.5 py-0.5 rounded text-[0.625rem] border border-amber-200 dark:border-amber-800'
+                            )}
+                          >
+                            {item.consensus}
+                          </span>
+                        </div>
+                      )}
                     </div>
 
-                    {/* Resultado da Votação */}
-                    {item.consensus && (
-                      <div className="flex items-center gap-1 ml-2 shrink-0">
-                        <FaTrophy className="w-2.5 h-2.5 text-yellow-500" />
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span
+                        className={twMerge(
+                          'text-[0.625rem] text-gray-500 dark:text-gray-400 shrink-0'
+                        )}
+                      >
+                        {formatDate(item.finalizedAt)}
+                      </span>
+                      {item.duration && (
                         <span
                           className={twMerge(
-                            'text-xs font-medium text-gray-900 dark:text-white bg-yellow-100 dark:bg-yellow-900/30 px-1.5 py-0.5 rounded text-[0.625rem] border border-yellow-200 dark:border-yellow-800'
+                            'text-[0.625rem] text-gray-500 dark:text-gray-400 flex items-center gap-1 shrink-0'
                           )}
                         >
-                          {item.consensus}
+                          <FaClock className="w-2 h-2" />
+                          {formatTime(item.duration)}
                         </span>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
 
                   {/* Detalhes da Votação */}
