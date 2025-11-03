@@ -179,14 +179,14 @@ export const generateHistoryPDF = ({
   // Card de filtros aplicados - altura padronizada
   const filterCardHeight = 48;
   checkPageBreak(filterCardHeight);
-  drawCard(15, yPos - 5, pageWidth - 30, filterCardHeight);
+  drawCard(15, yPos, pageWidth - 30, filterCardHeight);
 
   doc.setFontSize(12);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(colors.textPrimary[0], colors.textPrimary[1], colors.textPrimary[2]);
-  doc.text('Filtros e Ordenacao Aplicados', 20, yPos + 5);
+  doc.text('Filtros e Ordenacao Aplicados', 20, yPos + 10);
 
-  yPos += 15;
+  yPos += 20;
   doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(colors.textSecondary[0], colors.textSecondary[1], colors.textSecondary[2]);
@@ -211,6 +211,7 @@ export const generateHistoryPDF = ({
   );
   yPos += 6;
   doc.text(`Total de issues: ${filteredHistory.length}`, 25, yPos);
+  yPos += 6; // Espaço para sair do card de filtros
 
   yPos += SECTION_SPACING; // Espaçamento padrão entre seções
 
@@ -282,14 +283,14 @@ export const generateHistoryPDF = ({
       : 48; // Modo resumido: altura padrão igual ao filtro
 
     checkPageBreak(analysisHeight);
-    drawCard(15, yPos - 5, pageWidth - 30, analysisHeight, colors.analysisBackground);
+    drawCard(15, yPos, pageWidth - 30, analysisHeight, colors.analysisBackground);
 
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(colors.textPrimary[0], colors.textPrimary[1], colors.textPrimary[2]);
-    doc.text('Analise de Performance da Equipe', 20, yPos + 5);
+    doc.text('Analise de Performance da Equipe', 20, yPos + 10);
 
-    yPos += 15;
+    yPos += 20;
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(colors.textSecondary[0], colors.textSecondary[1], colors.textSecondary[2]);
@@ -306,7 +307,7 @@ export const generateHistoryPDF = ({
           25,
           yPos
         );
-        yPos += 10;
+        yPos += 6;
 
         analysis.userPerformances.forEach((user, index) => {
           const performance = user.consensusRate;
@@ -368,6 +369,7 @@ export const generateHistoryPDF = ({
       doc.text('Nao ha dados suficientes para analise', 25, yPos);
     }
 
+    yPos += 6; // Espaço para sair do card de análise
     yPos += SECTION_SPACING; // Espaçamento padrão após análise
   } else if (filteredHistory.length > 0) {
     // Se não há análise mas há cards, adicionar espaçamento
@@ -463,7 +465,7 @@ export const generateHistoryPDF = ({
       doc.setDrawColor(colors.border[0], colors.border[1], colors.border[2]);
       doc.setLineWidth(0.3);
       doc.line(20, yPos, pageWidth - 20, yPos);
-      yPos += 8;
+      yPos += 6;
 
       item.votingRounds.forEach((round, roundIndex) => {
         // Header da votação
@@ -484,7 +486,7 @@ export const generateHistoryPDF = ({
             doc.text(`Tempo: ${formatTime(round.duration)}`, statusX + 50, yPos);
           }
 
-          yPos += 8;
+          yPos += 7;
         }
 
         // Votos da rodada em lista simples - respeitando limites da caixa
