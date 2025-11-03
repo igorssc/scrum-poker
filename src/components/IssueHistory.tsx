@@ -1,5 +1,7 @@
 'use client';
 
+import { RoomContext } from '@/context/RoomContext';
+import { useRoomCache } from '@/hooks/useRoomCache';
 import { HistoryItem, Sector } from '@/types/voting';
 import { generateHistoryPDF } from '@/utils/pdfGenerator';
 import * as Popover from '@radix-ui/react-popover';
@@ -19,6 +21,7 @@ import {
   FaTrophy,
 } from 'react-icons/fa';
 import { twMerge } from 'tailwind-merge';
+import { useContextSelector } from 'use-context-selector';
 import { Box } from './Box';
 
 // Componente dos controles de filtro e ordenação
@@ -33,6 +36,7 @@ const FilterAndSortControls = ({
   showDetailedHistory,
   onToggleDetailedHistory,
   onDownloadPDF,
+  userCanDownloadPDF,
 }: {
   sectorFilter: Sector | 'all';
   onSectorFilterChange: React.Dispatch<React.SetStateAction<Sector | 'all'>>;
@@ -46,6 +50,7 @@ const FilterAndSortControls = ({
   showDetailedHistory: boolean;
   onToggleDetailedHistory: () => void;
   onDownloadPDF: () => void;
+  userCanDownloadPDF: boolean;
 }) => {
   const hasFilterApplied = sectorFilter !== 'all';
   const hasSortApplied = sortBy !== 'date' || sortOrder !== 'desc';
@@ -192,17 +197,22 @@ const FilterAndSortControls = ({
         )}
       </button>
 
-      {/* Separador */}
-      <div className="w-px h-4 bg-gray-300 dark:bg-gray-600 shrink-0"></div>
+      {/* Download PDF - apenas para usuários com permissão */}
+      {userCanDownloadPDF && (
+        <>
+          {/* Separador */}
+          <div className="w-px h-4 bg-gray-300 dark:bg-gray-600 shrink-0"></div>
 
-      {/* Download PDF */}
-      <button
-        onClick={onDownloadPDF}
-        className="p-[0.68rem] hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors flex items-center cursor-pointer shrink-0"
-        title="Baixar histórico em PDF"
-      >
-        <FaDownload className="w-3 h-3 text-gray-500 dark:text-gray-400" />
-      </button>
+          {/* Download PDF */}
+          <button
+            onClick={onDownloadPDF}
+            className="p-[0.68rem] hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors flex items-center cursor-pointer shrink-0"
+            title="Baixar histórico em PDF"
+          >
+            <FaDownload className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+          </button>
+        </>
+      )}
     </div>
   );
 };
@@ -240,6 +250,16 @@ export default function IssueHistory({
   formatDate,
   formatTime,
 }: IssueHistoryProps) {
+  // Verificar permissões do usuário
+  const { user } = useContextSelector(RoomContext, context => ({
+    user: context.user,
+  }));
+  const { cachedRoomData } = useRoomCache();
+
+  const room = cachedRoomData?.data;
+  const isOwner = room?.owner_id === user?.id;
+  const userCanDownloadPDF =
+    isOwner || (room?.who_can_open_cards?.includes(user?.id || '') ?? false);
   const getSectorLabel = (sector: Sector): string => {
     const labels = {
       backend: 'Backend',
@@ -385,6 +405,7 @@ export default function IssueHistory({
                 showDetailedHistory={showDetailedHistory}
                 onToggleDetailedHistory={onToggleDetailedHistory}
                 onDownloadPDF={handleDownloadPDF}
+                userCanDownloadPDF={userCanDownloadPDF}
               />
             )}
           </div>
