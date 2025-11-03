@@ -49,14 +49,14 @@ export function Footer({ variant = 'default', className = '' }: FooterProps) {
           <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-white mb-4 font-sinera">
             Scrum Poker
           </h3>
-          <p className="text-xs sm:text-sm md:text-sm lg:text-base mb-8">
+          <p className="text-xs sm:text-sm md:text-sm mb-8">
             A ferramenta gratuita e online para planning poker que sua equipe precisa.
           </p>
           <div className="border-t border-gray-700 pt-8">
-            <p className="text-xs sm:text-sm md:text-sm lg:text-base mb-2">
+            <p className="text-xs sm:text-sm md:text-sm mb-8">
               © 2024 Scrum Poker. Feito com 💜 para a comunidade ágil.
             </p>
-            <p className="text-xs sm:text-sm">
+            <p className="text-xs sm:text-sm flex items-center justify-center gap-2">
               Criado por{' '}
               <a
                 href="https://github.com/igorssc"
