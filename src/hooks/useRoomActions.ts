@@ -1,6 +1,7 @@
 import { RoomContext } from '@/context/RoomContext';
 import { handleApiError } from '@/utils/errorHandler';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 import { useContextSelector } from 'use-context-selector';
 
 export const useRoomActions = () => {
@@ -26,6 +27,7 @@ export const useRoomActions = () => {
       return res.json();
     },
     onSuccess: () => {
+      toast.success('Sala atualizada com sucesso');
       queryClient.invalidateQueries({ queryKey: ['room', room?.id] });
     },
   });

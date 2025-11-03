@@ -47,6 +47,19 @@ export const handleApiError = (error: unknown, customMessage?: string) => {
     message = error.message;
   }
 
+  // Não mostrar toast para erros genéricos do servidor e conexão
+  if (
+    message === 'Internal Server Error' ||
+    message === 'Network Error' ||
+    message === 'Request failed with status code 500' ||
+    message.includes('Connection refused') ||
+    message.includes('ERR_NETWORK') ||
+    message.includes('ERR_INTERNET_DISCONNECTED') ||
+    message.includes('fetch')
+  ) {
+    return;
+  }
+
   createControlledToast(() => toast.error(message));
 };
 
