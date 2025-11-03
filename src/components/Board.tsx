@@ -196,6 +196,11 @@ export const Board = () => {
               )}
             </Box>
 
+            {/* Users List - aparece aqui em md para baixo */}
+            <div className="lg:hidden">
+              <UsersList />
+            </div>
+
             {/* Issue Manager - Tema, Timer e Histórico */}
             <IssueManager
               items={votingHistory}
@@ -208,7 +213,7 @@ export const Board = () => {
           </div>
 
           {/* Users List - lateral em lg+ */}
-          <div className="lg:w-80 lg:shrink-0">
+          <div className="hidden lg:block lg:w-80 lg:shrink-0">
             <UsersList />
           </div>
         </div>
