@@ -168,7 +168,10 @@ export default function CurrentIssue({
 
   return (
     <>
-      <Box className="max-w-full w-full h-fit min-h-fit! p-3 sm:p-4 md:p-4 lg:p-5">
+      <Box
+        className="max-w-full w-full h-fit min-h-fit! p-3 sm:p-4 md:p-4 lg:p-5"
+        allowOverflow={isEditing}
+      >
         <div className="w-full flex flex-col gap-3 sm:gap-5">
           <div className="w-full h-fit flex justify-between items-center">
             <div className="flex items-center gap-2">
@@ -179,11 +182,13 @@ export default function CurrentIssue({
               >
                 Issue Atual
               </h3>
-              <span
-                className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[8px] font-medium shrink-0 border ${getSectorTagColor(currentSector)}`}
-              >
-                {getSectorLabel(currentSector)}
-              </span>
+              {currentIssue && (
+                <span
+                  className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[8px] font-medium shrink-0 border ${getSectorTagColor(currentSector)}`}
+                >
+                  {getSectorLabel(currentSector)}
+                </span>
+              )}
             </div>
 
             {/* Botão Limpar - sempre visível quando há issue */}
@@ -294,44 +299,46 @@ export default function CurrentIssue({
                 )}
               </div>
 
-              {/* Timer e Controles */}
-              <div className="flex items-stretch gap-2 shrink-0">
-                {/* Display do Timer - clicável para play/pause */}
-                <button
-                  onClick={!isRunning ? onStartTimer : onPauseTimer}
-                  disabled={(!onStartTimer && !isRunning) || (!onPauseTimer && isRunning)}
-                  className={twMerge(
-                    'flex items-center gap-1.5 px-2.5 py-1.5 rounded min-w-14 justify-center transition-colors disabled:cursor-not-allowed cursor-pointer',
-                    getTimerColorClasses(time).bg,
-                    getTimerColorClasses(time).border,
-                    getTimerColorClasses(time).hover,
-                    getTimerColorClasses(time).pulse,
-                    'border'
-                  )}
-                  title={isRunning ? 'Pausar timer' : 'Iniciar timer'}
-                >
-                  <ClockIcon isActive={isRunning} />
-                  <span
-                    className={twMerge(
-                      'text-[0.625rem] font-medium tabular-nums',
-                      getTimerColorClasses(time).text
-                    )}
-                  >
-                    {formatTime(time)}
-                  </span>
-                </button>
-
-                {/* Reset Button - à direita */}
-                {time > 0 && (
+              {/* Timer e Controles - só exibe quando há issue */}
+              {currentIssue && (
+                <div className="flex items-stretch gap-2 shrink-0">
+                  {/* Display do Timer - clicável para play/pause */}
                   <button
-                    onClick={() => onShowResetModal(true)}
-                    className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors cursor-pointer"
-                    title="Resetar timer"
+                    onClick={!isRunning ? onStartTimer : onPauseTimer}
+                    disabled={(!onStartTimer && !isRunning) || (!onPauseTimer && isRunning)}
+                    className={twMerge(
+                      'flex items-center gap-1.5 px-2.5 py-1.5 rounded min-w-14 justify-center transition-colors disabled:cursor-not-allowed cursor-pointer',
+                      getTimerColorClasses(time).bg,
+                      getTimerColorClasses(time).border,
+                      getTimerColorClasses(time).hover,
+                      getTimerColorClasses(time).pulse,
+                      'border'
+                    )}
+                    title={isRunning ? 'Pausar timer' : 'Iniciar timer'}
                   >
-                    <FaRedo className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+                    <ClockIcon isActive={isRunning} />
+                    <span
+                      className={twMerge(
+                        'text-[0.625rem] font-medium tabular-nums',
+                        getTimerColorClasses(time).text
+                      )}
+                    >
+                      {formatTime(time)}
+                    </span>
                   </button>
-                )}
-              </div>
+
+                  {/* Reset Button - à direita */}
+                  {time > 0 && (
+                    <button
+                      onClick={() => onShowResetModal(true)}
+                      className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors cursor-pointer"
+                      title="Resetar timer"
+                    >
+                      <FaRedo className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>

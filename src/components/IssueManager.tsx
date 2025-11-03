@@ -80,9 +80,15 @@ export const IssueManager = ({
   };
 
   const handleSave = () => {
+    const wasEmpty = !currentIssue.trim();
     setCurrentIssue(tempIssue);
     setCurrentSector(tempSector);
     setIsEditing(false);
+    
+    // Se era uma issue nova (campo estava vazio) e agora tem conteúdo, iniciar o timer
+    if (wasEmpty && tempIssue.trim() && onStartTimer) {
+      onStartTimer();
+    }
   };
 
   const handleCancel = () => {

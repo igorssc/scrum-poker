@@ -92,6 +92,19 @@ export const Board = () => {
     reset: resetTimer,
     seconds: secondsTimer,
   } = useServerTimer();
+
+  // Funções específicas para start e pause
+  const startTimer = async () => {
+    if (!isRunning) {
+      await toggleTimer();
+    }
+  };
+
+  const pauseTimer = async () => {
+    if (isRunning) {
+      await toggleTimer();
+    }
+  };
   const queryClient = useQueryClient();
   const data = queryClient.getQueryData<{ data: { members: MemberProps[] } & RoomProps }>([
     'room',
@@ -185,14 +198,14 @@ export const Board = () => {
                 time: secondsTimer,
                 isRunning: isRunning,
                 onFinalizeIssue: handleFinalizeTopic,
-                onStartTimer: toggleTimer,
-                onPauseTimer: toggleTimer,
+                onStartTimer: startTimer,
+                onPauseTimer: pauseTimer,
                 onResetTimer: resetTimer,
               });
               return issueManager.CurrentIssue;
             })()}
 
-            <Box className="max-w-full lg:flex-1 min-h-0! max-h-fit flex flex-col gap-y-3 sm:gap-y-4 md:gap-y-6 lg:gap-y-8 p-3 sm:p-4 md:p-4 lg:p-5">
+            <Box className="max-w-full lg:flex-1 min-h-0! max-h-fit flex flex-col gap-y-3 sm:gap-y-4 md:gap-y-4 lg:gap-y-5 p-3 sm:p-4 md:p-4 lg:p-5">
               <Cards />
 
               {userCanRevealAndClearCards && (
@@ -217,6 +230,14 @@ export const Board = () => {
                   </Button>
                 </Flex>
               )}
+
+              {currentIssue && (
+                <p className="text-[0.65rem] text-gray-400 leading-relaxed">
+                  Ao revelar as cartas, se uma issue está definida, é criado automaticamente um
+                  registro histórico contendo o resultado da votação, tempo decorrido e participação
+                  dos membros.
+                </p>
+              )}
             </Box>
 
             {/* Users List - aparece aqui em md para baixo */}
@@ -233,8 +254,8 @@ export const Board = () => {
                 time: secondsTimer,
                 isRunning: isRunning,
                 onFinalizeIssue: handleFinalizeTopic,
-                onStartTimer: toggleTimer,
-                onPauseTimer: toggleTimer,
+                onStartTimer: startTimer,
+                onPauseTimer: pauseTimer,
                 onResetTimer: resetTimer,
               });
               return issueManager.IssueHistory;

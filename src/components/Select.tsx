@@ -259,7 +259,7 @@ export const Select = ({
           />
         </div>
         {isOpen && !disabled && (
-          <ul className="absolute z-50 min-w-full w-max mt-1 bg-white border border-purple-200 rounded-lg shadow-xl dark:bg-gray-800 dark:border-purple-700 max-h-60 overflow-y-auto left-1/2 transform -translate-x-1/2">
+          <ul className="absolute z-9999 min-w-full w-max mt-1 bg-white border border-purple-200 rounded-lg shadow-xl dark:bg-gray-800 dark:border-purple-700 max-h-60 overflow-y-auto left-1/2 transform -translate-x-1/2">
             {options.map((option, index) => (
               <li
                 key={option.value}
