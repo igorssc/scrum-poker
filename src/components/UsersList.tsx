@@ -260,8 +260,17 @@ export const UsersList = () => {
             {/* Usuários Ativos */}
             {organizedMembers.length > 0 && (
               <div className="w-full">
-                <h3 className="text-xs md:text-sm xl:text-md font-medium text-center mb-3 sm:mb-4 md:mb-4 lg:mb-5">
-                  Usuários Ativos ({organizedMembers.length})
+                <h3 className="flex items-center justify-center gap-2 w-full text-xs md:text-sm xl:text-md font-medium text-center mb-3 sm:mb-4 md:mb-4 lg:mb-5">
+                  Usuários Ativos
+                  <div className="flex items-center gap-1">
+                    <span
+                      className={twMerge(
+                        'text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded-full text-[0.625rem]'
+                      )}
+                    >
+                      {organizedMembers.length}
+                    </span>
+                  </div>
                 </h3>
 
                 <div className="w-full space-y-2">

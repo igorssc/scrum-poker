@@ -10,7 +10,6 @@ import {
   FaClock,
   FaDownload,
   FaFilter,
-  FaHistory,
   FaSort,
   FaSortAmountDown,
   FaSortAmountUp,
@@ -60,7 +59,7 @@ const FilterAndSortControls = ({
   ];
 
   return (
-    <div className="flex items-center gap-2 text-[0.625rem]">
+    <div className="flex items-center gap-1 sm:gap-2 text-[0.625rem]">
       {/* Filtro Popover */}
       <Popover.Root>
         <Popover.Trigger asChild>
@@ -351,7 +350,6 @@ export default function IssueHistory({
               onClick={onToggleHistory}
               className="flex items-center gap-2 group cursor-pointer"
             >
-              <FaHistory className="w-3 h-3 text-gray-600 dark:text-gray-400" />
               <h4
                 className={twMerge('text-xs md:text-sm font-medium text-gray-900 dark:text-white')}
               >
