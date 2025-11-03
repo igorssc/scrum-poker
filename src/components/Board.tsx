@@ -135,7 +135,7 @@ export const Board = () => {
               return issueManager.CurrentIssue;
             })()}
 
-            <Box className="max-w-full lg:flex-1 min-h-0! max-h-fit flex flex-col gap-y-3 sm:gap-y-4 md:gap-y-4 lg:gap-y-5 p-3 sm:p-4 md:p-4 lg:p-5">
+            <Box className="max-w-full lg:flex-1 min-h-0! max-h-fit flex flex-col gap-y-3 sm:gap-y-4 md:gap-y-4 lg:gap-y-5 p-3 sm:p-4 md:p-4 lg:p-5" allowOverflow>
               <Cards />
 
               {userCanRevealAndClearCards && (

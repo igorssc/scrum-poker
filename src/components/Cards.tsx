@@ -175,10 +175,10 @@ export const Cards = () => {
 
     if (cardCount === 12) {
       // 12 cartas: 3 linhas de 4 (mobile) / 2 linhas de 6 (desktop) - espaçamentos reduzidos
-      return 'relative grid grid-cols-4 md:grid-cols-6 gap-x-1.5 gap-y-2 sm:gap-x-2 sm:gap-y-2.5 md:gap-x-2.5 md:gap-y-3 justify-items-center w-full h-fit';
+      return 'relative grid grid-cols-4 md:grid-cols-6 gap-x-1.5 gap-y-2 sm:gap-x-2 sm:gap-y-2.5 md:gap-x-2.5 md:gap-y-3 justify-items-center w-full h-fit overflow-visible';
     } else {
       // 10 cartas: layout original (5 colunas) - espaçamentos reduzidos
-      return 'relative grid grid-cols-5 gap-x-1.5 gap-y-2 sm:gap-x-2 sm:gap-y-2.5 md:gap-x-2.5 md:gap-y-3 justify-items-center w-full h-fit';
+      return 'relative grid grid-cols-5 gap-x-1.5 gap-y-2 sm:gap-x-2 sm:gap-y-2.5 md:gap-x-2.5 md:gap-y-3 justify-items-center w-full h-fit overflow-visible';
     }
   };
 
@@ -192,14 +192,15 @@ export const Cards = () => {
           return (
             <button
               key={icon}
-              onClick={() => handleCardClick(icon)}
+              onClick={() => !cardsOpen && handleCardClick(icon)}
               disabled={isVoting}
               className={twMerge(
-                'relative transition-all duration-200 rounded-lg cursor-pointer h-fit p-1',
+                'relative transition-all duration-200 rounded-lg cursor-pointer h-fit p-1 overflow-visible',
                 isSelected &&
                   'ring-2 ring-purple-500 dark:ring-purple-700 bg-purple-100 dark:bg-purple-900/30 scale-105',
-                !isSelected && 'hover:scale-105 hover:shadow-xs',
-                isVoting && 'opacity-50 cursor-not-allowed'
+                !isSelected && !cardsOpen && 'hover:scale-105 hover:shadow-xs',
+                isVoting && 'opacity-50 cursor-not-allowed',
+                cardsOpen && 'pointer-events-none'
               )}
             >
               <Image

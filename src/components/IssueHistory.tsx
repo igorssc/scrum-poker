@@ -518,11 +518,9 @@ export default function IssueHistory({
                                   {round.consensus}
                                 </span>
                               )}
-                              {round.duration && (
-                                <span className="text-[0.55rem] text-gray-500 dark:text-gray-400">
-                                  {formatTime(round.duration)}
-                                </span>
-                              )}
+                              <span className="text-[0.55rem] text-gray-500 dark:text-gray-400">
+                                {formatTime(round.duration || 0)}
+                              </span>
                             </div>
                           )}
 
