@@ -1,5 +1,6 @@
 'use client';
 
+import { HistoryItem, Sector, VotingRound } from '@/types/voting';
 import * as Popover from '@radix-ui/react-popover';
 import React from 'react';
 import {
@@ -18,8 +19,6 @@ import {
 } from 'react-icons/fa';
 import { twMerge } from 'tailwind-merge';
 import { Box } from './Box';
-
-type Sector = 'backend' | 'front-web' | 'front-app';
 
 // Componente dos controles de filtro e ordenação
 const FilterAndSortControls = ({
@@ -193,20 +192,6 @@ const FilterAndSortControls = ({
   );
 };
 
-interface HistoryItem {
-  id: string;
-  topic: string;
-  sector: Sector;
-  finalizedAt: Date;
-  duration?: number;
-  consensus?: string;
-  votes?: Array<{
-    userName: string;
-    card: string;
-  }>;
-  winnerCards?: string[];
-}
-
 interface IssueHistoryProps {
   historyItems: HistoryItem[];
   isHistoryExpanded: boolean;
@@ -282,17 +267,19 @@ export default function IssueHistory({
 
       switch (sortBy) {
         case 'date':
-          comparison = new Date(b.finalizedAt).getTime() - new Date(a.finalizedAt).getTime();
+          const aDate = a.finalizedAt || a.createdAt;
+          const bDate = b.finalizedAt || b.createdAt;
+          comparison = bDate.getTime() - aDate.getTime();
           break;
         case 'time':
-          comparison = (b.duration || 0) - (a.duration || 0);
+          comparison = (b.totalDuration || 0) - (a.totalDuration || 0);
           break;
         case 'sector':
           comparison = a.sector.localeCompare(b.sector);
           break;
         case 'score':
-          const aScore = a.consensus ? parseFloat(a.consensus) || 0 : 0;
-          const bScore = b.consensus ? parseFloat(b.consensus) || 0 : 0;
+          const aScore = a.finalConsensus ? parseFloat(a.finalConsensus) || 0 : 0;
+          const bScore = b.finalConsensus ? parseFloat(b.finalConsensus) || 0 : 0;
           comparison = bScore - aScore;
           break;
         case 'name':
@@ -388,8 +375,8 @@ export default function IssueHistory({
                         {getSectorLabel(item.sector)}
                       </span>
 
-                      {/* Resultado da Votação na mesma linha - só mostra troféu se não for empate */}
-                      {item.consensus && item.consensus !== 'Empate' && (
+                      {/* Resultado Final da Issue - só mostra troféu se não for empate */}
+                      {item.finalConsensus && item.finalConsensus !== 'Empate' && (
                         <div className="flex items-center gap-1 shrink-0">
                           <FaTrophy className="w-3 h-3 text-yellow-500" />
                           <span
@@ -397,22 +384,29 @@ export default function IssueHistory({
                               'text-xs font-medium text-gray-900 dark:text-white bg-yellow-100 dark:bg-yellow-900/30 px-1.5 py-0.5 rounded text-[0.625rem] border border-yellow-200 dark:border-yellow-800'
                             )}
                           >
-                            {item.consensus}
+                            {item.finalConsensus}
                           </span>
                         </div>
                       )}
 
-                      {/* Resultado da Votação na mesma linha - empate sem troféu */}
-                      {item.consensus === 'Empate' && (
+                      {/* Resultado Final da Issue - empate sem troféu */}
+                      {item.finalConsensus === 'Empate' && (
                         <div className="flex items-center gap-1 shrink-0">
                           <span
                             className={twMerge(
                               'text-xs font-medium text-gray-900 dark:text-white bg-amber-100 dark:bg-amber-900/30 px-1.5 py-0.5 rounded text-[0.625rem] border border-amber-200 dark:border-amber-800'
                             )}
                           >
-                            {item.consensus}
+                            {item.finalConsensus}
                           </span>
                         </div>
+                      )}
+
+                      {/* Indicador de múltiplas votações */}
+                      {item.votingRounds.length > 1 && (
+                        <span className="text-[8px] bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-1.5 py-0.5 rounded-full">
+                          {item.votingRounds.length} votações
+                        </span>
                       )}
                     </div>
 
@@ -422,62 +416,94 @@ export default function IssueHistory({
                           'text-[0.625rem] text-gray-500 dark:text-gray-400 shrink-0'
                         )}
                       >
-                        {formatDate(item.finalizedAt)}
+                        {formatDate(item.finalizedAt || item.createdAt)}
                       </span>
-                      {item.duration && (
+                      {item.totalDuration && (
                         <span
                           className={twMerge(
                             'text-[0.625rem] text-gray-500 dark:text-gray-400 flex items-center gap-1 shrink-0'
                           )}
                         >
                           <FaClock className="w-2 h-2" />
-                          {formatTime(item.duration)}
+                          {formatTime(item.totalDuration)}
                         </span>
                       )}
                     </div>
                   </div>
 
-                  {/* Detalhes da Votação */}
-                  {showDetailedHistory && item.votes && item.votes.length > 0 && (
-                    <div className="border-t border-gray-200 dark:border-gray-600 pt-2">
-                      <div className="grid grid-cols-2 lg:grid-cols-3 gap-1">
-                        {item.votes.map((vote, index) => (
-                          <div
-                            key={index}
-                            className={twMerge(
-                              'flex items-center justify-between p-1.5 bg-gray-100 dark:bg-gray-600 rounded text-[0.625rem]'
-                            )}
-                          >
-                            <span className="text-gray-700 dark:text-gray-300 truncate flex-1 mr-1">
-                              {vote.userName}
-                            </span>
-                            <span
-                              className={`font-medium px-1 py-0.5 rounded ${
-                                item.winnerCards?.includes(vote.card)
-                                  ? 'bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200'
-                                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-                              }`}
-                            >
-                              {vote.card}
-                            </span>
+                  {/* Histórico de Votações */}
+                  {showDetailedHistory && item.votingRounds.length > 0 && (
+                    <div className="border-t border-gray-200 dark:border-gray-600 pt-2 space-y-3">
+                      {item.votingRounds.map((round, roundIndex) => (
+                        <div key={round.id} className="space-y-2">
+                          {/* Header da votação */}
+                          {item.votingRounds.length > 1 && (
+                            <div className="flex items-center gap-2">
+                              <span className="text-[0.6rem] font-medium text-gray-700 dark:text-gray-300">
+                                Votação {roundIndex + 1}
+                              </span>
+                              {round.consensus && (
+                                <span
+                                  className={twMerge(
+                                    'text-[0.55rem] px-1 py-0.5 rounded',
+                                    round.consensus === 'Empate'
+                                      ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300'
+                                      : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
+                                  )}
+                                >
+                                  {round.consensus}
+                                </span>
+                              )}
+                              {round.duration && (
+                                <span className="text-[0.55rem] text-gray-500 dark:text-gray-400">
+                                  {formatTime(round.duration)}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                          
+                          {/* Votos da rodada */}
+                          <div className="grid grid-cols-2 lg:grid-cols-3 gap-1">
+                            {round.votes.map((vote, voteIndex) => (
+                              <div
+                                key={voteIndex}
+                                className={twMerge(
+                                  'flex items-center justify-between p-1.5 bg-gray-100 dark:bg-gray-600 rounded text-[0.625rem]'
+                                )}
+                              >
+                                <span className="text-gray-700 dark:text-gray-300 truncate flex-1 mr-1">
+                                  {vote.userName}
+                                </span>
+                                <span
+                                  className={`font-medium px-1 py-0.5 rounded ${
+                                    round.winnerCards?.includes(vote.card)
+                                      ? 'bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200'
+                                      : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                                  }`}
+                                >
+                                  {vote.card}
+                                </span>
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
+                        </div>
+                      ))}
                     </div>
                   )}
 
-                  {/* Resumo da Votação quando não está no modo detalhado */}
-                  {!showDetailedHistory && item.votes && item.votes.length > 0 && (
+                  {/* Resumo das Votações quando não está no modo detalhado */}
+                  {!showDetailedHistory && item.votingRounds.length > 0 && (
                     <div className="border-t border-gray-200 dark:border-gray-600 pt-2">
                       <div className="flex items-center justify-between">
                         <span
                           className={twMerge('text-[0.625rem] text-gray-500 dark:text-gray-400')}
                         >
-                          {item.votes.length} voto{item.votes.length !== 1 ? 's' : ''}
+                          {item.votingRounds.length} votação{item.votingRounds.length !== 1 ? 'ões' : ''} • {' '}
+                          {item.votingRounds.reduce((total, round) => total + round.votes.length, 0)} votos
                         </span>
-                        {item.winnerCards && item.winnerCards.length > 1 && (
-                          <span className="text-[10px] text-amber-600 dark:text-amber-400 truncate">
-                            Empate: {item.winnerCards.join(', ')}
+                        {item.votingRounds.length > 1 && (
+                          <span className="text-[10px] text-blue-600 dark:text-blue-400 truncate">
+                            Múltiplas rodadas
                           </span>
                         )}
                       </div>

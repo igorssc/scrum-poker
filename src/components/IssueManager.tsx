@@ -1,25 +1,7 @@
+import { HistoryItem, Sector } from '@/types/voting';
 import React, { useState } from 'react';
 import CurrentIssue from './CurrentIssue';
 import IssueHistory from './IssueHistory';
-
-type Sector = 'backend' | 'front-web' | 'front-app';
-
-interface Vote {
-  userId: string;
-  userName: string;
-  card: string;
-}
-
-interface HistoryItem {
-  id: string;
-  topic: string;
-  sector: Sector;
-  finalizedAt: Date;
-  duration?: number;
-  consensus?: string;
-  votes?: Vote[];
-  winnerCards?: string[];
-}
 
 interface IssueManagerProps {
   currentIssue: string;
