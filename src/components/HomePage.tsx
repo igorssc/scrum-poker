@@ -141,7 +141,7 @@ export function HomePage() {
               </button>
               <Link href="/board">
                 <Button className="light:bg-linear-to-r from-purple-300 via-purple-400 to-purple-500 focus:ring-purple-600 focus:ring-1 text-white px-6 py-2 rounded-lg font-medium transition-colors">
-                  Começar Agora
+                  Criar Sala
                 </Button>
               </Link>
               <ThemeToggle className="bg-transparent! dark:bg-transparent! border-transparent! dark:border-transparent! shadow-none!" />
@@ -199,7 +199,7 @@ export function HomePage() {
                 </button>
                 <Link href="/board">
                   <Button className="w-full light:bg-linear-to-r from-purple-300 via-purple-400 to-purple-500 focus:ring-purple-600 focus:ring-1 text-white px-6 py-2 rounded-lg font-medium transition-colors">
-                    Começar Agora
+                    Criar Sala
                   </Button>
                 </Link>
               </div>
@@ -218,19 +218,27 @@ export function HomePage() {
               <span className="block text-purple-400 dark:text-purple-400">Gratuito e Online</span>
             </h1>
             <p className="text-xs sm:text-sm md:text-sm lg:text-base text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
-              A ferramenta perfeita para estimativas ágeis. Colabore com sua equipe em tempo real,
-              vote nas histórias e melhore a precisão das suas estimativas.
+              A ferramenta perfeita para estimativas ágeis. Crie uma nova sala ou encontre salas existentes próximas a você. 
+              Colabore com sua equipe em tempo real, vote nas histórias e melhore a precisão das suas estimativas.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link href="/board">
                 <Button className="light:bg-linear-to-r from-purple-300 via-purple-400 to-purple-500 focus:ring-purple-600 focus:ring-1 text-white px-6 py-3 lg:px-8 lg:py-4 rounded-lg font-medium text-xs sm:text-sm transition-all transform hover:scale-105 flex items-center gap-2">
                   <FaPlay className="w-3 h-3 lg:w-4 lg:h-4" />
-                  Criar Sala
+                  Criar Nova Sala
                 </Button>
               </Link>
+              <Link href="/board?search=true">
+                <Button className="bg-transparent border-2 border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-white dark:border-purple-400 dark:text-purple-400 dark:hover:bg-purple-400 dark:hover:text-white px-6 py-3 lg:px-8 lg:py-4 rounded-lg font-medium text-xs sm:text-sm transition-all transform hover:scale-105 flex items-center gap-2">
+                  <FaGlobe className="w-3 h-3 lg:w-4 lg:h-4" />
+                  Encontrar Salas
+                </Button>
+              </Link>
+            </div>
+            <div className="mt-4">
               <button
                 onClick={() => scrollToSection('how-it-works')}
-                className="cursor-pointer text-purple-400 dark:text-purple-400 hover:text-purple-500 dark:hover:text-purple-300 font-medium text-xs sm:text-sm flex items-center gap-2 transition-colors"
+                className="cursor-pointer text-purple-400 dark:text-purple-400 hover:text-purple-500 dark:hover:text-purple-300 font-medium text-xs sm:text-sm flex items-center gap-2 transition-colors mx-auto"
               >
                 Ver Como Funciona
                 <FaArrowRight className="w-3 h-3 lg:w-4 lg:h-4" />
@@ -248,8 +256,8 @@ export function HomePage() {
             </h2>
             <p className="text-xs sm:text-sm md:text-sm lg:text-base text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
               Desenvolvido por desenvolvedores, para desenvolvedores. Uma ferramenta simples e
-              poderosa para suas estimativas ágeis. Encontre salas próximas usando nossa
-              funcionalidade de busca por localização.
+              poderosa para suas estimativas ágeis. Crie salas privadas para sua equipe ou descubra 
+              salas públicas próximas usando nossa funcionalidade de busca por localização.
             </p>
           </div>
 
@@ -289,10 +297,10 @@ export function HomePage() {
                 <span className="text-2xl font-bold text-purple-400 dark:text-purple-400">1</span>
               </div>
               <h3 className="text-sm sm:text-base md:text-base lg:text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                Crie uma Sala
+                Crie ou Encontre uma Sala
               </h3>
               <p className="text-xs sm:text-sm md:text-sm lg:text-base text-gray-600 dark:text-gray-300 leading-relaxed">
-                Clique em "Criar Sala" e configure sua sessão de planning poker em segundos.
+                Crie uma nova sala em segundos ou encontre salas públicas próximas usando nossa busca por localização.
               </p>
             </div>
 
@@ -301,10 +309,10 @@ export function HomePage() {
                 <span className="text-2xl font-bold text-purple-400 dark:text-purple-400">2</span>
               </div>
               <h3 className="text-sm sm:text-base md:text-base lg:text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                Convide sua Equipe
+                Entre na Sala
               </h3>
               <p className="text-xs sm:text-sm md:text-sm lg:text-base text-gray-600 dark:text-gray-300 leading-relaxed">
-                Compartilhe o link da sala com seus colegas. Eles podem entrar sem cadastro.
+                Compartilhe o link com sua equipe ou solicite acesso a salas existentes. Entrada sem cadastro.
               </p>
             </div>
 
@@ -322,11 +330,18 @@ export function HomePage() {
           </div>
 
           <div className="text-center mt-12">
-            <Link href="/board">
-              <Button className="light:bg-linear-to-r from-purple-300 via-purple-400 to-purple-500 focus:ring-purple-600 focus:ring-1 text-white px-6 py-3 lg:px-8 lg:py-4 rounded-lg font-medium text-xs sm:text-sm transition-all transform hover:scale-105">
-                Começar Agora!
-              </Button>
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Link href="/board">
+                <Button className="light:bg-linear-to-r from-purple-300 via-purple-400 to-purple-500 focus:ring-purple-600 focus:ring-1 text-white px-6 py-3 lg:px-8 lg:py-4 rounded-lg font-medium text-xs sm:text-sm transition-all transform hover:scale-105">
+                  Criar Nova Sala
+                </Button>
+              </Link>
+              <Link href="/board?search=true">
+                <Button className="bg-transparent border-2 border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-white dark:border-purple-400 dark:text-purple-400 dark:hover:bg-purple-400 dark:hover:text-white px-6 py-3 lg:px-8 lg:py-4 rounded-lg font-medium text-xs sm:text-sm transition-all transform hover:scale-105">
+                  Buscar Salas Existentes
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -376,14 +391,21 @@ export function HomePage() {
           </h2>
           <p className="text-xs sm:text-sm md:text-sm lg:text-base text-purple-50 mb-8 max-w-3xl mx-auto">
             Junte-se a milhares de equipes que já estão usando nossa ferramenta para melhorar suas
-            planning meetings.
+            planning meetings. Crie sua própria sala ou encontre outras equipes próximas.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-6">
             <Link href="/board">
               <Button className="bg-white text-purple-500 hover:bg-gray-100 px-6 py-3 lg:px-8 lg:py-4 rounded-lg font-medium text-xs sm:text-sm transition-all transform hover:scale-105">
-                Criar Primeira Sala
+                Criar Nova Sala
               </Button>
             </Link>
+            <Link href="/board?search=true">
+              <Button className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-purple-500 px-6 py-3 lg:px-8 lg:py-4 rounded-lg font-medium text-xs sm:text-sm transition-all transform hover:scale-105">
+                Explorar Salas
+              </Button>
+            </Link>
+          </div>
+          <div className="text-center">
             <span className="text-purple-50 text-xs sm:text-sm md:text-sm lg:text-base">
               100% gratuito • Sem cadastro • Sem limites
             </span>

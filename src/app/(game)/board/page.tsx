@@ -32,6 +32,18 @@ function BoardContent() {
     clear: context.clear,
   }));
 
+  // Detectar se deve mostrar a tela de busca baseado no parâmetro da URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('search') === 'true') {
+      setIsLookingForRoom(true);
+      urlParams.delete('search');
+      const newUrl =
+        window.location.pathname + (urlParams.toString() ? `?${urlParams.toString()}` : '');
+      window.history.replaceState({}, '', newUrl);
+    }
+  }, []);
+
   const { data, error } = useQuery<{ data: { members: MemberProps[] } & RoomProps }>({
     queryKey: ['room', room?.id],
     queryFn: async () => {

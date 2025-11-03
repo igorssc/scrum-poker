@@ -2,8 +2,8 @@
 
 import { THEME } from '@/enums/theme';
 import { useTheme } from '@/hooks/useTheme';
-import { ThemeIcon } from './ThemeIcon';
 import { twMerge } from 'tailwind-merge';
+import { ThemeIcon } from './ThemeIcon';
 
 type ThemeToggleProps = {
   defaultTheme?: THEME;
@@ -54,7 +54,7 @@ export const ThemeToggle = ({ defaultTheme, className = '' }: ThemeToggleProps) 
       <ThemeIcon
         theme={theme!}
         size="lg"
-        className={isDark ? 'text-yellow-400/80' : 'text-slate-400'}
+        className={isDark ? 'text-purple-400/80' : 'text-purple-400'}
       />
     </button>
   );

@@ -25,7 +25,7 @@ export const HomeButton = ({ className = '' }: HomeButtonProps) => {
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="w-4 h-4 dark:text-yellow-400/80 text-slate-400"
+        className="w-4 h-4 dark:text-purple-400/80 text-purple-400"
       >
         <path d="M9 14l-5-5 5-5" />
         <path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H12" />
