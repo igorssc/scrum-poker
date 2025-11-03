@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect, Dispatch, SetStateAction } from 'react';
-import { twMerge } from 'tailwind-merge';
 import { ChevronDown } from 'lucide-react';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 type Option = {
   value: string;
@@ -15,6 +15,8 @@ type SelectProps = {
   value: string;
   placeholder?: string;
   onChange: Dispatch<SetStateAction<string>>;
+  size?: 'sm' | 'md';
+  variant?: 'default' | 'discrete';
 };
 
 export const Select = ({
@@ -24,6 +26,8 @@ export const Select = ({
   value,
   onChange,
   placeholder = 'Selecione',
+  size = 'md',
+  variant = 'default',
 }: SelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [hasFocus, setHasFocus] = useState(false);
@@ -176,21 +180,21 @@ export const Select = ({
 
   const getOptionClass = (option: Option, index: number) => {
     if (option.disabled) {
-      return 'text-gray-400 cursor-not-allowed';
+      return 'px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 text-[0.65rem] sm:text-xs text-gray-400 cursor-not-allowed';
     }
 
     const baseClass =
-      'px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 text-[0.65rem] sm:text-xs cursor-pointer text-gray-900 dark:text-gray-200';
+      'px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 text-[0.65rem] sm:text-xs cursor-pointer transition-colors duration-150';
     const isSelected = option.value === value;
     const isHighlighted = highlightedIndex === index;
 
     return twMerge(
       baseClass,
       isSelected
-        ? 'bg-purple-300 dark:bg-purple-700'
+        ? 'bg-purple-500 text-white font-medium'
         : isHighlighted
-          ? 'bg-purple-200 dark:bg-purple-600'
-          : 'hover:bg-purple-200 dark:hover:bg-purple-600'
+          ? 'bg-purple-100 dark:bg-purple-800 text-purple-900 dark:text-purple-100'
+          : 'text-gray-900 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/30'
     );
   };
 
@@ -218,25 +222,44 @@ export const Select = ({
         <div
           onClick={toggleOptions}
           className={twMerge(
-            'block w-full px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 text-[0.65rem] sm:text-xs rounded-lg transition-colors border border-gray-300',
-            'bg-white text-gray-900 placeholder-gray-500 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600',
+            'flex items-center w-full px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 text-[0.65rem] sm:text-xs rounded-lg transition-all duration-200 cursor-pointer',
+            size === 'sm' ? 'h-8' : 'h-9',
+            variant === 'discrete'
+              ? 'bg-transparent hover:bg-gray-100 dark:hover:bg-gray-700'
+              : 'bg-white dark:bg-gray-800 border',
+            variant === 'discrete'
+              ? 'text-gray-700 dark:text-gray-300'
+              : 'text-gray-900 dark:text-gray-200',
             disabled
-              ? 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-500'
-              : 'focus:border-purple-500 focus:outline-none'
+              ? variant === 'discrete'
+                ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                : 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-500 border-gray-300 dark:border-gray-600 cursor-not-allowed'
+              : variant === 'discrete'
+                ? ''
+                : isOpen
+                  ? 'border-purple-500 ring-2 ring-purple-200 dark:ring-purple-800 shadow-sm'
+                  : 'border-gray-300 dark:border-gray-600 hover:border-purple-400 dark:hover:border-purple-500',
+            variant === 'default' &&
+              'focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-800'
           )}
         >
-          {value ? options.find(option => option.value === value)?.label : placeholder}
           <span
             className={twMerge(
-              'absolute right-2.5 sm:right-3 md:right-4 top-1/2 transform -translate-y-1/2 transition-transform duration-200',
-              isOpen && 'rotate-180'
+              'flex-1 truncate',
+              value ? 'text-gray-900 dark:text-gray-200' : 'text-gray-500 dark:text-gray-400'
             )}
           >
-            <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 dark:text-gray-500" />
+            {value ? options.find(option => option.value === value)?.label : placeholder}
           </span>
+          <ChevronDown
+            className={twMerge(
+              'w-3 h-3 sm:w-4 sm:h-4 transition-all duration-200 shrink-0',
+              isOpen ? 'text-purple-500 rotate-180' : 'text-gray-400 dark:text-gray-500'
+            )}
+          />
         </div>
         {isOpen && !disabled && (
-          <ul className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-600">
+          <ul className="absolute z-50 min-w-full w-max mt-1 bg-white border border-purple-200 rounded-lg shadow-xl dark:bg-gray-800 dark:border-purple-700 max-h-60 overflow-y-auto left-1/2 transform -translate-x-1/2">
             {options.map((option, index) => (
               <li
                 key={option.value}

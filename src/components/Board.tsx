@@ -17,14 +17,60 @@ import { IssueManager } from './IssueManager';
 import { NavBar } from './NavBar';
 import { UsersList } from './UsersList';
 
+type Sector = 'backend' | 'front-web' | 'front-app';
+
+interface Vote {
+  userId: string;
+  userName: string;
+  card: string;
+}
+
 interface HistoryItem {
   id: string;
   topic: string;
+  sector: Sector;
   finalizedAt: Date;
+  duration?: number; // em segundos
+  votes?: Vote[];
+  winnerCards?: string[]; // em caso de empate, pode ter múltiplas
+  consensus?: string; // carta vencedora ou "Empate"
 }
 
 export const Board = () => {
-  const [votingHistory, setVotingHistory] = useState<HistoryItem[]>([]);
+  // Mock data inicial para demonstração
+  const [votingHistory, setVotingHistory] = useState<HistoryItem[]>([
+    {
+      id: '1',
+      topic: 'Implementar sistema de autenticação OAuth',
+      sector: 'backend',
+      finalizedAt: new Date(Date.now() - 1000 * 60 * 30), // 30 min atrás
+      duration: 180, // 3 minutos
+      consensus: '8',
+      winnerCards: ['8'],
+      votes: [
+        { userId: '1', userName: 'João Silva', card: '8' },
+        { userId: '2', userName: 'Maria Santos', card: '8' },
+        { userId: '3', userName: 'Pedro Costa', card: '5' },
+        { userId: '4', userName: 'Ana Lima', card: '8' },
+      ],
+    },
+    {
+      id: '2',
+      topic: 'Refatorar componentes de UI para melhor performance',
+      sector: 'front-web',
+      finalizedAt: new Date(Date.now() - 1000 * 60 * 60), // 1 hora atrás
+      duration: 240, // 4 minutos
+      consensus: 'Empate',
+      winnerCards: ['5', '8'],
+      votes: [
+        { userId: '1', userName: 'João Silva', card: '5' },
+        { userId: '2', userName: 'Maria Santos', card: '8' },
+        { userId: '3', userName: 'Pedro Costa', card: '5' },
+        { userId: '4', userName: 'Ana Lima', card: '8' },
+        { userId: '5', userName: 'Carlos Rocha', card: '3' },
+      ],
+    },
+  ]);
 
   const { room, user, clear } = useContextSelector(RoomContext, context => ({
     room: context.room,
@@ -56,17 +102,47 @@ export const Board = () => {
   const userCanRevealAndClearCards =
     isOwner || cachedRoomData?.data?.who_can_open_cards.includes(user?.id || '');
 
-  const handleFinalizeTopic = (topic: string) => {
-    // TODO: Conectar com API futuramente
+  const handleFinalizeTopic = (topic: string, sector: Sector) => {
+    // Mock votes para demonstração
+    const mockVotes: Vote[] = [
+      { userId: '1', userName: 'João Silva', card: Math.random() > 0.5 ? '5' : '8' },
+      { userId: '2', userName: 'Maria Santos', card: Math.random() > 0.5 ? '3' : '5' },
+      { userId: '3', userName: 'Pedro Costa', card: Math.random() > 0.5 ? '8' : '13' },
+      { userId: '4', userName: 'Ana Lima', card: Math.random() > 0.5 ? '5' : '8' },
+    ];
+
+    // Calcular cartas vencedoras
+    const cardCounts = mockVotes.reduce(
+      (acc, vote) => {
+        acc[vote.card] = (acc[vote.card] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
+
+    const maxVotes = Math.max(...Object.values(cardCounts));
+    const winnerCards = Object.keys(cardCounts).filter(card => cardCounts[card] === maxVotes);
+
     const newHistoryItem: HistoryItem = {
       id: Date.now().toString(),
       topic,
+      sector,
       finalizedAt: new Date(),
+      duration: Math.floor(Math.random() * 300) + 60, // Entre 1-5 minutos
+      votes: mockVotes,
+      winnerCards,
+      consensus: winnerCards.length === 1 ? winnerCards[0] : 'Empate',
     };
 
     setVotingHistory(prev => [newHistoryItem, ...prev]);
-    console.log('Finalizing topic:', topic);
-    // Aqui será feita a chamada para API para salvar no histórico
+    console.log(
+      'Finalizing topic:',
+      topic,
+      'sector:',
+      sector,
+      'with consensus:',
+      newHistoryItem.consensus
+    );
   };
 
   useEffect(() => {
@@ -92,7 +168,7 @@ export const Board = () => {
         {/* Layout responsivo: coluna em mobile/tablet, lado a lado em lg+ */}
         <div className="flex flex-col lg:flex-row lg:items-start gap-3 sm:gap-4 md:gap-6">
           {/* Cards Section */}
-          <div className="w-full flex flex-col gap-3 sm:gap-4 md:gap-6">
+          <div className="w-full lg:max-w-[calc(100%-21.5rem)] flex flex-col gap-3 sm:gap-4 md:gap-6">
             <Box className="max-w-full lg:flex-1 min-h-0! max-h-fit flex flex-col gap-y-3 sm:gap-y-4 md:gap-y-6 lg:gap-y-8">
               <Cards />
 
