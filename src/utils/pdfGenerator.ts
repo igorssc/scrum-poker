@@ -15,39 +15,41 @@ interface PDFGeneratorOptions {
 
 // Função para limpar texto removendo emojis, caracteres especiais e acentos
 const cleanText = (text: string): string => {
-  return text
-    // Remover emojis (vários ranges Unicode)
-    .replace(/[\u{1F600}-\u{1F64F}]/gu, '') // Emoticons
-    .replace(/[\u{1F300}-\u{1F5FF}]/gu, '') // Símbolos diversos
-    .replace(/[\u{1F680}-\u{1F6FF}]/gu, '') // Transporte e símbolos
-    .replace(/[\u{1F700}-\u{1F77F}]/gu, '') // Símbolos alquímicos
-    .replace(/[\u{1F780}-\u{1F7FF}]/gu, '') // Símbolos geométricos estendidos
-    .replace(/[\u{1F800}-\u{1F8FF}]/gu, '') // Setas suplementares
-    .replace(/[\u{2600}-\u{26FF}]/gu, '') // Símbolos diversos
-    .replace(/[\u{2700}-\u{27BF}]/gu, '') // Dingbats
-    .replace(/[\u{1F900}-\u{1F9FF}]/gu, '') // Símbolos suplementares
-    .replace(/[\u{1FA00}-\u{1FA6F}]/gu, '') // Símbolos estendidos A
-    .replace(/[\u{1FA70}-\u{1FAFF}]/gu, '') // Símbolos estendidos B
-    // Substituir acentos por caracteres sem acento
-    .replace(/[àáâãäå]/g, 'a')
-    .replace(/[èéêë]/g, 'e')
-    .replace(/[ìíîï]/g, 'i')
-    .replace(/[òóôõö]/g, 'o')
-    .replace(/[ùúûü]/g, 'u')
-    .replace(/[ñ]/g, 'n')
-    .replace(/[ç]/g, 'c')
-    .replace(/[ÀÁÂÃÄÅ]/g, 'A')
-    .replace(/[ÈÉÊË]/g, 'E')
-    .replace(/[ÌÍÎÏ]/g, 'I')
-    .replace(/[ÒÓÔÕÖ]/g, 'O')
-    .replace(/[ÙÚÛÜ]/g, 'U')
-    .replace(/[Ñ]/g, 'N')
-    .replace(/[Ç]/g, 'C')
-    // Remover outros caracteres especiais, mantendo apenas letras, números, espaços e pontuação básica
-    .replace(/[^\w\s\-\.\,\:\;\!\?\(\)]/g, '')
-    // Limpar espaços múltiplos
-    .replace(/\s+/g, ' ')
-    .trim();
+  return (
+    text
+      // Remover emojis (vários ranges Unicode)
+      .replace(/[\u{1F600}-\u{1F64F}]/gu, '') // Emoticons
+      .replace(/[\u{1F300}-\u{1F5FF}]/gu, '') // Símbolos diversos
+      .replace(/[\u{1F680}-\u{1F6FF}]/gu, '') // Transporte e símbolos
+      .replace(/[\u{1F700}-\u{1F77F}]/gu, '') // Símbolos alquímicos
+      .replace(/[\u{1F780}-\u{1F7FF}]/gu, '') // Símbolos geométricos estendidos
+      .replace(/[\u{1F800}-\u{1F8FF}]/gu, '') // Setas suplementares
+      .replace(/[\u{2600}-\u{26FF}]/gu, '') // Símbolos diversos
+      .replace(/[\u{2700}-\u{27BF}]/gu, '') // Dingbats
+      .replace(/[\u{1F900}-\u{1F9FF}]/gu, '') // Símbolos suplementares
+      .replace(/[\u{1FA00}-\u{1FA6F}]/gu, '') // Símbolos estendidos A
+      .replace(/[\u{1FA70}-\u{1FAFF}]/gu, '') // Símbolos estendidos B
+      // Substituir acentos por caracteres sem acento
+      .replace(/[àáâãäå]/g, 'a')
+      .replace(/[èéêë]/g, 'e')
+      .replace(/[ìíîï]/g, 'i')
+      .replace(/[òóôõö]/g, 'o')
+      .replace(/[ùúûü]/g, 'u')
+      .replace(/[ñ]/g, 'n')
+      .replace(/[ç]/g, 'c')
+      .replace(/[ÀÁÂÃÄÅ]/g, 'A')
+      .replace(/[ÈÉÊË]/g, 'E')
+      .replace(/[ÌÍÎÏ]/g, 'I')
+      .replace(/[ÒÓÔÕÖ]/g, 'O')
+      .replace(/[ÙÚÛÜ]/g, 'U')
+      .replace(/[Ñ]/g, 'N')
+      .replace(/[Ç]/g, 'C')
+      // Remover outros caracteres especiais, mantendo apenas letras, números, espaços e pontuação básica
+      .replace(/[^\w\s\-\.\,\:\;\!\?\(\)]/g, '')
+      // Limpar espaços múltiplos
+      .replace(/\s+/g, ' ')
+      .trim()
+  );
 };
 
 export const generateHistoryPDF = ({
@@ -75,10 +77,10 @@ export const generateHistoryPDF = ({
       background: [255, 255, 255], // Branco
       cardBackground: [249, 250, 251], // Cinza muito claro
       cardBackgroundAlt: [255, 255, 255], // Branco
-      analysisBackground: [240, 248, 255], // Azul claro
+      analysisBackground: [220, 220, 220], // Cinza claro
       textPrimary: [0, 0, 0], // Preto
       textSecondary: [60, 60, 60], // Cinza escuro
-      textMuted: [100, 100, 100], // Cinza médio
+      textMuted: [50, 50, 50], // Cinza médio
       border: [200, 200, 200], // Cinza claro
     },
     dark: {
@@ -86,11 +88,11 @@ export const generateHistoryPDF = ({
       cardBackground: [63, 63, 70], // Zinc-700
       // cardBackgroundAlt: [71, 85, 105], // Slate-600
       cardBackgroundAlt: [63, 63, 70], // Zinc-700
-      analysisBackground: [30, 41, 59], // Slate-800
-      textPrimary: [248, 250, 252], // Slate-50
-      textSecondary: [203, 213, 225], // Slate-300
-      textMuted: [148, 163, 184], // Slate-400
-      border: [100, 116, 139], // Slate-500
+      analysisBackground: [82, 82, 91], // Zinc-600
+      textPrimary: [244, 244, 245], // Zinc-100
+      textSecondary: [228, 228, 231], // Zinc-200
+      textMuted: [228, 228, 231], // Zinc-200
+      border: [39, 39, 42], // Zinc-800
     },
   };
 
@@ -216,7 +218,7 @@ export const generateHistoryPDF = ({
   // Card de filtros aplicados - altura padronizada
   const filterCardHeight = 48;
   checkPageBreak(filterCardHeight);
-  drawCard(15, yPos, pageWidth - 30, filterCardHeight);
+  drawCard(15, yPos, pageWidth - 30, filterCardHeight, colors.analysisBackground);
 
   doc.setFontSize(12);
   doc.setFont('helvetica', 'bold');
