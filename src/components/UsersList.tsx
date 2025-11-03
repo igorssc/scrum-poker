@@ -265,7 +265,7 @@ export const UsersList = () => {
                   <div className="flex items-center gap-1">
                     <span
                       className={twMerge(
-                        'text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded-full text-[0.625rem]'
+                        'text-xs text-gray-500 dark:text-gray-400 bg-purple-100 dark:bg-gray-700 px-1.5 py-0.5 rounded-full text-[0.625rem]'
                       )}
                     >
                       {organizedMembers.length}

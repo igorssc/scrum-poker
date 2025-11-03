@@ -211,9 +211,9 @@ const FilterAndSortControls = ({
             className="p-[0.68rem] hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors flex items-center cursor-pointer shrink-0"
             title={`Baixar histórico em PDF - O documento será gerado com: ${
               showDetailedHistory ? 'visualização detalhada' : 'visualização resumida'
-            }, ordenação por ${
-              sortOptions.find(opt => opt.value === sortBy)?.label.toLowerCase()
-            } (${sortOrder === 'asc' ? 'crescente' : 'decrescente'}), ${
+            }, ordenação por ${sortOptions
+              .find(opt => opt.value === sortBy)
+              ?.label.toLowerCase()} (${sortOrder === 'asc' ? 'crescente' : 'decrescente'}), ${
               sectorFilter === 'all' ? 'todos os setores' : `setor ${getSectorLabel(sectorFilter)}`
             } e tema atual`}
           >
@@ -386,7 +386,7 @@ export default function IssueHistory({
               <div className="flex items-center gap-1">
                 <span
                   className={twMerge(
-                    'text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded-full text-[0.625rem]'
+                    'text-xs text-gray-500 dark:text-gray-400 bg-purple-100 dark:bg-gray-700 px-1.5 py-0.5 rounded-full text-[0.625rem]'
                   )}
                 >
                   {sectorFilter === 'all'
@@ -468,7 +468,7 @@ export default function IssueHistory({
 
                       {/* Indicador de múltiplas votações */}
                       {item.votingRounds.length > 1 && (
-                        <span className="text-[8px] bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-1.5 py-0.5 rounded-full">
+                        <span className="text-[8px] bg-purple-100 dark:bg-purple-700/30 text-purple-800 dark:text-purple-200 px-1.5 py-0.5 rounded-full">
                           {item.votingRounds.length} votações
                         </span>
                       )}
@@ -571,7 +571,7 @@ export default function IssueHistory({
                           votos
                         </span>
                         {item.votingRounds.length > 1 && (
-                          <span className="text-[10px] text-blue-600 dark:text-blue-400 truncate">
+                          <span className="text-[10px] text-purple-600 dark:text-purple-400 truncate">
                             Múltiplas rodadas
                           </span>
                         )}

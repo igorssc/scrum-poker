@@ -42,19 +42,15 @@ export const NavBar = () => {
             <div className="flex flex-col min-w-0 flex-1 gap-2 sm:gap-2">
               <div className="flex items-center gap-2 mr-4">
                 {cachedRoomData?.data?.private && (
-                  <svg
-                    className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500 dark:text-gray-400 shrink-0"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                    />
-                  </svg>
+                  <div className="relative">
+                    <svg
+                      className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-600 dark:text-amber-400 shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M6 10V8a6 6 0 1 1 12 0v2h1a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h1zm2 0h8V8a4 4 0 1 0-8 0v2zm4 4a2 2 0 1 1 0 4 2 2 0 0 1 0-4z" />
+                    </svg>
+                  </div>
                 )}
                 <h1 className="text-sm sm:text-base font-bold text-gray-900 dark:text-gray-100 truncate">
                   {cachedRoomData?.data?.name || 'Carregando...'}
@@ -219,28 +215,36 @@ export const NavBar = () => {
         <div className="hidden md:flex md:items-center md:justify-between">
           {/* Informações do usuário e sala */}
           <div className="flex flex-col gap-2 overflow-hidden">
-            <div className="flex items-center gap-2 pr-6">
+            <div
+              className={`flex items-center gap-2 ${
+                (cachedRoomData?.data?.name || 'Carregando...').length > 20 ? 'pr-6' : 'pr-2'
+              }`}
+            >
               {cachedRoomData?.data?.private && (
-                <svg
-                  className="w-4 h-4 text-gray-500 dark:text-gray-400 shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                  />
-                </svg>
+                <div className="relative">
+                  <svg
+                    className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M6 10V8a6 6 0 1 1 12 0v2h1a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h1zm2 0h8V8a4 4 0 1 0-8 0v2zm4 4a2 2 0 1 1 0 4 2 2 0 0 1 0-4z" />
+                  </svg>
+                </div>
               )}
               <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 truncate">
                 {cachedRoomData?.data?.name || 'Carregando...'}
               </h1>
             </div>
-            <div className="flex gap-1 pr-6">
-              <p className="text-sm text-gray-600 dark:text-gray-400 truncate pr-6">
+            <div
+              className={`flex gap-1 ${
+                (userMember?.member.name || 'Usuário').length > 15 ? 'pr-6' : 'pr-2'
+              }`}
+            >
+              <p
+                className={`text-sm text-gray-600 dark:text-gray-400 truncate ${
+                  (userMember?.member.name || 'Usuário').length > 15 ? 'pr-6' : 'pr-2'
+                }`}
+              >
                 Olá, {userMember?.member.name || 'Usuário'}
               </p>
               {room?.owner_id === user?.id && (
