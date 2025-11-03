@@ -3,7 +3,6 @@
 import { HistoryItem, Sector } from '@/types/voting';
 import * as Popover from '@radix-ui/react-popover';
 import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 import React from 'react';
 import {
   FaChevronDown,
@@ -317,10 +316,12 @@ export default function IssueHistory({
   // Aplicar ordenação
   const filteredHistory = sortHistory(filteredItems, sortBy, sortOrder);
 
-  // Função para gerar PDF
+  // Função para gerar PDF com layout limpo e organizado
   const handleDownloadPDF = () => {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
+    let yPos = 20;
 
     const sortOptions = [
       { value: 'date', label: 'Data' },
@@ -330,112 +331,259 @@ export default function IssueHistory({
       { value: 'score', label: 'Pontuação' },
     ];
 
+    // Função para adicionar nova página se necessário
+    const checkPageBreak = (neededHeight: number) => {
+      if (yPos + neededHeight > pageHeight - 20) {
+        doc.addPage();
+        yPos = 20;
+      }
+    };
+
+    // Função para desenhar retângulo com bordas (simulando card)
+    const drawCard = (
+      x: number,
+      y: number,
+      width: number,
+      height: number,
+      fillColor?: number[]
+    ) => {
+      doc.setDrawColor(200, 200, 200);
+      doc.setLineWidth(0.5);
+      if (fillColor) {
+        doc.setFillColor(fillColor[0], fillColor[1], fillColor[2]);
+      } else {
+        doc.setFillColor(249, 250, 251);
+      }
+      doc.rect(x, y, width, height, 'FD');
+    };
+
+    // Função para desenhar tag/badge
+    const drawTag = (text: string, x: number, y: number, color: number[]) => {
+      const textWidth = doc.getTextWidth(text);
+      const tagWidth = textWidth + 8;
+      const tagHeight = 6;
+
+      doc.setFillColor(color[0], color[1], color[2]);
+      doc.rect(x, y - 1, tagWidth, tagHeight, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(7);
+      doc.text(text, x + 4, y + 3);
+      doc.setTextColor(0, 0, 0);
+
+      return tagWidth;
+    };
+
     // Cabeçalho
     doc.setFontSize(18);
-    doc.text('Histórico de Votações - Scrum Poker', pageWidth / 2, 20, { align: 'center' });
+    doc.setFont('helvetica', 'bold');
+    doc.text('Historico de Votacoes - Scrum Poker', pageWidth / 2, yPos, { align: 'center' });
+    yPos += 15;
 
     // Data de geração
     doc.setFontSize(10);
-    doc.text(`Gerado em: ${formatDate(new Date())}`, pageWidth / 2, 30, { align: 'center' });
-
-    // Filtros aplicados
-    let yPos = 45;
-    doc.setFontSize(12);
-    doc.text('Filtros e Ordenação:', 20, yPos);
-
-    yPos += 10;
-    doc.setFontSize(10);
-    doc.text(
-      `Setor: ${sectorFilter === 'all' ? 'Todos' : getSectorLabel(sectorFilter as Sector)}`,
-      25,
-      yPos
-    );
-    yPos += 8;
-    doc.text(
-      `Ordenação: ${sortOptions.find((opt: any) => opt.value === sortBy)?.label} (${sortOrder === 'asc' ? 'Crescente' : 'Decrescente'})`,
-      25,
-      yPos
-    );
-    yPos += 8;
-    doc.text(`Visualização: ${showDetailedHistory ? 'Detalhada' : 'Resumida'}`, 25, yPos);
-    yPos += 8;
-    doc.text(`Total de issues: ${filteredHistory.length}`, 25, yPos);
-
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Gerado em: ${formatDate(new Date())}`, pageWidth / 2, yPos, { align: 'center' });
     yPos += 20;
 
-    // Preparar dados para a tabela
-    const tableData: any[] = [];
+    // Card de filtros aplicados - altura ajustada
+    const filterCardHeight = 45;
+    checkPageBreak(filterCardHeight);
+    drawCard(15, yPos - 5, pageWidth - 30, filterCardHeight);
 
-    filteredHistory.forEach(item => {
-      if (showDetailedHistory) {
-        // Linha principal da issue
-        tableData.push([
-          item.topic,
-          getSectorLabel(item.sector),
-          formatDate(item.finalizedAt || item.createdAt),
-          item.totalDuration ? formatTime(item.totalDuration) : '-',
-          item.finalConsensus || '-',
-          `${item.votingRounds.length} votação${item.votingRounds.length !== 1 ? 'ões' : ''}`,
-        ]);
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(0, 0, 0);
+    doc.text('Filtros e Ordenacao Aplicados', 20, yPos + 5);
 
-        // Detalhes das votações
-        item.votingRounds.forEach((round, index) => {
-          const roundData = [
-            `  └ Votação ${index + 1}`,
-            '',
-            formatDate(round.votedAt),
-            round.duration ? formatTime(round.duration) : '-',
-            round.consensus || '-',
-            `${round.votes.length} votos`,
-          ];
-          tableData.push(roundData);
+    yPos += 15;
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(60, 60, 60);
+    doc.text(
+      `Setor: ${sectorFilter === 'all' ? 'Todos os setores' : getSectorLabel(sectorFilter as Sector)}`,
+      25,
+      yPos
+    );
+    yPos += 6;
+    doc.text(
+      `Ordenacao: ${sortOptions.find((opt: any) => opt.value === sortBy)?.label} (${sortOrder === 'asc' ? 'Crescente' : 'Decrescente'})`,
+      25,
+      yPos
+    );
+    yPos += 6;
+    doc.text(
+      `Visualizacao: ${showDetailedHistory ? 'Detalhada com todas as votacoes' : 'Resumida'}`,
+      25,
+      yPos
+    );
+    yPos += 6;
+    doc.text(`Total de issues: ${filteredHistory.length}`, 25, yPos);
 
-          // Votos da rodada
-          if (round.votes.length > 0) {
-            const votesStr = round.votes.map(vote => `${vote.userName}: ${vote.card}`).join(', ');
-            tableData.push([`    Votos: ${votesStr}`, '', '', '', '', '']);
-          }
-        });
-      } else {
-        // Versão resumida
-        tableData.push([
-          item.topic,
-          getSectorLabel(item.sector),
-          formatDate(item.finalizedAt || item.createdAt),
-          item.totalDuration ? formatTime(item.totalDuration) : '-',
-          item.finalConsensus || '-',
-          `${item.votingRounds.length} votação${item.votingRounds.length !== 1 ? 'ões' : ''}`,
-        ]);
+    yPos += 25;
+
+    // Renderizar cada issue como um card
+    filteredHistory.forEach((item, index) => {
+      const cardHeight = showDetailedHistory
+        ? 40 +
+          item.votingRounds.length * 25 +
+          item.votingRounds.reduce((sum, round) => sum + Math.ceil(round.votes.length / 3) * 8, 0)
+        : 35;
+
+      checkPageBreak(cardHeight);
+
+      // Card principal da issue
+      const cardColor = index % 2 === 0 ? [249, 250, 251] : [255, 255, 255]; // Alternar cores
+      drawCard(15, yPos, pageWidth - 30, cardHeight, cardColor);
+
+      // Header da issue
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(0, 0, 0);
+
+      // Título sem truncamento
+      doc.text(item.topic, 20, yPos + 10);
+
+      // Mover para linha das tags (abaixo do título, lado esquerdo) - espaçamento maior
+      yPos += 20;
+
+      // Tags do lado esquerdo
+      let tagX = 20; // Começar do lado esquerdo
+      const sectorColors: Record<Sector, number[]> = {
+        backend: [59, 130, 246], // blue-500
+        'front-web': [34, 197, 94], // green-500
+        'front-app': [168, 85, 247], // purple-500
+      };
+
+      // Tag do setor
+      const tagWidth = drawTag(getSectorLabel(item.sector), tagX, yPos, sectorColors[item.sector]);
+      tagX += tagWidth + 5;
+
+      // Resultado final
+      if (item.finalConsensus) {
+        if (item.finalConsensus !== 'Empate') {
+          const consensusText = `Consenso: ${item.finalConsensus}`;
+          const resultWidth = drawTag(consensusText, tagX, yPos, [34, 197, 94]); // green-500
+          tagX += resultWidth + 5;
+        } else {
+          const empateWidth = drawTag('Empate', tagX, yPos, [245, 158, 11]); // amber-500
+          tagX += empateWidth + 5;
+        }
       }
+
+      // Indicador de múltiplas votações
+      if (item.votingRounds.length > 1) {
+        const votacoesText = `${item.votingRounds.length} votacoes`;
+        drawTag(votacoesText, tagX, yPos, [99, 102, 241]); // purple-500
+      }
+
+      // Informações da issue (data e duração) - espaçamento maior após as tags
+      yPos += 15;
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(100, 100, 100);
+      doc.text(`Data: ${formatDate(item.finalizedAt || item.createdAt)}`, 20, yPos);
+
+      if (item.totalDuration) {
+        doc.text(`Duracao: ${formatTime(item.totalDuration)}`, 80, yPos);
+      }
+
+      yPos += 10;
+
+      // Detalhes das votações (se modo detalhado)
+      if (showDetailedHistory && item.votingRounds.length > 0) {
+        // Linha separadora
+        doc.setDrawColor(220, 220, 220);
+        doc.setLineWidth(0.3);
+        doc.line(20, yPos, pageWidth - 20, yPos);
+        yPos += 8;
+
+        item.votingRounds.forEach((round, roundIndex) => {
+          // Header da votação
+          doc.setFontSize(9);
+          doc.setFont('helvetica', 'bold');
+          doc.setTextColor(50, 50, 50);
+
+          if (item.votingRounds.length > 1) {
+            doc.text(`Votacao ${roundIndex + 1}`, 25, yPos);
+
+            // Status da votação
+            const statusX = 70;
+            if (round.consensus) {
+              doc.text(`Resultado: ${round.consensus}`, statusX, yPos);
+            }
+
+            // Duração da votação
+            if (round.duration) {
+              doc.text(`Tempo: ${formatTime(round.duration)}`, statusX + 50, yPos);
+            }
+
+            yPos += 8;
+          }
+
+          // Votos da rodada em lista simples - respeitando limites da caixa
+          round.votes.forEach((vote, voteIndex) => {
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'normal');
+
+            // Nome do usuário
+            doc.setTextColor(80, 80, 80);
+            let userName = vote.userName;
+            // Limitar nome para caber na caixa (margem de 30 a 165)
+            const maxNameWidth = 50;
+            if (doc.getTextWidth(userName) > maxNameWidth) {
+              userName = userName.split(' ')[0]; // Apenas primeiro nome
+              if (doc.getTextWidth(userName) > maxNameWidth) {
+                userName = userName.substring(0, 8) + '...'; // Truncar se ainda estiver muito longo
+              }
+            }
+            doc.text(`${userName}:`, 30, yPos);
+
+            // Carta votada - posição limitada para não sair da caixa
+            const isWinner = round.winnerCards?.includes(vote.card);
+            const isEmpate = round.consensus === 'Empate';
+
+            if (isWinner && !isEmpate) {
+              doc.setTextColor(0, 150, 0); // Verde para vencedor real
+              doc.setFont('helvetica', 'bold');
+              doc.text(`${vote.card} (vencedor)`, 85, yPos);
+            } else if (isWinner && isEmpate) {
+              doc.setTextColor(245, 158, 11); // Cor âmbar para empate
+              doc.setFont('helvetica', 'bold');
+              doc.text(vote.card, 85, yPos);
+            } else {
+              doc.setTextColor(120, 120, 120);
+              doc.setFont('helvetica', 'normal');
+              doc.text(vote.card, 85, yPos);
+            }
+
+            yPos += 6;
+          });
+
+          yPos += 5; // Espaço após cada rodada
+        });
+      } else if (!showDetailedHistory && item.votingRounds.length > 0) {
+        // Resumo das votações - respeitando limites da caixa
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(120, 120, 120);
+        const totalVotes = item.votingRounds.reduce(
+          (total, round) => total + round.votes.length,
+          0
+        );
+        // Manter texto dentro da margem da caixa (20 a pageWidth-45)
+        doc.text(`${item.votingRounds.length} votacao(s) - ${totalVotes} votos total`, 30, yPos);
+        yPos += 8;
+      }
+
+      yPos += 15; // Espaço entre cards
     });
 
-    // Gerar tabela
-    autoTable(doc, {
-      head: [['Issue', 'Setor', 'Data', 'Duração', 'Consenso', 'Votações']],
-      body: tableData,
-      startY: yPos,
-      styles: {
-        fontSize: 8,
-        cellPadding: 3,
-      },
-      headStyles: {
-        fillColor: [99, 102, 241], // purple-500
-        textColor: 255,
-        fontSize: 9,
-        fontStyle: 'bold',
-      },
-      alternateRowStyles: {
-        fillColor: [249, 250, 251], // gray-50
-      },
-      columnStyles: {
-        0: { cellWidth: 50 }, // Issue
-        1: { cellWidth: 25 }, // Setor
-        2: { cellWidth: 30 }, // Data
-        3: { cellWidth: 20 }, // Duração
-        4: { cellWidth: 20 }, // Consenso
-        5: { cellWidth: 25 }, // Votações
-      },
-      margin: { left: 20, right: 20 },
+    // Footer
+    doc.setFontSize(8);
+    doc.setTextColor(150, 150, 150);
+    doc.text('Scrum Poker - Historico de Votacoes', pageWidth / 2, pageHeight - 10, {
+      align: 'center',
     });
 
     // Salvar PDF
