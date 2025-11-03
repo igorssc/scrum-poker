@@ -324,7 +324,7 @@ export default function IssueHistory({
     >
       <div className="w-full flex flex-col gap-4 min-w-0">
         <div className="dark:border-gray-700">
-          <div className="flex items-center justify-between mb-3 max-sm:flex-col max-sm:gap-2">
+          <div className="flex items-center justify-between mb-3 max-[400px]:flex-col max-[400px]:gap-2">
             <button
               onClick={onToggleHistory}
               className="flex items-center gap-2 group cursor-pointer"
