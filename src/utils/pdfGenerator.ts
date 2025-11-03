@@ -1,6 +1,5 @@
 import { HistoryItem, Sector } from '@/types/voting';
 import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 
 interface PDFGeneratorOptions {
   historyItems: HistoryItem[];
@@ -27,6 +26,9 @@ export const generateHistoryPDF = ({
   const pageWidth = doc.internal.pageSize.width;
   const pageHeight = doc.internal.pageSize.height;
   let yPos = 20;
+  
+  // Espaçamento padrão entre todas as caixas
+  const SECTION_SPACING = 8;
 
   const sortOptions = [
     { value: 'date', label: 'Data' },
@@ -109,7 +111,9 @@ export const generateHistoryPDF = ({
 
   // Filtrar histórico por setor
   const filteredItems =
-    sectorFilter === 'all' ? historyItems : historyItems.filter(item => item.sector === sectorFilter);
+    sectorFilter === 'all'
+      ? historyItems
+      : historyItems.filter(item => item.sector === sectorFilter);
 
   // Aplicar ordenação
   const filteredHistory = sortHistory(filteredItems, sortBy, sortOrder);
@@ -163,13 +167,17 @@ export const generateHistoryPDF = ({
   yPos += 6;
   doc.text(`Total de issues: ${filteredHistory.length}`, 25, yPos);
 
-  yPos += 15;
+  yPos += SECTION_SPACING; // Espaçamento padrão entre seções
 
   // Análise dinâmica das votações
   const generateVotingAnalysis = () => {
     // Coleta de dados dos votos
-    const allVotes: { userName: string; card: string; wasWinner: boolean; isEmpate: boolean }[] = [];
-    const userStats: Record<string, { total: number; wins: number; empates: number; consensus: number }> = {};
+    const allVotes: { userName: string; card: string; wasWinner: boolean; isEmpate: boolean }[] =
+      [];
+    const userStats: Record<
+      string,
+      { total: number; wins: number; empates: number; consensus: number }
+    > = {};
 
     filteredHistory.forEach(item => {
       item.votingRounds.forEach(round => {
@@ -180,7 +188,7 @@ export const generateHistoryPDF = ({
             userName: vote.userName,
             card: vote.card,
             wasWinner,
-            isEmpate
+            isEmpate,
           });
 
           if (!userStats[vote.userName]) {
@@ -202,21 +210,32 @@ export const generateHistoryPDF = ({
 
     // Análise dos dados
     const users = Object.keys(userStats);
-    const userPerformances = users.map(userName => ({
-      name: userName,
-      ...userStats[userName],
-      winRate: userStats[userName].total > 0 ? (userStats[userName].wins / userStats[userName].total) * 100 : 0,
-      consensusRate: userStats[userName].total > 0 ? (userStats[userName].consensus / userStats[userName].total) * 100 : 0
-    })).sort((a, b) => b.consensusRate - a.consensusRate);
+    const userPerformances = users
+      .map(userName => ({
+        name: userName,
+        ...userStats[userName],
+        winRate:
+          userStats[userName].total > 0
+            ? (userStats[userName].wins / userStats[userName].total) * 100
+            : 0,
+        consensusRate:
+          userStats[userName].total > 0
+            ? (userStats[userName].consensus / userStats[userName].total) * 100
+            : 0,
+      }))
+      .sort((a, b) => b.consensusRate - a.consensusRate);
 
     return { userPerformances, totalVotes: allVotes.length, totalUsers: users.length };
   };
 
   if (filteredHistory.length > 0) {
     const analysis = generateVotingAnalysis();
-    
-    // Card de análise
-    const analysisHeight = 45;
+
+    // Card de análise - altura dinâmica baseada no modo (mais precisa)
+    const analysisHeight = showDetailedHistory
+      ? 25 + analysis.userPerformances.length * 6 + 18 // Modo detalhado: altura ajustada sem espaço extra
+      : 45; // Modo resumido: altura fixa
+
     checkPageBreak(analysisHeight);
     drawCard(15, yPos - 5, pageWidth - 30, analysisHeight, [240, 248, 255]); // Cor azul clara
 
@@ -231,32 +250,83 @@ export const generateHistoryPDF = ({
     doc.setTextColor(60, 60, 60);
 
     if (analysis.userPerformances.length > 0) {
-      const bestPerformer = analysis.userPerformances[0];
-      const worstPerformer = analysis.userPerformances[analysis.userPerformances.length - 1];
-      const avgConsensusRate = analysis.userPerformances.reduce((sum, user) => sum + user.consensusRate, 0) / analysis.userPerformances.length;
+      const avgConsensusRate =
+        analysis.userPerformances.reduce((sum, user) => sum + user.consensusRate, 0) /
+        analysis.userPerformances.length;
 
-      doc.text(`Melhor alinhamento: ${bestPerformer.name} (${bestPerformer.consensusRate.toFixed(1)}% de consenso)`, 25, yPos);
-      yPos += 6;
-      
-      if (analysis.userPerformances.length > 1) {
-        doc.text(`Menor alinhamento: ${worstPerformer.name} (${worstPerformer.consensusRate.toFixed(1)}% de consenso)`, 25, yPos);
+      if (showDetailedHistory) {
+        // Modo detalhado: análise individual de cada membro
+        doc.text(
+          `Analise individual dos ${analysis.userPerformances.length} membros (${analysis.totalVotes} votos total):`,
+          25,
+          yPos
+        );
+        yPos += 10;
+
+        analysis.userPerformances.forEach((user, index) => {
+          const performance = user.consensusRate;
+          let performanceLabel = '';
+
+          if (performance >= avgConsensusRate + 10) {
+            performanceLabel = 'Excelente alinhamento';
+          } else if (performance >= avgConsensusRate) {
+            performanceLabel = 'Bom alinhamento';
+          } else if (performance >= avgConsensusRate - 10) {
+            performanceLabel = 'Alinhamento regular';
+          } else {
+            performanceLabel = 'Precisa melhorar';
+          }
+
+          const userText = `${index + 1}. ${user.name}: ${user.consensus}/${user.total} consensos (${performance.toFixed(1)}%) - ${performanceLabel}`;
+          doc.text(userText, 30, yPos);
+          yPos += 6;
+        });
+
+        yPos += 4; // Espaçamento menor antes da média
+        doc.text(`Media da equipe: ${avgConsensusRate.toFixed(1)}% de taxa de consenso`, 25, yPos);
+      } else {
+        // Modo resumido: visão geral
+        const bestPerformer = analysis.userPerformances[0];
+        const worstPerformer = analysis.userPerformances[analysis.userPerformances.length - 1];
+
+        doc.text(
+          `Melhor alinhamento: ${bestPerformer.name} (${bestPerformer.consensusRate.toFixed(1)}% de consenso)`,
+          25,
+          yPos
+        );
         yPos += 6;
-      }
-      
-      doc.text(`Media da equipe: ${avgConsensusRate.toFixed(1)}% de consenso em ${analysis.totalVotes} votos`, 25, yPos);
-      yPos += 6;
 
-      // Classificação dos usuários
-      const aboveAvg = analysis.userPerformances.filter(u => u.consensusRate > avgConsensusRate);
-      
-      if (aboveAvg.length > 0) {
-        doc.text(`Acima da media: ${aboveAvg.map(u => u.name).join(', ')}`, 25, yPos);
+        if (analysis.userPerformances.length > 1) {
+          doc.text(
+            `Menor alinhamento: ${worstPerformer.name} (${worstPerformer.consensusRate.toFixed(1)}% de consenso)`,
+            25,
+            yPos
+          );
+          yPos += 6;
+        }
+
+        doc.text(
+          `Media da equipe: ${avgConsensusRate.toFixed(1)}% de consenso em ${analysis.totalVotes} votos`,
+          25,
+          yPos
+        );
+        yPos += 6;
+
+        // Classificação dos usuários
+        const aboveAvg = analysis.userPerformances.filter(u => u.consensusRate > avgConsensusRate);
+
+        if (aboveAvg.length > 0) {
+          doc.text(`Acima da media: ${aboveAvg.map(u => u.name).join(', ')}`, 25, yPos);
+        }
       }
     } else {
       doc.text('Nao ha dados suficientes para analise', 25, yPos);
     }
 
-    yPos += 15;
+    yPos += SECTION_SPACING; // Espaçamento padrão após análise
+  } else if (filteredHistory.length > 0) {
+    // Se não há análise mas há cards, adicionar espaçamento
+    yPos += SECTION_SPACING;
   }
 
   // Renderizar cada issue como um card
@@ -412,7 +482,7 @@ export const generateHistoryPDF = ({
           yPos += 6;
         });
 
-        yPos += 3; // Espaço reduzido após cada rodada
+        yPos += 5; // Espaçamento entre rodadas
       });
     } else if (!showDetailedHistory && item.votingRounds.length > 0) {
       // Resumo das votações - respeitando limites da caixa
@@ -425,7 +495,7 @@ export const generateHistoryPDF = ({
       yPos += 8;
     }
 
-    yPos += 5; // Espaço reduzido entre cards
+    yPos += SECTION_SPACING; // Espaçamento padrão entre cards
   });
 
   // Footer
