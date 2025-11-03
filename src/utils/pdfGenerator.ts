@@ -13,6 +13,43 @@ interface PDFGeneratorOptions {
   theme?: 'light' | 'dark';
 }
 
+// Função para limpar texto removendo emojis, caracteres especiais e acentos
+const cleanText = (text: string): string => {
+  return text
+    // Remover emojis (vários ranges Unicode)
+    .replace(/[\u{1F600}-\u{1F64F}]/gu, '') // Emoticons
+    .replace(/[\u{1F300}-\u{1F5FF}]/gu, '') // Símbolos diversos
+    .replace(/[\u{1F680}-\u{1F6FF}]/gu, '') // Transporte e símbolos
+    .replace(/[\u{1F700}-\u{1F77F}]/gu, '') // Símbolos alquímicos
+    .replace(/[\u{1F780}-\u{1F7FF}]/gu, '') // Símbolos geométricos estendidos
+    .replace(/[\u{1F800}-\u{1F8FF}]/gu, '') // Setas suplementares
+    .replace(/[\u{2600}-\u{26FF}]/gu, '') // Símbolos diversos
+    .replace(/[\u{2700}-\u{27BF}]/gu, '') // Dingbats
+    .replace(/[\u{1F900}-\u{1F9FF}]/gu, '') // Símbolos suplementares
+    .replace(/[\u{1FA00}-\u{1FA6F}]/gu, '') // Símbolos estendidos A
+    .replace(/[\u{1FA70}-\u{1FAFF}]/gu, '') // Símbolos estendidos B
+    // Substituir acentos por caracteres sem acento
+    .replace(/[àáâãäå]/g, 'a')
+    .replace(/[èéêë]/g, 'e')
+    .replace(/[ìíîï]/g, 'i')
+    .replace(/[òóôõö]/g, 'o')
+    .replace(/[ùúûü]/g, 'u')
+    .replace(/[ñ]/g, 'n')
+    .replace(/[ç]/g, 'c')
+    .replace(/[ÀÁÂÃÄÅ]/g, 'A')
+    .replace(/[ÈÉÊË]/g, 'E')
+    .replace(/[ÌÍÎÏ]/g, 'I')
+    .replace(/[ÒÓÔÕÖ]/g, 'O')
+    .replace(/[ÙÚÛÜ]/g, 'U')
+    .replace(/[Ñ]/g, 'N')
+    .replace(/[Ç]/g, 'C')
+    // Remover outros caracteres especiais, mantendo apenas letras, números, espaços e pontuação básica
+    .replace(/[^\w\s\-\.\,\:\;\!\?\(\)]/g, '')
+    // Limpar espaços múltiplos
+    .replace(/\s+/g, ' ')
+    .trim();
+};
+
 export const generateHistoryPDF = ({
   historyItems,
   sectorFilter,
@@ -323,7 +360,7 @@ export const generateHistoryPDF = ({
             performanceLabel = 'Precisa melhorar';
           }
 
-          const userText = `${index + 1}. ${user.name}: ${user.consensus}/${user.total} consensos (${performance.toFixed(1)}%) - ${performanceLabel}`;
+          const userText = `${index + 1}. ${cleanText(user.name)}: ${user.consensus}/${user.total} consensos (${performance.toFixed(1)}%) - ${performanceLabel}`;
           doc.text(userText, 30, yPos);
           yPos += 6;
         });
@@ -336,7 +373,7 @@ export const generateHistoryPDF = ({
         const worstPerformer = analysis.userPerformances[analysis.userPerformances.length - 1];
 
         doc.text(
-          `Melhor alinhamento: ${bestPerformer.name} (${bestPerformer.consensusRate.toFixed(1)}% de consenso)`,
+          `Melhor alinhamento: ${cleanText(bestPerformer.name)} (${bestPerformer.consensusRate.toFixed(1)}% de consenso)`,
           25,
           yPos
         );
@@ -344,7 +381,7 @@ export const generateHistoryPDF = ({
 
         if (analysis.userPerformances.length > 1) {
           doc.text(
-            `Menor alinhamento: ${worstPerformer.name} (${worstPerformer.consensusRate.toFixed(1)}% de consenso)`,
+            `Menor alinhamento: ${cleanText(worstPerformer.name)} (${worstPerformer.consensusRate.toFixed(1)}% de consenso)`,
             25,
             yPos
           );
@@ -362,7 +399,7 @@ export const generateHistoryPDF = ({
         const aboveAvg = analysis.userPerformances.filter(u => u.consensusRate > avgConsensusRate);
 
         if (aboveAvg.length > 0) {
-          doc.text(`Acima da media: ${aboveAvg.map(u => u.name).join(', ')}`, 25, yPos);
+          doc.text(`Acima da media: ${aboveAvg.map(u => cleanText(u.name)).join(', ')}`, 25, yPos);
         }
       }
     } else {
@@ -395,8 +432,8 @@ export const generateHistoryPDF = ({
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(colors.textPrimary[0], colors.textPrimary[1], colors.textPrimary[2]);
 
-    // Título sem truncamento
-    doc.text(item.topic, 20, yPos + 10);
+    // Título sem truncamento - texto limpo
+    doc.text(cleanText(item.topic), 20, yPos + 10);
 
     // Mover para linha das tags (abaixo do título, lado esquerdo) - espaçamento maior
     yPos += 20;
@@ -500,7 +537,7 @@ export const generateHistoryPDF = ({
             colors.textSecondary[1],
             colors.textSecondary[2]
           );
-          let userName = vote.userName;
+          let userName = cleanText(vote.userName);
           // Limitar nome para caber na caixa (margem de 30 a 165)
           const maxNameWidth = 50;
           if (doc.getTextWidth(userName) > maxNameWidth) {

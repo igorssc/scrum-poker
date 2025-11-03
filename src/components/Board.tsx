@@ -103,10 +103,10 @@ export const Board = () => {
           consensus: 'Empate',
           winnerCards: ['8', '13'],
           votes: [
-            { userName: 'João Silva', card: '8' },
-            { userName: 'Maria Santos', card: '13' },
-            { userName: 'Pedro Costa', card: '8' },
-            { userName: 'Ana Lima', card: '13' },
+            { userName: 'João Silva 💜', card: '8' },
+            { userName: 'Maria Santos 💜', card: '13' },
+            { userName: 'Pedro Costa 💜', card: '8' },
+            { userName: 'Ana Lima 💜', card: '13' },
           ],
         },
         {
@@ -231,14 +231,7 @@ export const Board = () => {
     };
 
     setVotingHistory(prev => [newHistoryItem, ...prev]);
-    console.log(
-      'Finalizing topic:',
-      topic,
-      'sector:',
-      sector,
-      'with consensus:',
-      consensus
-    );
+    console.log('Finalizing topic:', topic, 'sector:', sector, 'with consensus:', consensus);
   };
 
   useEffect(() => {
