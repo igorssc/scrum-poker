@@ -420,7 +420,7 @@ export default function IssueHistory({
           </div>
 
           {isHistoryExpanded && (
-            <div className="space-y-2">
+            <div className="space-y-4">
               {filteredHistory.map((item: HistoryItem) => (
                 <div
                   key={item.id}
@@ -568,11 +568,11 @@ export default function IssueHistory({
                           )}{' '}
                           votos
                         </span>
-                        {item.votingRounds.length > 1 && (
+                        {/* {item.votingRounds.length > 1 && (
                           <span className="text-[10px] text-purple-600 dark:text-purple-400 truncate">
                             Múltiplas rodadas
                           </span>
-                        )}
+                        )} */}
                       </div>
                     </div>
                   )}

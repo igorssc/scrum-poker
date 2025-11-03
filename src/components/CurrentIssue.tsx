@@ -4,11 +4,12 @@ import { RoomContext } from '@/context/RoomContext';
 import { useRoomActions } from '@/hooks/useRoomActions';
 import { useRoomCache } from '@/hooks/useRoomCache';
 import React, { useState } from 'react';
-import { FaCheck, FaEdit, FaRedo, FaTimes } from 'react-icons/fa';
+import { FaCheck, FaEdit, FaRedo, FaTimes, FaTrash } from 'react-icons/fa';
 import { twMerge } from 'tailwind-merge';
 import { useContextSelector } from 'use-context-selector';
 import { Box } from './Box';
 import { Button } from './Button';
+import { ClearIssueModalContent } from './ClearIssueModalContent';
 import { Input } from './Input';
 import { Modal } from './Modal';
 import { Select } from './Select';
@@ -64,6 +65,7 @@ export default function CurrentIssue({
   const [tempIssue, setTempIssue] = useState('');
   const [tempSector, setTempSector] = useState<Sector>('backend');
   const [showResetModal, setShowResetModal] = useState(false);
+  const [showClearIssueModal, setShowClearIssueModal] = useState(false);
 
   // Verificar permissões do usuário
   const { user } = useContextSelector(RoomContext, context => ({
@@ -120,7 +122,11 @@ export default function CurrentIssue({
     setTempSector('backend');
   };
 
-  const handleFinalize = async () => {
+  const handleClearIssue = () => {
+    setShowClearIssueModal(true);
+  };
+
+  const handleConfirmClearIssue = async () => {
     if (!canPerformActions) return;
 
     try {
@@ -134,6 +140,8 @@ export default function CurrentIssue({
       if (onResetTimer) {
         onResetTimer();
       }
+
+      setShowClearIssueModal(false);
     } catch (error) {
       console.error('Erro ao limpar issue:', error);
     }
@@ -263,20 +271,6 @@ export default function CurrentIssue({
                 </span>
               )}
             </div>
-
-            {/* Botão Limpar - sempre visível quando há issue e usuário tem permissão */}
-            {currentIssue && !isEditing && canPerformActions && (
-              <div className="flex justify-end">
-                <Button
-                  onClick={handleFinalize}
-                  variant="primary"
-                  className="bg-transparent dark:bg-transparent text-purple-600 dark:text-gray-400 border border-purple-600 dark:border-gray-600 hover:bg-purple-50 dark:hover:bg-gray-500/20"
-                  disabled={isUpdatingRoom}
-                >
-                  {isUpdatingRoom ? 'Limpando...' : 'Limpar Issue'}
-                </Button>
-              </div>
-            )}
           </div>
 
           {isEditing && canPerformActions ? (
@@ -350,6 +344,17 @@ export default function CurrentIssue({
                 {currentIssue ? (
                   <div className="flex items-center justify-between gap-2 w-full min-w-0">
                     <div className="flex items-center gap-2 flex-1 min-w-0 overflow-hidden">
+                      {/* Ícone de lixeira discreto à esquerda */}
+                      {canPerformActions && (
+                        <button
+                          onClick={handleClearIssue}
+                          disabled={isUpdatingRoom}
+                          className="cursor-pointer p-1 hover:bg-red-100 dark:hover:bg-red-900/20 rounded transition-colors shrink-0 disabled:opacity-50 disabled:cursor-not-allowed group"
+                          title="Remover issue"
+                        >
+                          <FaTrash className="w-2.5 h-2.5 text-gray-400 dark:text-gray-500 group-hover:text-red-500 dark:group-hover:text-red-400 transition-colors" />
+                        </button>
+                      )}
                       <span
                         className={twMerge(
                           'text-[0.65rem] md:text-xs text-gray-900 dark:text-white truncate flex-1 min-w-0'
@@ -461,6 +466,19 @@ export default function CurrentIssue({
           formattedTime={formatTime(time)}
           onConfirm={handleResetTimer}
           onCancel={() => setShowResetModal(false)}
+        />
+      </Modal>
+
+      {/* Modal de confirmação de limpar issue */}
+      <Modal
+        isOpen={showClearIssueModal}
+        onClose={() => setShowClearIssueModal(false)}
+        title="Remover Issue"
+      >
+        <ClearIssueModalContent
+          currentIssue={currentIssue}
+          onConfirm={handleConfirmClearIssue}
+          onCancel={() => setShowClearIssueModal(false)}
         />
       </Modal>
     </>
