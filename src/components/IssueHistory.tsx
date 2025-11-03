@@ -37,6 +37,7 @@ const FilterAndSortControls = ({
   onToggleDetailedHistory,
   onDownloadPDF,
   userCanDownloadPDF,
+  getSectorLabel,
 }: {
   sectorFilter: Sector | 'all';
   onSectorFilterChange: React.Dispatch<React.SetStateAction<Sector | 'all'>>;
@@ -51,6 +52,7 @@ const FilterAndSortControls = ({
   onToggleDetailedHistory: () => void;
   onDownloadPDF: () => void;
   userCanDownloadPDF: boolean;
+  getSectorLabel: (sector: Sector) => string;
 }) => {
   const hasFilterApplied = sectorFilter !== 'all';
   const hasSortApplied = sortBy !== 'date' || sortOrder !== 'desc';
@@ -207,7 +209,13 @@ const FilterAndSortControls = ({
           <button
             onClick={onDownloadPDF}
             className="p-[0.68rem] hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors flex items-center cursor-pointer shrink-0"
-            title="Baixar histórico em PDF"
+            title={`Baixar histórico em PDF - O documento será gerado com: ${
+              showDetailedHistory ? 'visualização detalhada' : 'visualização resumida'
+            }, ordenação por ${
+              sortOptions.find(opt => opt.value === sortBy)?.label.toLowerCase()
+            } (${sortOrder === 'asc' ? 'crescente' : 'decrescente'}), ${
+              sectorFilter === 'all' ? 'todos os setores' : `setor ${getSectorLabel(sectorFilter)}`
+            } e tema atual`}
           >
             <FaDownload className="w-3 h-3 text-gray-500 dark:text-gray-400" />
           </button>
@@ -406,6 +414,7 @@ export default function IssueHistory({
                 onToggleDetailedHistory={onToggleDetailedHistory}
                 onDownloadPDF={handleDownloadPDF}
                 userCanDownloadPDF={userCanDownloadPDF}
+                getSectorLabel={getSectorLabel}
               />
             )}
           </div>
