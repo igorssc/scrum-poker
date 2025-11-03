@@ -318,6 +318,10 @@ export default function IssueHistory({
 
   // Função para gerar PDF usando o gerador extraído
   const handleDownloadPDF = () => {
+    // Detectar tema atual
+    const isDark = document.documentElement.classList.contains('dark');
+    const theme = isDark ? 'dark' : 'light';
+
     generateHistoryPDF({
       historyItems,
       sectorFilter,
@@ -327,6 +331,7 @@ export default function IssueHistory({
       formatDate,
       formatTime,
       getSectorLabel,
+      theme,
     });
   };
 

@@ -10,6 +10,7 @@ interface PDFGeneratorOptions {
   formatDate: (date: Date) => string;
   formatTime: (seconds: number) => string;
   getSectorLabel: (sector: Sector) => string;
+  theme?: 'light' | 'dark';
 }
 
 export const generateHistoryPDF = ({
@@ -21,14 +22,48 @@ export const generateHistoryPDF = ({
   formatDate,
   formatTime,
   getSectorLabel,
+  theme = 'light',
 }: PDFGeneratorOptions) => {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.width;
   const pageHeight = doc.internal.pageSize.height;
   let yPos = 20;
-  
+
   // Espaçamento padrão entre todas as caixas
   const SECTION_SPACING = 8;
+
+  // Configurações de tema
+  const themeConfig = {
+    light: {
+      background: [255, 255, 255], // Branco
+      cardBackground: [249, 250, 251], // Cinza muito claro
+      cardBackgroundAlt: [255, 255, 255], // Branco
+      analysisBackground: [240, 248, 255], // Azul claro
+      textPrimary: [0, 0, 0], // Preto
+      textSecondary: [60, 60, 60], // Cinza escuro
+      textMuted: [100, 100, 100], // Cinza médio
+      border: [200, 200, 200], // Cinza claro
+    },
+    dark: {
+      background: [39, 39, 42], // Zinc-800
+      cardBackground: [63, 63, 70], // Zinc-700
+      // cardBackgroundAlt: [71, 85, 105], // Slate-600
+      cardBackgroundAlt: [63, 63, 70], // Zinc-700
+      analysisBackground: [30, 41, 59], // Slate-800
+      textPrimary: [248, 250, 252], // Slate-50
+      textSecondary: [203, 213, 225], // Slate-300
+      textMuted: [148, 163, 184], // Slate-400
+      border: [100, 116, 139], // Slate-500
+    },
+  };
+
+  const colors = themeConfig[theme];
+
+  // Aplicar fundo da página se for tema escuro
+  if (theme === 'dark') {
+    doc.setFillColor(colors.background[0], colors.background[1], colors.background[2]);
+    doc.rect(0, 0, pageWidth, pageHeight, 'F');
+  }
 
   const sortOptions = [
     { value: 'date', label: 'Data' },
@@ -42,18 +77,27 @@ export const generateHistoryPDF = ({
   const checkPageBreak = (neededHeight: number) => {
     if (yPos + neededHeight > pageHeight - 20) {
       doc.addPage();
+      // Aplicar fundo em novas páginas se for tema escuro
+      if (theme === 'dark') {
+        doc.setFillColor(colors.background[0], colors.background[1], colors.background[2]);
+        doc.rect(0, 0, pageWidth, pageHeight, 'F');
+      }
       yPos = 20;
     }
   };
 
   // Função para desenhar retângulo com bordas (simulando card)
   const drawCard = (x: number, y: number, width: number, height: number, fillColor?: number[]) => {
-    doc.setDrawColor(200, 200, 200);
+    doc.setDrawColor(colors.border[0], colors.border[1], colors.border[2]);
     doc.setLineWidth(0.5);
     if (fillColor) {
       doc.setFillColor(fillColor[0], fillColor[1], fillColor[2]);
     } else {
-      doc.setFillColor(249, 250, 251);
+      doc.setFillColor(
+        colors.cardBackground[0],
+        colors.cardBackground[1],
+        colors.cardBackground[2]
+      );
     }
     doc.rect(x, y, width, height, 'FD');
   };
@@ -121,30 +165,31 @@ export const generateHistoryPDF = ({
   // Cabeçalho
   doc.setFontSize(18);
   doc.setFont('helvetica', 'bold');
+  doc.setTextColor(colors.textPrimary[0], colors.textPrimary[1], colors.textPrimary[2]);
   doc.text('Historico de Votacoes - Scrum Poker', pageWidth / 2, yPos, { align: 'center' });
   yPos += 15;
 
   // Data de geração
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
-  doc.setTextColor(100, 100, 100);
+  doc.setTextColor(colors.textMuted[0], colors.textMuted[1], colors.textMuted[2]);
   doc.text(`Gerado em: ${formatDate(new Date())}`, pageWidth / 2, yPos, { align: 'center' });
   yPos += 20;
 
-  // Card de filtros aplicados - altura ajustada
-  const filterCardHeight = 45;
+  // Card de filtros aplicados - altura padronizada
+  const filterCardHeight = 48;
   checkPageBreak(filterCardHeight);
   drawCard(15, yPos - 5, pageWidth - 30, filterCardHeight);
 
   doc.setFontSize(12);
   doc.setFont('helvetica', 'bold');
-  doc.setTextColor(0, 0, 0);
+  doc.setTextColor(colors.textPrimary[0], colors.textPrimary[1], colors.textPrimary[2]);
   doc.text('Filtros e Ordenacao Aplicados', 20, yPos + 5);
 
   yPos += 15;
   doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
-  doc.setTextColor(60, 60, 60);
+  doc.setTextColor(colors.textSecondary[0], colors.textSecondary[1], colors.textSecondary[2]);
   doc.text(
     `Setor: ${sectorFilter === 'all' ? 'Todos os setores' : getSectorLabel(sectorFilter as Sector)}`,
     25,
@@ -231,23 +276,23 @@ export const generateHistoryPDF = ({
   if (filteredHistory.length > 0) {
     const analysis = generateVotingAnalysis();
 
-    // Card de análise - altura dinâmica baseada no modo (mais precisa)
+    // Card de análise - altura padronizada
     const analysisHeight = showDetailedHistory
-      ? 25 + analysis.userPerformances.length * 6 + 18 // Modo detalhado: altura ajustada sem espaço extra
-      : 45; // Modo resumido: altura fixa
+      ? 25 + analysis.userPerformances.length * 6 + 15 // Modo detalhado: altura precisa
+      : 48; // Modo resumido: altura padrão igual ao filtro
 
     checkPageBreak(analysisHeight);
-    drawCard(15, yPos - 5, pageWidth - 30, analysisHeight, [240, 248, 255]); // Cor azul clara
+    drawCard(15, yPos - 5, pageWidth - 30, analysisHeight, colors.analysisBackground);
 
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
-    doc.setTextColor(0, 0, 0);
+    doc.setTextColor(colors.textPrimary[0], colors.textPrimary[1], colors.textPrimary[2]);
     doc.text('Analise de Performance da Equipe', 20, yPos + 5);
 
     yPos += 15;
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
-    doc.setTextColor(60, 60, 60);
+    doc.setTextColor(colors.textSecondary[0], colors.textSecondary[1], colors.textSecondary[2]);
 
     if (analysis.userPerformances.length > 0) {
       const avgConsensusRate =
@@ -332,21 +377,21 @@ export const generateHistoryPDF = ({
   // Renderizar cada issue como um card
   filteredHistory.forEach((item, index) => {
     const cardHeight = showDetailedHistory
-      ? 40 +
+      ? 45 + // Base mínima padronizada
         item.votingRounds.length * 25 +
         item.votingRounds.reduce((sum, round) => sum + Math.ceil(round.votes.length / 3) * 8, 0)
-      : 50; // Altura otimizada para modo resumido
+      : 55; // Altura padronizada para modo resumido
 
     checkPageBreak(cardHeight);
 
-    // Card principal da issue
-    const cardColor = index % 2 === 0 ? [249, 250, 251] : [255, 255, 255]; // Alternar cores
+    // Card principal da issue com cores alternadas do tema
+    const cardColor = index % 2 === 0 ? colors.cardBackground : colors.cardBackgroundAlt;
     drawCard(15, yPos, pageWidth - 30, cardHeight, cardColor);
 
     // Header da issue
     doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
-    doc.setTextColor(0, 0, 0);
+    doc.setTextColor(colors.textPrimary[0], colors.textPrimary[1], colors.textPrimary[2]);
 
     // Título sem truncamento
     doc.text(item.topic, 20, yPos + 10);
@@ -389,7 +434,7 @@ export const generateHistoryPDF = ({
       yPos += 15;
       doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
-      doc.setTextColor(100, 100, 100);
+      doc.setTextColor(colors.textMuted[0], colors.textMuted[1], colors.textMuted[2]);
       doc.text(`Data: ${formatDate(item.finalizedAt || item.createdAt)}`, 20, yPos);
 
       if (item.totalDuration) {
@@ -402,7 +447,7 @@ export const generateHistoryPDF = ({
       yPos += 15;
       doc.setFontSize(8);
       doc.setFont('helvetica', 'normal');
-      doc.setTextColor(100, 100, 100);
+      doc.setTextColor(colors.textMuted[0], colors.textMuted[1], colors.textMuted[2]);
       doc.text(`Data: ${formatDate(item.finalizedAt || item.createdAt)}`, 20, yPos);
 
       if (item.totalDuration) {
@@ -415,7 +460,7 @@ export const generateHistoryPDF = ({
     // Detalhes das votações (se modo detalhado)
     if (showDetailedHistory && item.votingRounds.length > 0) {
       // Linha separadora
-      doc.setDrawColor(220, 220, 220);
+      doc.setDrawColor(colors.border[0], colors.border[1], colors.border[2]);
       doc.setLineWidth(0.3);
       doc.line(20, yPos, pageWidth - 20, yPos);
       yPos += 8;
@@ -424,8 +469,7 @@ export const generateHistoryPDF = ({
         // Header da votação
         doc.setFontSize(9);
         doc.setFont('helvetica', 'bold');
-        doc.setTextColor(50, 50, 50);
-
+        doc.setTextColor(colors.textSecondary[0], colors.textSecondary[1], colors.textSecondary[2]);
         if (item.votingRounds.length > 1) {
           doc.text(`Votacao ${roundIndex + 1}`, 25, yPos);
 
@@ -449,7 +493,11 @@ export const generateHistoryPDF = ({
           doc.setFont('helvetica', 'normal');
 
           // Nome do usuário
-          doc.setTextColor(80, 80, 80);
+          doc.setTextColor(
+            colors.textSecondary[0],
+            colors.textSecondary[1],
+            colors.textSecondary[2]
+          );
           let userName = vote.userName;
           // Limitar nome para caber na caixa (margem de 30 a 165)
           const maxNameWidth = 50;
@@ -488,7 +536,7 @@ export const generateHistoryPDF = ({
       // Resumo das votações - respeitando limites da caixa
       doc.setFontSize(8);
       doc.setFont('helvetica', 'normal');
-      doc.setTextColor(120, 120, 120);
+      doc.setTextColor(colors.textMuted[0], colors.textMuted[1], colors.textMuted[2]);
       const totalVotes = item.votingRounds.reduce((total, round) => total + round.votes.length, 0);
       // Alinhar com os demais elementos do card (posição x: 20)
       doc.text(`${item.votingRounds.length} votacao(s) - ${totalVotes} votos total`, 20, yPos);
@@ -500,7 +548,7 @@ export const generateHistoryPDF = ({
 
   // Footer
   doc.setFontSize(8);
-  doc.setTextColor(150, 150, 150);
+  doc.setTextColor(colors.textMuted[0], colors.textMuted[1], colors.textMuted[2]);
   doc.text('Scrum Poker - Historico de Votacoes', pageWidth / 2, pageHeight - 10, {
     align: 'center',
   });
