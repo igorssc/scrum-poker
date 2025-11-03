@@ -246,7 +246,9 @@ export default function CurrentIssue({
                       onTempIssueChange(e.target.value)
                     }
                     placeholder="Digite a issue atual..."
-                    className={twMerge('w-full text-xs h-9 placeholder:text-[0.625rem]')}
+                    className={twMerge(
+                      'w-full text-[0.65rem] md:text-xs h-9 placeholder:text-[0.625rem]'
+                    )}
                     autoFocus
                     onKeyDown={(e: React.KeyboardEvent) => {
                       if (e.key === 'Enter') onSave();
@@ -304,7 +306,7 @@ export default function CurrentIssue({
                     <div className="flex items-center gap-2 flex-1 min-w-0 overflow-hidden">
                       <span
                         className={twMerge(
-                          'text-xs text-gray-900 dark:text-white truncate flex-1 min-w-0'
+                          'text-[0.65rem] md:text-xs text-gray-900 dark:text-white truncate flex-1 min-w-0'
                         )}
                         title={currentIssue}
                       >
@@ -329,7 +331,7 @@ export default function CurrentIssue({
                   >
                     <span
                       className={twMerge(
-                        'text-xs text-gray-500 dark:text-gray-400 italic flex-1 min-w-0 text-left'
+                        'text-[0.65rem] md:text-xs text-gray-500 dark:text-gray-400 italic flex-1 min-w-0 text-left'
                       )}
                     >
                       Clique aqui para definir a issue
@@ -338,7 +340,7 @@ export default function CurrentIssue({
                 ) : (
                   <span
                     className={twMerge(
-                      'text-xs text-gray-400 dark:text-gray-500 italic flex-1 min-w-0 text-left p-1'
+                      'text-[0.65rem] md:text-xs text-gray-400 dark:text-gray-500 italic flex-1 min-w-0 text-left p-1'
                     )}
                     title="Você não tem permissão para definir issues"
                   >

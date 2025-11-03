@@ -18,7 +18,7 @@ export default async function RootLayout({
 }>) {
   return (
     <div className="min-h-screen flex flex-col">
-      <div className="flex-1 relative h-full bg-amber-300">
+      <div className="flex-1 relative h-full">
         <SampleCards>
           <Glass>{children}</Glass>
         </SampleCards>
