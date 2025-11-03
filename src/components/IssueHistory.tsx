@@ -71,7 +71,7 @@ const FilterAndSortControls = ({
       <Popover.Root>
         <Popover.Trigger asChild>
           <button
-            className="relative p-[0.68rem] hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors flex items-center cursor-pointer shrink-0"
+            className="relative p-[0.68rem] hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors flex items-center cursor-pointer shrink-0"
             title="Filtrar por setor"
           >
             <FaFilter className="w-3 h-2.5 text-gray-500 dark:text-gray-400" />
@@ -113,7 +113,7 @@ const FilterAndSortControls = ({
       <Popover.Root>
         <Popover.Trigger asChild>
           <button
-            className="relative p-[0.68rem] hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors flex items-center cursor-pointer shrink-0"
+            className="relative p-[0.68rem] hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors flex items-center cursor-pointer shrink-0"
             title="Ordenar"
           >
             <FaSort className="w-3 h-3.5 text-gray-500 dark:text-gray-400" />
@@ -189,7 +189,7 @@ const FilterAndSortControls = ({
       {/* Toggle de Detalhes */}
       <button
         onClick={onToggleDetailedHistory}
-        className="p-[0.68rem] hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors flex items-center cursor-pointer shrink-0"
+        className="p-[0.68rem] hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors flex items-center cursor-pointer shrink-0"
         title={showDetailedHistory ? 'Visualização resumida' : 'Visualização detalhada'}
       >
         {showDetailedHistory ? (
@@ -208,7 +208,7 @@ const FilterAndSortControls = ({
           {/* Download PDF */}
           <button
             onClick={onDownloadPDF}
-            className="p-[0.68rem] hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors flex items-center cursor-pointer shrink-0"
+            className="p-[0.68rem] hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors flex items-center cursor-pointer shrink-0"
             title={`Baixar histórico em PDF - O documento será gerado com: ${
               showDetailedHistory ? 'visualização detalhada' : 'visualização resumida'
             }, ordenação por ${sortOptions
@@ -424,7 +424,7 @@ export default function IssueHistory({
               {filteredHistory.map((item: HistoryItem) => (
                 <div
                   key={item.id}
-                  className="p-2.5 bg-gray-50 dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600"
+                  className="p-2.5 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600"
                 >
                   {/* Header da Issue */}
                   <div className="mb-2">
@@ -445,7 +445,7 @@ export default function IssueHistory({
                           <FaTrophy className="w-3 h-3 text-yellow-500" />
                           <span
                             className={twMerge(
-                              'text-xs font-medium text-gray-900 dark:text-white bg-yellow-100 dark:bg-yellow-900/30 px-1.5 py-0.5 rounded text-[0.625rem] border border-yellow-200 dark:border-yellow-800'
+                              'text-xs font-medium text-gray-900 dark:text-white bg-yellow-100 dark:bg-yellow-900/30 px-1.5 py-0.5 rounded-lg text-[0.625rem] border border-yellow-200 dark:border-yellow-800'
                             )}
                           >
                             {item.finalConsensus}
@@ -458,7 +458,7 @@ export default function IssueHistory({
                         <div className="flex items-center gap-1 shrink-0">
                           <span
                             className={twMerge(
-                              'text-xs font-medium text-gray-900 dark:text-white bg-amber-100 dark:bg-amber-900/30 px-1.5 py-0.5 rounded text-[0.625rem] border border-amber-200 dark:border-amber-800'
+                              'text-xs font-medium text-gray-900 dark:text-white bg-amber-100 dark:bg-amber-900/30 px-1.5 py-0.5 rounded-lg text-[0.625rem] border border-amber-200 dark:border-amber-800'
                             )}
                           >
                             {item.finalConsensus}
@@ -530,14 +530,14 @@ export default function IssueHistory({
                               <div
                                 key={voteIndex}
                                 className={twMerge(
-                                  'flex items-center justify-between p-1.5 bg-gray-100 dark:bg-gray-600 rounded text-[0.625rem]'
+                                  'flex items-center justify-between p-1.5 bg-gray-100 dark:bg-gray-600 rounded-lg text-[0.625rem]'
                                 )}
                               >
                                 <span className="text-gray-700 dark:text-gray-300 truncate flex-1 mr-1">
                                   {vote.userName}
                                 </span>
                                 <span
-                                  className={`font-medium px-1 py-0.5 rounded ${
+                                  className={`font-medium px-1 py-0.5 rounded-lg ${
                                     round.winnerCards?.includes(vote.card)
                                       ? 'bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200'
                                       : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'

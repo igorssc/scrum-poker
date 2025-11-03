@@ -262,7 +262,7 @@ export default function CurrentIssue({
                     }
                     placeholder="Digite a issue atual..."
                     className={twMerge(
-                      'w-full text-[0.65rem] md:text-xs h-9 placeholder:text-[0.625rem]'
+                      'w-full text-[0.65rem] md:text-xs h-9 placeholder:text-[0.625rem] rounded-lg'
                     )}
                     autoFocus
                     onKeyDown={(e: React.KeyboardEvent) => {
@@ -312,7 +312,7 @@ export default function CurrentIssue({
             <div className="flex items-stretch gap-2 sm:h-8 min-w-0">
               <div
                 className={twMerge(
-                  'flex-1 p-2.5 max-sm:py-1.5 bg-gray-50 dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600 flex items-center min-w-0 overflow-hidden',
+                  'flex-1 p-2.5 max-sm:py-1.5 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 flex items-center min-w-0 overflow-hidden',
                   canPerformActions
                     ? 'hover:bg-gray-100 dark:hover:bg-gray-700/80'
                     : 'cursor-not-allowed'
@@ -356,7 +356,7 @@ export default function CurrentIssue({
                   <button
                     onClick={handleStartEdit}
                     disabled={isUpdatingRoom}
-                    className="flex items-center justify-between w-full cursor-pointer transition-colors rounded p-1 -m-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center justify-between w-full cursor-pointer transition-colors rounded-lg p-1 -m-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     title="Clique para definir a issue"
                   >
                     <span
@@ -393,7 +393,7 @@ export default function CurrentIssue({
                       (!onPauseTimer && isRunning)
                     }
                     className={twMerge(
-                      'flex items-center gap-1.5 px-2.5 py-1.5 rounded min-w-14 justify-center transition-colors disabled:cursor-not-allowed',
+                      'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg min-w-14 justify-center transition-colors disabled:cursor-not-allowed',
                       getTimerColorClasses(time).bg,
                       getTimerColorClasses(time).border,
                       getTimerColorClasses(time).hover,
@@ -424,7 +424,7 @@ export default function CurrentIssue({
                   {time > 0 && canPerformActions && (
                     <button
                       onClick={() => setShowResetModal(true)}
-                      className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors cursor-pointer"
+                      className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer"
                       title="Resetar timer"
                     >
                       <FaRedo className="w-3 h-3 text-gray-500 dark:text-gray-400" />
