@@ -40,17 +40,15 @@ export const ThemeColorManager = () => {
           document.head.appendChild(newMeta);
         }
 
-        // Force viewport meta refresh for mobile browsers
-        const viewport = document.querySelector('meta[name="viewport"]');
-        if (viewport) {
-          const content = viewport.getAttribute('content');
-          if (content) {
-            viewport.setAttribute('content', content + ', theme-color=' + themeColor);
-            // Restore original viewport after micro-delay
-            setTimeout(() => {
-              viewport.setAttribute('content', content);
-            }, 10);
-          }
+        // Force browser to recognize theme-color change
+        // Some mobile browsers need a small delay to properly register theme-color changes
+        const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+        if (themeColorMeta) {
+          // Trigger reflow to ensure mobile browsers pick up the change
+          themeColorMeta.setAttribute('content', '');
+          setTimeout(() => {
+            themeColorMeta.setAttribute('content', themeColor);
+          }, 1);
         }
       }, 5);
 

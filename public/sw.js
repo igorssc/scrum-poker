@@ -111,8 +111,10 @@ self.addEventListener('fetch', event => {
         // Try to fetch and cache
         return fetch(event.request).then(response => {
           if (response.ok) {
+            // Clone the response before using it
+            const responseClone = response.clone();
             caches.open(CACHE_NAME).then(cache => {
-              cache.put(event.request, response.clone());
+              cache.put(event.request, responseClone);
             });
           }
           return response;
