@@ -65,7 +65,7 @@ export default function CurrentIssue({
     setIsEditing(true);
   };
 
-  const handleSave = async () => {
+  const handleSave = async (edit = false) => {
     if (!canPerformActions) return;
 
     try {
@@ -76,6 +76,10 @@ export default function CurrentIssue({
       await updateRoom({
         current_issue: tempIssue.trim() || null,
         current_sector: tempIssue.trim() ? tempSector : null,
+        ...(!edit && {
+          stop_timer: null,
+          start_timer: new Date(new Date().getTime() - 1000).toISOString(),
+        }),
       });
       setIsEditing(false);
 
@@ -262,7 +266,7 @@ export default function CurrentIssue({
                     )}
                     autoFocus
                     onKeyDown={(e: React.KeyboardEvent) => {
-                      if (e.key === 'Enter') handleSave();
+                      if (e.key === 'Enter') handleSave(!!room?.current_issue);
                       if (e.key === 'Escape') handleCancel();
                     }}
                   />
@@ -293,7 +297,7 @@ export default function CurrentIssue({
                   <span>Cancelar</span>
                 </button>
                 <button
-                  onClick={handleSave}
+                  onClick={() => handleSave(!!room?.current_issue)}
                   disabled={isUpdatingRoom}
                   className={twMerge(
                     'inline-flex items-center gap-1 px-3 py-2.5 text-[0.625rem] text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-200 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
