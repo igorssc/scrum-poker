@@ -420,7 +420,7 @@ export default function IssueHistory({
     yPos += 6;
     doc.text(`Total de issues: ${filteredHistory.length}`, 25, yPos);
 
-    yPos += 25;
+    yPos += 15; // Espaço reduzido entre card de filtros e issues
 
     // Renderizar cada issue como um card
     filteredHistory.forEach((item, index) => {
@@ -575,7 +575,7 @@ export default function IssueHistory({
             yPos += 6;
           });
 
-          yPos += 5; // Espaço após cada rodada
+          yPos += 3; // Espaço reduzido após cada rodada
         });
       } else if (!showDetailedHistory && item.votingRounds.length > 0) {
         // Resumo das votações - respeitando limites da caixa
@@ -591,7 +591,7 @@ export default function IssueHistory({
         yPos += 8;
       }
 
-      yPos += 15; // Espaço entre cards
+      yPos += 5; // Espaço reduzido entre cards
     });
 
     // Footer
