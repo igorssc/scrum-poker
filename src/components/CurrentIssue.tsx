@@ -1,8 +1,9 @@
 'use client';
 
 import { RoomContext } from '@/context/RoomContext';
+import { useRoomActions } from '@/hooks/useRoomActions';
 import { useRoomCache } from '@/hooks/useRoomCache';
-import React from 'react';
+import React, { useState } from 'react';
 import { FaCheck, FaEdit, FaRedo, FaTimes } from 'react-icons/fa';
 import { twMerge } from 'tailwind-merge';
 import { useContextSelector } from 'use-context-selector';
@@ -15,24 +16,11 @@ import { Select } from './Select';
 type Sector = 'backend' | 'front-web' | 'front-app';
 
 interface CurrentIssueProps {
-  currentIssue: string;
-  currentSector: Sector;
-  tempIssue: string;
-  tempSector: Sector;
-  isEditing: boolean;
   time: number;
   isRunning: boolean;
-  showResetModal: boolean;
-  onStartEdit: () => void;
-  onSave: () => void;
-  onCancel: () => void;
-  onFinalize: () => void;
   onStartTimer?: () => void;
   onPauseTimer?: () => void;
   onResetTimer?: () => void;
-  onTempIssueChange: (value: string) => void;
-  onTempSectorChange: React.Dispatch<React.SetStateAction<Sector>>;
-  onShowResetModal: (show: boolean) => void;
   formatTime: (seconds: number) => string;
 }
 
@@ -64,31 +52,25 @@ const ResetTimerModalContent = ({
 );
 
 export default function CurrentIssue({
-  currentIssue,
-  currentSector,
-  tempIssue,
-  tempSector,
-  isEditing,
   time,
   isRunning,
-  showResetModal,
-  onStartEdit,
-  onSave,
-  onCancel,
-  onFinalize,
   onStartTimer,
   onPauseTimer,
   onResetTimer,
-  onTempIssueChange,
-  onTempSectorChange,
-  onShowResetModal,
   formatTime,
 }: CurrentIssueProps) {
+  // Estados internos para edição
+  const [isEditing, setIsEditing] = useState(false);
+  const [tempIssue, setTempIssue] = useState('');
+  const [tempSector, setTempSector] = useState<Sector>('backend');
+  const [showResetModal, setShowResetModal] = useState(false);
+
   // Verificar permissões do usuário
   const { user } = useContextSelector(RoomContext, context => ({
     user: context.user,
   }));
   const { cachedRoomData } = useRoomCache();
+  const { updateRoom, isUpdatingRoom } = useRoomActions();
 
   const room = cachedRoomData?.data;
   const isOwner = room?.owner_id === user?.id;
@@ -96,6 +78,74 @@ export default function CurrentIssue({
 
   // Se o usuário não tem permissão, desabilita as ações
   const canPerformActions = userCanOpenCards;
+
+  // Dados atuais do room
+  const currentIssue = room?.current_issue || '';
+  const currentSector = (room?.current_sector as Sector) || 'backend';
+
+  // Funções para gerenciar a edição
+  const handleStartEdit = () => {
+    setTempIssue(currentIssue);
+    setTempSector(currentSector);
+    setIsEditing(true);
+  };
+
+  const handleSave = async () => {
+    if (!canPerformActions) return;
+
+    try {
+      // Verifica se é uma nova issue (campo estava vazio)
+      const wasEmpty = !currentIssue.trim();
+      const hasNewContent = tempIssue.trim();
+
+      await updateRoom({
+        current_issue: tempIssue.trim() || null,
+        current_sector: tempIssue.trim() ? tempSector : null,
+      });
+      setIsEditing(false);
+
+      // Auto-start timer: Se era uma issue nova (campo estava vazio) e agora tem conteúdo,
+      // iniciar o timer automaticamente para começar a contagem de tempo da votação
+      if (wasEmpty && hasNewContent && onStartTimer && !isRunning) {
+        onStartTimer();
+      }
+    } catch (error) {
+      console.error('Erro ao salvar issue:', error);
+    }
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setTempIssue('');
+    setTempSector('backend');
+  };
+
+  const handleFinalize = async () => {
+    if (!canPerformActions) return;
+
+    try {
+      await updateRoom({
+        current_issue: null,
+        current_sector: null,
+      });
+
+      // Reset timer: Quando a issue é limpa, o timer deve ser zerado
+      // para não manter o tempo da votação anterior
+      if (onResetTimer) {
+        onResetTimer();
+      }
+    } catch (error) {
+      console.error('Erro ao limpar issue:', error);
+    }
+  };
+
+  const handleResetTimer = () => {
+    if (onResetTimer) {
+      onResetTimer();
+      setShowResetModal(false);
+    }
+  };
+
   const getSectorLabel = (sector: Sector): string => {
     const labels = {
       backend: 'Backend',
@@ -115,13 +165,6 @@ export default function CurrentIssue({
         'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200 border-purple-200 dark:border-purple-800',
     };
     return colors[sector];
-  };
-
-  const handleResetTimer = () => {
-    if (onResetTimer) {
-      onResetTimer();
-      onShowResetModal(false);
-    }
   };
 
   // Função para determinar a cor do timer baseada no tempo
@@ -225,11 +268,12 @@ export default function CurrentIssue({
             {currentIssue && !isEditing && canPerformActions && (
               <div className="flex justify-end">
                 <Button
-                  onClick={onFinalize}
+                  onClick={handleFinalize}
                   variant="primary"
                   className="bg-transparent dark:bg-transparent text-purple-600 dark:text-gray-400 border border-purple-600 dark:border-gray-600 hover:bg-purple-50 dark:hover:bg-gray-500/20"
+                  disabled={isUpdatingRoom}
                 >
-                  Limpar Issue
+                  {isUpdatingRoom ? 'Limpando...' : 'Limpar Issue'}
                 </Button>
               </div>
             )}
@@ -243,7 +287,7 @@ export default function CurrentIssue({
                   <Input
                     value={tempIssue}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      onTempIssueChange(e.target.value)
+                      setTempIssue(e.target.value)
                     }
                     placeholder="Digite a issue atual..."
                     className={twMerge(
@@ -251,15 +295,15 @@ export default function CurrentIssue({
                     )}
                     autoFocus
                     onKeyDown={(e: React.KeyboardEvent) => {
-                      if (e.key === 'Enter') onSave();
-                      if (e.key === 'Escape') onCancel();
+                      if (e.key === 'Enter') handleSave();
+                      if (e.key === 'Escape') handleCancel();
                     }}
                   />
                 </div>
                 <div className="w-full sm:w-36 sm:shrink-0">
                   <Select
                     value={tempSector}
-                    onChange={value => onTempSectorChange(value as Sector)}
+                    onChange={value => setTempSector(value as Sector)}
                     placeholder="Setor"
                     options={[
                       { value: 'backend', label: 'Backend' },
@@ -272,22 +316,24 @@ export default function CurrentIssue({
               {/* Botões discretos alinhados à direita */}
               <div className="flex justify-center sm:justify-end gap-1 pt-2">
                 <button
-                  onClick={onCancel}
+                  onClick={handleCancel}
+                  disabled={isUpdatingRoom}
                   className={twMerge(
-                    'inline-flex items-center gap-1 px-3 py-2.5 text-[0.625rem] text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors cursor-pointer'
+                    'inline-flex items-center gap-1 px-3 py-2.5 text-[0.625rem] text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
                   )}
                 >
                   <FaTimes className="w-2 h-2" />
                   <span>Cancelar</span>
                 </button>
                 <button
-                  onClick={onSave}
+                  onClick={handleSave}
+                  disabled={isUpdatingRoom}
                   className={twMerge(
-                    'inline-flex items-center gap-1 px-3 py-2.5 text-[0.625rem] text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-200 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded transition-colors cursor-pointer'
+                    'inline-flex items-center gap-1 px-3 py-2.5 text-[0.625rem] text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-200 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
                   )}
                 >
                   <FaCheck className="w-2 h-2" />
-                  <span>Salvar</span>
+                  <span>{isUpdatingRoom ? 'Salvando...' : 'Salvar'}</span>
                 </button>
               </div>
             </div>
@@ -315,8 +361,9 @@ export default function CurrentIssue({
                     </div>
                     {canPerformActions && (
                       <button
-                        onClick={onStartEdit}
-                        className="cursor-pointer p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors shrink-0"
+                        onClick={handleStartEdit}
+                        disabled={isUpdatingRoom}
+                        className="cursor-pointer p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
                         title="Editar issue"
                       >
                         <FaEdit className="w-3 h-3 text-gray-500 dark:text-gray-400" />
@@ -325,8 +372,9 @@ export default function CurrentIssue({
                   </div>
                 ) : canPerformActions ? (
                   <button
-                    onClick={onStartEdit}
-                    className="flex items-center justify-between w-full cursor-pointer transition-colors rounded p-1 -m-1"
+                    onClick={handleStartEdit}
+                    disabled={isUpdatingRoom}
+                    className="flex items-center justify-between w-full cursor-pointer transition-colors rounded p-1 -m-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     title="Clique para definir a issue"
                   >
                     <span
@@ -393,7 +441,7 @@ export default function CurrentIssue({
                   {/* Reset Button - à direita */}
                   {time > 0 && canPerformActions && (
                     <button
-                      onClick={() => onShowResetModal(true)}
+                      onClick={() => setShowResetModal(true)}
                       className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors cursor-pointer"
                       title="Resetar timer"
                     >
@@ -408,11 +456,11 @@ export default function CurrentIssue({
       </Box>
 
       {/* Modal de confirmação de reset do timer */}
-      <Modal isOpen={showResetModal} onClose={() => onShowResetModal(false)} title="Resetar Timer">
+      <Modal isOpen={showResetModal} onClose={() => setShowResetModal(false)} title="Resetar Timer">
         <ResetTimerModalContent
           formattedTime={formatTime(time)}
           onConfirm={handleResetTimer}
-          onCancel={() => onShowResetModal(false)}
+          onCancel={() => setShowResetModal(false)}
         />
       </Modal>
     </>

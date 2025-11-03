@@ -18,4 +18,6 @@ export type RoomProps = {
   start_timer?: string | null;
   stop_timer?: string | null;
   auto_grant_permissions: boolean;
+  current_sector?: string | null;
+  current_issue?: string | null;
 };

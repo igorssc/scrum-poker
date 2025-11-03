@@ -1,5 +1,5 @@
 import { HistoryItem, Sector } from '@/types/voting';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import CurrentIssue from './CurrentIssue';
 import IssueHistory from './IssueHistory';
 
@@ -66,7 +66,7 @@ export const IssueManager = ({
     setCurrentIssue(tempIssue);
     setCurrentSector(tempSector);
     setIsEditing(false);
-    
+
     // Se era uma issue nova (campo estava vazio) e agora tem conteúdo, iniciar o timer
     if (wasEmpty && tempIssue.trim() && onStartTimer) {
       onStartTimer();
@@ -105,24 +105,11 @@ export const IssueManager = ({
   return {
     CurrentIssue: (
       <CurrentIssue
-        currentIssue={currentIssue}
-        currentSector={currentSector}
-        tempIssue={tempIssue}
-        tempSector={tempSector}
-        isEditing={isEditing}
         time={time}
         isRunning={isRunning}
-        showResetModal={showResetModal}
-        onStartEdit={handleStartEdit}
-        onSave={handleSave}
-        onCancel={handleCancel}
-        onFinalize={handleFinalize}
         onStartTimer={onStartTimer}
         onPauseTimer={onPauseTimer}
         onResetTimer={onResetTimer}
-        onTempIssueChange={setTempIssue}
-        onTempSectorChange={setTempSector}
-        onShowResetModal={setShowResetModal}
         formatTime={formatTime}
       />
     ),
@@ -142,6 +129,6 @@ export const IssueManager = ({
         formatDate={formatDate}
         formatTime={formatTime}
       />
-    )
+    ),
   };
 };
