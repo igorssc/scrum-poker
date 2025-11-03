@@ -403,6 +403,7 @@ export const generateHistoryPDF = ({
         if (aboveAvg.length > 0) {
           doc.text(`Acima da media: ${aboveAvg.map(u => cleanText(u.name)).join(', ')}`, 25, yPos);
         }
+        yPos += 6;
       }
     } else {
       doc.text('Nao ha dados suficientes para analise', 25, yPos);
@@ -418,12 +419,43 @@ export const generateHistoryPDF = ({
   // Renderizar cada issue como um card
   filteredHistory.forEach((item, index) => {
     const cardHeight = showDetailedHistory
-      ? 45 + // Base mínima padronizada
-        item.votingRounds.length * 25 +
-        item.votingRounds.reduce((sum, round) => sum + Math.ceil(round.votes.length / 3) * 8, 0)
+      ? (() => {
+          // Cálculo otimizado da altura para modo detalhado - compacto
+          let height = 35; // Base reduzida: header (10) + tags (18) + data (7)
+
+          if (item.votingRounds.length > 0) {
+            height += 12; // Linha separadora: espaço antes (6) + linha + espaço depois (6)
+
+            // Calcular altura real das votações (compacta)
+            const votingContentHeight = item.votingRounds.reduce((totalHeight, round) => {
+              let roundHeight = 0;
+
+              // Header da votação (se múltiplas rodadas)
+              if (item.votingRounds.length > 1) {
+                roundHeight += 5;
+              }
+
+              // Altura dos votos (4px cada)
+              roundHeight += round.votes.length * 4;
+
+              // Espaçamento entre rodadas (exceto a última)
+              roundHeight += 4;
+
+              return totalHeight + roundHeight;
+            }, 0);
+
+            height += votingContentHeight;
+            height += 8; // Padding mínimo + margem inferior
+          }
+
+          return Math.max(height, 45); // Altura mínima reduzida
+        })()
       : 55; // Altura padronizada para modo resumido
 
     checkPageBreak(cardHeight);
+
+    // Salvar posição inicial do card para controlar o final
+    const cardStartY = yPos;
 
     // Card principal da issue com cores alternadas do tema
     const cardColor = index % 2 === 0 ? colors.cardBackground : colors.cardBackgroundAlt;
@@ -481,8 +513,6 @@ export const generateHistoryPDF = ({
       if (item.totalDuration) {
         doc.text(`Duracao: ${formatTime(item.totalDuration)}`, 80, yPos);
       }
-
-      yPos += 10;
     } else {
       // No modo resumido, posicionar mais abaixo para ficar próximo do fim da caixa
       yPos += 15;
@@ -500,11 +530,33 @@ export const generateHistoryPDF = ({
 
     // Detalhes das votações (se modo detalhado)
     if (showDetailedHistory && item.votingRounds.length > 0) {
-      // Linha separadora
+      // Adicionar um espaço compacto antes da linha separadora
+      yPos += 6;
+
+      // Linha separadora - posição fixa no meio entre header e votações
       doc.setDrawColor(colors.border[0], colors.border[1], colors.border[2]);
       doc.setLineWidth(0.3);
       doc.line(20, yPos, pageWidth - 20, yPos);
       yPos += 6;
+
+      // Calcular altura do conteúdo das votações (sem incluir a linha separadora)
+      const votingContentHeight = item.votingRounds.reduce((height, round) => {
+        let roundHeight = 0;
+        if (item.votingRounds.length > 1) {
+          roundHeight += 5; // Header da votação (reduzido)
+        }
+        roundHeight += round.votes.length * 4; // Cada voto (reduzido)
+        roundHeight += 4; // Espaçamento entre rodadas (reduzido)
+        return height + roundHeight;
+      }, 0);
+
+      // Calcular espaço disponível para as votações (da linha separadora até o final da caixa)
+      const separatorPosition = yPos - cardStartY; // Posição atual relativa ao início do card
+      const remainingHeight = cardHeight - separatorPosition - 6; // 6 de margem inferior reduzida
+      const votingPadding = Math.max(0, (remainingHeight - votingContentHeight) / 2);
+
+      // Adicionar padding para centralizar apenas as votações
+      yPos += votingPadding;
 
       item.votingRounds.forEach((round, roundIndex) => {
         // Header da votação
@@ -525,7 +577,7 @@ export const generateHistoryPDF = ({
             doc.text(`Tempo: ${formatTime(round.duration)}`, statusX + 50, yPos);
           }
 
-          yPos += 7;
+          yPos += 5;
         }
 
         // Votos da rodada em lista simples - respeitando limites da caixa
@@ -568,11 +620,13 @@ export const generateHistoryPDF = ({
             doc.text(vote.card, 85, yPos);
           }
 
-          yPos += 6;
+          yPos += 4;
         });
 
-        yPos += 5; // Espaçamento entre rodadas
+        yPos += 4; // Espaçamento entre rodadas
       });
+
+      // Espaçamento adicional após todas as rodadas detalhadas já será aplicado no final
     } else if (!showDetailedHistory && item.votingRounds.length > 0) {
       // Resumo das votações - respeitando limites da caixa
       doc.setFontSize(8);
@@ -584,7 +638,13 @@ export const generateHistoryPDF = ({
       yPos += 8;
     }
 
-    yPos += SECTION_SPACING; // Espaçamento padrão entre cards
+    // SEMPRE garantir que o próximo card comece após o final do card atual
+    // Para ambos os modos, usar a altura calculada do card para posicionamento preciso
+    if (showDetailedHistory) {
+      yPos = cardStartY + cardHeight + SECTION_SPACING - 4;
+    } else {
+      yPos += SECTION_SPACING;
+    }
   });
 
   // Footer

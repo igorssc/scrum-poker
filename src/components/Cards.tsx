@@ -77,7 +77,9 @@ export const Cards = () => {
     cachedRoomData.data.members
       .filter(member => member.status === 'LOGGED' && member.vote)
       .forEach(member => {
-        voteCounts[member.vote] = (voteCounts[member.vote] || 0) + 1;
+        if (member.vote) {
+          voteCounts[member.vote] = (voteCounts[member.vote] || 0) + 1;
+        }
       });
 
     if (Object.keys(voteCounts).length === 0) return null;

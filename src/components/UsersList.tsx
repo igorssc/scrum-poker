@@ -320,7 +320,7 @@ export const UsersList = () => {
                                   <div className="flip-card-back">
                                     <Image
                                       alt={`Card ${member.vote}`}
-                                      src={path.join('assets', 'cards', member.vote)}
+                                      src={path.join('assets', 'cards', member.vote || '')}
                                       width={24}
                                       height={36}
                                       className="w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9 rounded"
@@ -331,7 +331,7 @@ export const UsersList = () => {
                                 // Após o flip, mostrar a carta real
                                 <Image
                                   alt={`Card ${member.vote}`}
-                                  src={path.join('assets', 'cards', member.vote)}
+                                  src={path.join('assets', 'cards', member.vote || '')}
                                   width={24}
                                   height={36}
                                   className="w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9 rounded"

@@ -4,7 +4,7 @@ import { useServerTimer } from '@/hooks/useServerTimer';
 import { useWebSocketEventHandlers } from '@/hooks/useWebSocketEventHandlers';
 import { MemberProps } from '@/protocols/Member';
 import { RoomProps } from '@/protocols/Room';
-import { HistoryItem, Sector, Vote, VotingRound } from '@/types/voting';
+import { HistoryItem, Sector } from '@/types/voting';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useContextSelector } from 'use-context-selector';
@@ -22,131 +22,37 @@ export const Board = () => {
   // Estados para a issue atual
   const [currentIssue, setCurrentIssue] = useState<string>('');
   const [currentSector, setCurrentSector] = useState<Sector>('backend');
+  const { cachedRoomData } = useRoomCache();
 
-  // Mock data inicial para demonstração
-  const [votingHistory, setVotingHistory] = useState<HistoryItem[]>([
-    {
-      id: '1',
-      topic: 'Implementar sistema de autenticação OAuth',
-      sector: 'backend',
-      createdAt: new Date(Date.now() - 1000 * 60 * 45), // 45 min atrás
-      finalizedAt: new Date(Date.now() - 1000 * 60 * 30), // 30 min atrás
-      totalDuration: 900, // 15 minutos total
-      finalConsensus: '8',
-      votingRounds: [
-        {
-          id: '1-1',
-          votedAt: new Date(Date.now() - 1000 * 60 * 40),
-          duration: 420, // 7 minutos
-          consensus: 'Empate',
-          winnerCards: ['5', '8'],
-          votes: [
-            { userName: 'João Silva', card: '5' },
-            { userName: 'Maria Santos', card: '8' },
-            { userName: 'Pedro Costa', card: '5' },
-            { userName: 'Ana Lima', card: '8' },
-          ],
-        },
-        {
-          id: '1-2',
-          votedAt: new Date(Date.now() - 1000 * 60 * 30),
-          duration: 480, // 8 minutos
-          consensus: '8',
-          winnerCards: ['8'],
-          votes: [
-            { userName: 'João Silva', card: '8' },
-            { userName: 'Maria Santos', card: '8' },
-            { userName: 'Pedro Costa', card: '8' },
-            { userName: 'Ana Lima', card: '5' },
-          ],
-        },
-      ],
-    },
-    {
-      id: '2',
-      topic: 'Refatorar componentes de UI para melhor performance',
-      sector: 'front-web',
-      createdAt: new Date(Date.now() - 1000 * 60 * 60), // 1 hora atrás
-      finalizedAt: new Date(Date.now() - 1000 * 60 * 55), // 55 min atrás
-      totalDuration: 300, // 5 minutos total
-      finalConsensus: '5',
-      votingRounds: [
-        {
-          id: '2-1',
-          votedAt: new Date(Date.now() - 1000 * 60 * 55),
-          duration: 300, // 5 minutos
-          consensus: '5',
-          winnerCards: ['5'],
-          votes: [
-            { userName: 'João Silva', card: '5' },
-            { userName: 'Maria Santos', card: '5' },
-            { userName: 'Pedro Costa', card: '5' },
-            { userName: 'Ana Lima', card: '8' },
-            { userName: 'Carlos Rocha', card: '3' },
-          ],
-        },
-      ],
-    },
-    {
-      id: '3',
-      topic: 'Implementar funcionalidade de chat em tempo real',
-      sector: 'front-app',
-      createdAt: new Date(Date.now() - 1000 * 60 * 120), // 2 horas atrás
-      finalizedAt: new Date(Date.now() - 1000 * 60 * 100), // 1h40min atrás
-      totalDuration: 1200, // 20 minutos total
-      finalConsensus: 'Empate',
-      votingRounds: [
-        {
-          id: '3-1',
-          votedAt: new Date(Date.now() - 1000 * 60 * 115),
-          duration: 300, // 5 minutos
-          consensus: 'Empate',
-          winnerCards: ['8', '13'],
-          votes: [
-            { userName: 'João Silva 💜', card: '8' },
-            { userName: 'Maria Santos 💜', card: '13' },
-            { userName: 'Pedro Costa 💜', card: '8' },
-            { userName: 'Ana Lima 💜', card: '13' },
-          ],
-        },
-        {
-          id: '3-2',
-          votedAt: new Date(Date.now() - 1000 * 60 * 110),
-          duration: 420, // 7 minutos
-          consensus: 'Empate',
-          winnerCards: ['5', '8'],
-          votes: [
-            { userName: 'João Silva', card: '5' },
-            { userName: 'Maria Santos', card: '8' },
-            { userName: 'Pedro Costa', card: '5' },
-            { userName: 'Ana Lima', card: '8' },
-          ],
-        },
-        {
-          id: '3-3',
-          votedAt: new Date(Date.now() - 1000 * 60 * 100),
-          duration: 480, // 8 minutos
-          consensus: 'Empate',
-          winnerCards: ['8', '13'],
-          votes: [
-            { userName: 'João Silva', card: '8' },
-            { userName: 'Maria Santos', card: '13' },
-            { userName: 'Pedro Costa', card: '8' },
-            { userName: 'Ana Lima', card: '13' },
-            { userName: 'Carlos Rocha', card: '5' },
-          ],
-        },
-      ],
-    },
-  ]);
+  // Converter dados reais do cache para o formato HistoryItem
+  const votingHistory: HistoryItem[] =
+    cachedRoomData?.data?.votes?.map(session => ({
+      id: session.id,
+      topic: session.topic,
+      sector: session.sector as Sector,
+      createdAt: new Date(session.created_at),
+      finalizedAt: session.finalized_at ? new Date(session.finalized_at) : undefined,
+      totalDuration: session.total_duration || undefined,
+      finalConsensus: session.final_consensus || undefined,
+      votingRounds: session.voting_rounds.map(round => ({
+        id: round.id,
+        votedAt: new Date(round.voted_at),
+        duration: round.duration || 0,
+        consensus: round.consensus,
+        winnerCards: round.winner_cards,
+        votes: round.votes.map(vote => ({
+          userId: vote.user_id,
+          userName: vote.user.name,
+          card: vote.card.toString(),
+        })),
+      })),
+    })) || [];
 
   const { room, user, clear } = useContextSelector(RoomContext, context => ({
     room: context.room,
     user: context.user,
     clear: context.clear,
   }));
-
-  const { cachedRoomData } = useRoomCache();
 
   const { revealCards, clearVotes, isRevealingCards, isClearingVotes } = useRoomActions();
   const {
@@ -187,51 +93,6 @@ export const Board = () => {
     // Atualizar a issue atual
     setCurrentIssue(topic);
     setCurrentSector(sector);
-    // Mock votes para demonstração
-    const mockVotes: Vote[] = [
-      { userId: '1', userName: 'João Silva', card: Math.random() > 0.5 ? '5' : '8' },
-      { userId: '2', userName: 'Maria Santos', card: Math.random() > 0.5 ? '3' : '5' },
-      { userId: '3', userName: 'Pedro Costa', card: Math.random() > 0.5 ? '8' : '13' },
-      { userId: '4', userName: 'Ana Lima', card: Math.random() > 0.5 ? '5' : '8' },
-    ];
-
-    // Calcular cartas vencedoras
-    const cardCounts = mockVotes.reduce(
-      (acc, vote) => {
-        acc[vote.card] = (acc[vote.card] || 0) + 1;
-        return acc;
-      },
-      {} as Record<string, number>
-    );
-
-    const maxVotes = Math.max(...Object.values(cardCounts));
-    const winnerCards = Object.keys(cardCounts).filter(card => cardCounts[card] === maxVotes);
-
-    const consensus = winnerCards.length === 1 ? winnerCards[0] : 'Empate';
-    const duration = Math.floor(Math.random() * 300) + 60; // Entre 1-5 minutos
-
-    const newVotingRound: VotingRound = {
-      id: `${Date.now()}-1`,
-      votedAt: new Date(),
-      duration,
-      consensus,
-      winnerCards,
-      votes: mockVotes.map(vote => ({ userName: vote.userName, card: vote.card })),
-    };
-
-    const newHistoryItem: HistoryItem = {
-      id: Date.now().toString(),
-      topic,
-      sector,
-      createdAt: new Date(),
-      finalizedAt: new Date(),
-      totalDuration: duration,
-      finalConsensus: consensus,
-      votingRounds: [newVotingRound],
-    };
-
-    setVotingHistory(prev => [newHistoryItem, ...prev]);
-    console.log('Finalizing topic:', topic, 'sector:', sector, 'with consensus:', consensus);
   };
 
   useEffect(() => {

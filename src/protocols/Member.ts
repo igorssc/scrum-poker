@@ -4,7 +4,7 @@ export type MemberProps = {
     id: string;
     created_at: string;
   };
-  vote: any;
+  vote: string | null;
   status: 'PENDING' | 'LOGGED' | 'REFUSED';
   created_at: string;
   id: string;
