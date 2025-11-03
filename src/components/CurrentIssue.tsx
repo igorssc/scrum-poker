@@ -120,7 +120,7 @@ export default function CurrentIssue({
         border: 'border-red-200 dark:border-red-800',
         bg: 'bg-red-50 dark:bg-red-900/20',
         hover: 'hover:bg-red-100 dark:hover:bg-red-900/40',
-        pulse: 'animate-pulse',
+        pulse: isRunning ? 'animate-pulse' : '',
       };
     } else if (minutes >= 10) {
       // Amarelo após 10 minutos
@@ -129,18 +129,16 @@ export default function CurrentIssue({
         border: 'border-yellow-200 dark:border-yellow-800',
         bg: 'bg-yellow-50 dark:bg-yellow-900/20',
         hover: 'hover:bg-yellow-100 dark:hover:bg-yellow-900/40',
-        pulse: 'animate-pulse',
+        pulse: isRunning ? 'animate-pulse' : '',
       };
     } else {
-      // Cor normal (cinza/roxo quando ativo)
+      // Cor normal (cinza) - pulsa apenas se o timer não estiver zerado E estiver rodando
       return {
-        text: isRunning
-          ? 'text-purple-600 dark:text-purple-400'
-          : 'text-gray-600 dark:text-gray-400',
+        text: 'text-gray-600 dark:text-gray-400',
         border: 'border-gray-200 dark:border-gray-600',
         bg: 'bg-gray-50 dark:bg-gray-700',
         hover: 'hover:bg-gray-100 dark:hover:bg-gray-600',
-        pulse: '',
+        pulse: seconds > 0 && isRunning ? 'animate-pulse' : '',
       };
     }
   };
@@ -194,7 +192,7 @@ export default function CurrentIssue({
                 <Button
                   onClick={onFinalize}
                   variant="primary"
-                  className="bg-transparent dark:bg-transparent text-purple-600 border border-purple-600 dark:border-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20"
+                  className="bg-transparent dark:bg-transparent text-purple-600 dark:text-gray-400 border border-purple-600 dark:border-gray-600 hover:bg-purple-50 dark:hover:bg-gray-500/20"
                 >
                   Limpar Issue
                 </Button>
