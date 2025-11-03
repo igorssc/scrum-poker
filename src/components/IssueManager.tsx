@@ -33,7 +33,7 @@ interface IssueManagerProps {
   onResetTimer?: () => void;
 }
 
-export const IssueManager: React.FC<IssueManagerProps> = ({
+export const IssueManager = ({
   currentIssue: initialIssue,
   currentSector: initialSector,
   historyItems,
@@ -43,7 +43,7 @@ export const IssueManager: React.FC<IssueManagerProps> = ({
   onStartTimer,
   onPauseTimer,
   onResetTimer,
-}) => {
+}: IssueManagerProps) => {
   const [currentIssue, setCurrentIssue] = useState(initialIssue);
   const [currentSector, setCurrentSector] = useState(initialSector);
   const [tempIssue, setTempIssue] = useState(initialIssue);
@@ -114,8 +114,8 @@ export const IssueManager: React.FC<IssueManagerProps> = ({
     setShowDetailedHistory(!showDetailedHistory);
   };
 
-  return (
-    <>
+  return {
+    CurrentIssue: (
       <CurrentIssue
         currentIssue={currentIssue}
         currentSector={currentSector}
@@ -137,7 +137,8 @@ export const IssueManager: React.FC<IssueManagerProps> = ({
         onShowResetModal={setShowResetModal}
         formatTime={formatTime}
       />
-
+    ),
+    IssueHistory: (
       <IssueHistory
         historyItems={historyItems}
         isHistoryExpanded={isHistoryExpanded}
@@ -153,6 +154,6 @@ export const IssueManager: React.FC<IssueManagerProps> = ({
         formatDate={formatDate}
         formatTime={formatTime}
       />
-    </>
-  );
+    )
+  };
 };

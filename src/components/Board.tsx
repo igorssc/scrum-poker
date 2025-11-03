@@ -176,6 +176,22 @@ export const Board = () => {
         <div className="flex flex-col lg:flex-row lg:items-start gap-3 sm:gap-4 md:gap-6">
           {/* Cards Section */}
           <div className="w-full lg:max-w-[calc(100%-21.5rem)] flex flex-col gap-3 sm:gap-4 md:gap-6">
+            {/* Issue Manager - separado para usar apenas CurrentIssue */}
+            {(() => {
+              const issueManager = IssueManager({
+                currentIssue: currentIssue || '',
+                currentSector: currentSector || 'backend',
+                historyItems: votingHistory,
+                time: secondsTimer,
+                isRunning: isRunning,
+                onFinalizeIssue: handleFinalizeTopic,
+                onStartTimer: toggleTimer,
+                onPauseTimer: toggleTimer,
+                onResetTimer: resetTimer,
+              });
+              return issueManager.CurrentIssue;
+            })()}
+
             <Box className="max-w-full lg:flex-1 min-h-0! max-h-fit flex flex-col gap-y-3 sm:gap-y-4 md:gap-y-6 lg:gap-y-8 p-3 sm:p-4 md:p-4 lg:p-5">
               <Cards />
 
@@ -208,18 +224,21 @@ export const Board = () => {
               <UsersList />
             </div>
 
-            {/* Issue Manager - Tema, Timer e Histórico */}
-            <IssueManager
-              currentIssue={currentIssue || ''}
-              currentSector={currentSector || 'backend'}
-              historyItems={votingHistory}
-              time={secondsTimer}
-              isRunning={isRunning}
-              onFinalizeIssue={handleFinalizeTopic}
-              onStartTimer={toggleTimer}
-              onPauseTimer={toggleTimer}
-              onResetTimer={resetTimer}
-            />
+            {/* Issue History */}
+            {(() => {
+              const issueManager = IssueManager({
+                currentIssue: currentIssue || '',
+                currentSector: currentSector || 'backend',
+                historyItems: votingHistory,
+                time: secondsTimer,
+                isRunning: isRunning,
+                onFinalizeIssue: handleFinalizeTopic,
+                onStartTimer: toggleTimer,
+                onPauseTimer: toggleTimer,
+                onResetTimer: resetTimer,
+              });
+              return issueManager.IssueHistory;
+            })()}
           </div>
 
           {/* Users List - lateral em lg+ */}

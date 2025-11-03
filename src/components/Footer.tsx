@@ -19,7 +19,7 @@ export function Footer({ variant = 'default', className = '' }: FooterProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <p className="text-xs sm:text-sm">
-              Criado com ❤️ por{' '}
+              Criado com 💜 por{' '}
               <a
                 href="https://github.com/igorssc"
                 target="_blank"
@@ -54,7 +54,7 @@ export function Footer({ variant = 'default', className = '' }: FooterProps) {
           </p>
           <div className="border-t border-gray-700 pt-8">
             <p className="text-xs sm:text-sm md:text-sm lg:text-base mb-2">
-              © 2024 Scrum Poker. Feito com ❤️ para a comunidade ágil.
+              © 2024 Scrum Poker. Feito com 💜 para a comunidade ágil.
             </p>
             <p className="text-xs sm:text-sm">
               Criado por{' '}

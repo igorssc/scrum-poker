@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { FaCheck, FaEdit, FaPause, FaPlay, FaStop, FaTimes } from 'react-icons/fa';
+import { FaCheck, FaEdit, FaRedo, FaTimes } from 'react-icons/fa';
 import { twMerge } from 'tailwind-merge';
 import { Box } from './Box';
 import { Button } from './Button';
@@ -109,47 +109,98 @@ export default function CurrentIssue({
     }
   };
 
+  // Função para determinar a cor do timer baseada no tempo
+  const getTimerColorClasses = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+
+    if (minutes >= 20) {
+      // Vermelho após 20 minutos
+      return {
+        text: 'text-red-600 dark:text-red-400',
+        border: 'border-red-200 dark:border-red-800',
+        bg: 'bg-red-50 dark:bg-red-900/20',
+        hover: 'hover:bg-red-100 dark:hover:bg-red-900/40',
+        pulse: 'animate-pulse',
+      };
+    } else if (minutes >= 10) {
+      // Amarelo após 10 minutos
+      return {
+        text: 'text-yellow-600 dark:text-yellow-400',
+        border: 'border-yellow-200 dark:border-yellow-800',
+        bg: 'bg-yellow-50 dark:bg-yellow-900/20',
+        hover: 'hover:bg-yellow-100 dark:hover:bg-yellow-900/40',
+        pulse: 'animate-pulse',
+      };
+    } else {
+      // Cor normal (cinza/roxo quando ativo)
+      return {
+        text: isRunning
+          ? 'text-purple-600 dark:text-purple-400'
+          : 'text-gray-600 dark:text-gray-400',
+        border: 'border-gray-200 dark:border-gray-600',
+        bg: 'bg-gray-50 dark:bg-gray-700',
+        hover: 'hover:bg-gray-100 dark:hover:bg-gray-600',
+        pulse: '',
+      };
+    }
+  };
+
   // Componente do relógio SVG
-  const ClockIcon = ({ isActive }: { isActive: boolean }) => (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 24 24"
-      fill="none"
-      className={twMerge(
-        'transition-colors',
-        isActive ? 'text-purple-600 dark:text-purple-400' : 'text-gray-500 dark:text-gray-400'
-      )}
-    >
-      <circle
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        strokeWidth="2"
-        className={isActive ? 'animate-pulse' : ''}
-      />
-      <polyline
-        points="12,6 12,12 16,14"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
+  const ClockIcon = ({ isActive }: { isActive: boolean }) => {
+    const colors = getTimerColorClasses(time);
+    return (
+      <svg
+        width="12"
+        height="12"
+        viewBox="0 0 24 24"
+        fill="none"
+        className={twMerge('transition-colors', colors.text)}
+      >
+        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+        <polyline
+          points="12,6 12,12 16,14"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+  };
 
   return (
     <>
       <Box className="max-w-full w-full h-fit min-h-fit! p-3 sm:p-4 md:p-4 lg:p-5">
-        <div className="w-full flex flex-col gap-3">
-          <h3
-            className={twMerge(
-              'text-xs md:text-sm font-medium max-lg:text-center text-gray-900 dark:text-white'
+        <div className="w-full flex flex-col gap-3 sm:gap-5">
+          <div className="w-full h-fit flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <h3
+                className={twMerge(
+                  'text-xs md:text-sm font-medium max-lg:text-center text-gray-900 dark:text-white'
+                )}
+              >
+                Issue Atual
+              </h3>
+              <span
+                className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[8px] font-medium shrink-0 border ${getSectorTagColor(currentSector)}`}
+              >
+                {getSectorLabel(currentSector)}
+              </span>
+            </div>
+
+            {/* Botão Limpar - sempre visível quando há issue */}
+            {currentIssue && !isEditing && (
+              <div className="flex justify-end">
+                <Button
+                  onClick={onFinalize}
+                  variant="primary"
+                  className="bg-transparent dark:bg-transparent text-purple-600 border border-purple-600 dark:border-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20"
+                >
+                  Limpar Issue
+                </Button>
+              </div>
             )}
-          >
-            Issue Atual
-          </h3>
+          </div>
 
           {isEditing ? (
             <div className="space-y-3">
@@ -206,8 +257,8 @@ export default function CurrentIssue({
               </div>
             </div>
           ) : (
-            <div className="flex max-sm:flex-col items-stretch gap-2 sm:h-8 min-w-0">
-              <div className="flex-1 p-2.5 max-sm:py-1.5 bg-gray-50 dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600 flex items-center min-w-0 overflow-hidden">
+            <div className="flex items-stretch gap-2 sm:h-8 min-w-0">
+              <div className="flex-1 p-2.5 max-sm:py-1.5 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700/80 rounded border border-gray-200 dark:border-gray-600 flex items-center min-w-0 overflow-hidden">
                 {currentIssue ? (
                   <div className="flex items-center justify-between gap-2 w-full min-w-0">
                     <div className="flex items-center gap-2 flex-1 min-w-0 overflow-hidden">
@@ -219,99 +270,70 @@ export default function CurrentIssue({
                       >
                         {currentIssue}
                       </span>
-                      <span
-                        className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[8px] font-medium shrink-0 border ${getSectorTagColor(currentSector)}`}
-                      >
-                        {getSectorLabel(currentSector)}
-                      </span>
                     </div>
                     <button
                       onClick={onStartEdit}
-                      className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors shrink-0"
+                      className="cursor-pointer p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors shrink-0"
                       title="Editar issue"
                     >
-                      <FaEdit className="w-2 h-2 text-gray-500 dark:text-gray-400" />
+                      <FaEdit className="w-3 h-3 text-gray-500 dark:text-gray-400" />
                     </button>
                   </div>
                 ) : (
-                  <div className="flex items-center justify-between w-full">
+                  <button
+                    onClick={onStartEdit}
+                    className="flex items-center justify-between w-full cursor-pointer transition-colors rounded p-1 -m-1"
+                    title="Clique para definir a issue"
+                  >
                     <span
                       className={twMerge(
-                        'text-xs text-gray-500 dark:text-gray-400 italic flex-1 min-w-0'
+                        'text-xs text-gray-500 dark:text-gray-400 italic flex-1 min-w-0 text-left'
                       )}
                     >
-                      Nenhuma issue definida
+                      Clique aqui para definir a issue
                     </span>
-                    <button
-                      onClick={onStartEdit}
-                      className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors shrink-0 ml-2"
-                      title="Adicionar issue"
-                    >
-                      <FaEdit className="w-2 h-2 text-gray-500 dark:text-gray-400" />
-                    </button>
-                  </div>
+                  </button>
                 )}
               </div>
 
               {/* Timer e Controles */}
-              <div className="flex items-stretch gap-1 shrink-0">
-                {/* Display do Timer */}
-                <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded min-w-14 justify-center">
+              <div className="flex items-stretch gap-2 shrink-0">
+                {/* Display do Timer - clicável para play/pause */}
+                <button
+                  onClick={!isRunning ? onStartTimer : onPauseTimer}
+                  disabled={(!onStartTimer && !isRunning) || (!onPauseTimer && isRunning)}
+                  className={twMerge(
+                    'flex items-center gap-1.5 px-2.5 py-1.5 rounded min-w-14 justify-center transition-colors disabled:cursor-not-allowed cursor-pointer',
+                    getTimerColorClasses(time).bg,
+                    getTimerColorClasses(time).border,
+                    getTimerColorClasses(time).hover,
+                    getTimerColorClasses(time).pulse,
+                    'border'
+                  )}
+                  title={isRunning ? 'Pausar timer' : 'Iniciar timer'}
+                >
                   <ClockIcon isActive={isRunning} />
                   <span
                     className={twMerge(
                       'text-[0.625rem] font-medium tabular-nums',
-                      isRunning
-                        ? 'text-purple-600 dark:text-purple-400'
-                        : 'text-gray-600 dark:text-gray-400'
+                      getTimerColorClasses(time).text
                     )}
                   >
                     {formatTime(time)}
                   </span>
-                </div>
+                </button>
 
-                {/* Controles do Timer */}
-                <div className="flex items-stretch">
-                  {!isRunning ? (
-                    <button
-                      onClick={onStartTimer}
-                      disabled={!onStartTimer}
-                      className="px-2 py-1.5 bg-green-50 hover:bg-green-100 dark:bg-green-900/20 dark:hover:bg-green-900/40 border border-green-200 dark:border-green-800 text-green-600 dark:text-green-400 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      title="Iniciar timer"
-                    >
-                      <FaPlay className="w-2 h-2" />
-                    </button>
-                  ) : (
-                    <button
-                      onClick={onPauseTimer}
-                      disabled={!onPauseTimer}
-                      className="px-2 py-1.5 bg-yellow-50 hover:bg-yellow-100 dark:bg-yellow-900/20 dark:hover:bg-yellow-900/40 border border-yellow-200 dark:border-yellow-800 text-yellow-600 dark:text-yellow-400 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      title="Pausar timer"
-                    >
-                      <FaPause className="w-2 h-2" />
-                    </button>
-                  )}
-
-                  {time > 0 && (
-                    <button
-                      onClick={() => onShowResetModal(true)}
-                      className="px-2 py-1.5 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 rounded ml-1 transition-colors"
-                      title="Resetar timer"
-                    >
-                      <FaStop className="w-2 h-2" />
-                    </button>
-                  )}
-                </div>
+                {/* Reset Button - à direita */}
+                {time > 0 && (
+                  <button
+                    onClick={() => onShowResetModal(true)}
+                    className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors cursor-pointer"
+                    title="Resetar timer"
+                  >
+                    <FaRedo className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+                  </button>
+                )}
               </div>
-            </div>
-          )}
-
-          {/* Botão Finalizar - sempre visível quando há issue */}
-          {currentIssue && !isEditing && (
-            <div className="flex justify-end pt-2">
-              <Button onClick={onFinalize} variant="primary">
-                Finalizar Issue
-              </Button>
             </div>
           )}
         </div>
