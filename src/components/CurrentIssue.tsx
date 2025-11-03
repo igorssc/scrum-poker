@@ -8,10 +8,10 @@ import { FaCheck, FaEdit, FaRedo, FaTimes, FaTrash } from 'react-icons/fa';
 import { twMerge } from 'tailwind-merge';
 import { useContextSelector } from 'use-context-selector';
 import { Box } from './Box';
-import { Button } from './Button';
 import { ClearIssueModalContent } from './ClearIssueModalContent';
 import { Input } from './Input';
 import { Modal } from './Modal';
+import { ResetTimerModalContent } from './ResetTimerModalContent';
 import { Select } from './Select';
 
 type Sector = 'backend' | 'front-web' | 'front-app';
@@ -24,33 +24,6 @@ interface CurrentIssueProps {
   onResetTimer?: () => void;
   formatTime: (seconds: number) => string;
 }
-
-// Componente do Modal de Reset do Timer
-const ResetTimerModalContent = ({
-  formattedTime,
-  onConfirm,
-  onCancel,
-}: {
-  formattedTime: string;
-  onConfirm: () => void;
-  onCancel: () => void;
-}) => (
-  <div className="space-y-3">
-    <p className="text-sm text-gray-600 dark:text-gray-400">
-      Tem certeza que deseja resetar o timer? O tempo atual de{' '}
-      <span className="font-medium text-gray-900 dark:text-white">{formattedTime}</span> será
-      perdido.
-    </p>
-    <div className="flex justify-end gap-2 pt-2">
-      <Button onClick={onCancel} variant="secondary">
-        Cancelar
-      </Button>
-      <Button onClick={onConfirm} variant="primary">
-        Resetar
-      </Button>
-    </div>
-  </div>
-);
 
 export default function CurrentIssue({
   time,
@@ -474,6 +447,7 @@ export default function CurrentIssue({
         isOpen={showClearIssueModal}
         onClose={() => setShowClearIssueModal(false)}
         title="Remover Issue"
+        className="max-w-lg"
       >
         <ClearIssueModalContent
           currentIssue={currentIssue}
