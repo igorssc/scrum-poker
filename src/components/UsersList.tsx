@@ -7,7 +7,6 @@ import { handleApiError, showSuccessToast } from '@/utils/errorHandler';
 import * as Popover from '@radix-ui/react-popover';
 import { useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
-import path from 'path';
 import { useEffect, useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import { twMerge } from 'tailwind-merge';
@@ -68,6 +67,7 @@ export const UsersList = () => {
   const loggedMembers = members.filter(member => member.status === 'LOGGED');
   const pendingMembers = members.filter(member => member.status === 'PENDING');
   const cardsOpen = cachedRoomData?.data?.cards_open;
+  const theme = cachedRoomData?.data?.theme || 'nature';
 
   // Verificar se o usuário atual é o owner
   const isOwner = room?.owner_id === user?.id;
@@ -310,7 +310,7 @@ export const UsersList = () => {
                                   <div className="flip-card-front">
                                     <Image
                                       alt="Card back"
-                                      src="/assets/cards/nature/verse.svg"
+                                      src={`/assets/cards/${theme}/verse.png`}
                                       width={24}
                                       height={36}
                                       className="w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9 rounded"
@@ -320,7 +320,7 @@ export const UsersList = () => {
                                   <div className="flip-card-back">
                                     <Image
                                       alt={`Card ${member.vote}`}
-                                      src={path.join('assets', 'cards', member.vote || '')}
+                                      src={`/assets/cards/${member.vote || ''}`}
                                       width={24}
                                       height={36}
                                       className="w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9 rounded"
@@ -331,7 +331,7 @@ export const UsersList = () => {
                                 // Após o flip, mostrar a carta real
                                 <Image
                                   alt={`Card ${member.vote}`}
-                                  src={path.join('assets', 'cards', member.vote || '')}
+                                  src={`/assets/cards/${member.vote || ''}`}
                                   width={24}
                                   height={36}
                                   className="w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9 rounded"
@@ -347,7 +347,7 @@ export const UsersList = () => {
                           <div className="relative w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9">
                             <Image
                               alt="Card back"
-                              src="/assets/cards/nature/verse.svg"
+                              src={`/assets/cards/${theme}/verse.png`}
                               width={24}
                               height={36}
                               className="w-5 h-7 sm:w-6 sm:h-8 md:w-6 md:h-9 rounded"
