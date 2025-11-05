@@ -5,6 +5,7 @@ import { useRoomActions } from '@/hooks/useRoomActions';
 import { useRoomCache } from '@/hooks/useRoomCache';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { twMerge } from 'tailwind-merge';
 import { useContextSelector } from 'use-context-selector';
 import { Button } from './Button';
@@ -71,7 +72,11 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
   ]);
 
   // Temas fake
-  const themeOptions = [{ value: 'nature', label: 'Natureza (Padrão)' }];
+  const themeOptions = [
+    { value: 'nature', label: 'Natureza (Padrão)' },
+    { value: 'simple', label: 'Simples' },
+    { value: 'cheap', label: 'Baralho' },
+  ];
 
   // Opções dos membros para os MultiSelects
   const memberOptions: MultiSelectOption[] = (room?.members || [])
@@ -232,6 +237,7 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
         });
       }
       onClose();
+      toast.success('Sala atualizada com sucesso');
     } catch (err: any) {
       setError(err.message || 'Erro ao salvar alterações');
     } finally {
@@ -274,7 +280,7 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
                 options={themeOptions}
                 value={theme}
                 onChange={setTheme}
-                disabled={!userCanEditRoom || themeOptions.length < 2}
+                disabled={!userCanEditRoom || themeOptions.length <= 1}
               />
 
               {/* Toggle para permissões automáticas */}

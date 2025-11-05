@@ -3,7 +3,6 @@ import { useRoomActions } from '@/hooks/useRoomActions';
 import { useRoomCache } from '@/hooks/useRoomCache';
 import confetti from 'canvas-confetti';
 import Image from 'next/image';
-import path from 'path';
 import { Children, useEffect, useMemo, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useContextSelector } from 'use-context-selector';
@@ -26,7 +25,7 @@ export const Cards = () => {
   // Gerar lista de cartas com ícones sorteados (memoizada para manter consistência)
   const allCards = useMemo(() => {
     // Validar se theme é um tipo válido de IconThemeData, caso contrário usar 'nature' como default
-    const validTheme = theme && theme in iconsData ? theme : 'nature';
+    const validTheme = theme && theme in iconsData ? theme : 'simple';
 
     const natureData = iconsData[validTheme];
     const cards: string[] = [];
@@ -189,6 +188,8 @@ export const Cards = () => {
           const isSelected = selectedCard === icon;
           const isWinning = winningCard === icon;
 
+          console.log({ icon });
+
           return (
             <button
               key={icon}
@@ -205,7 +206,7 @@ export const Cards = () => {
             >
               <Image
                 alt={`Card ${icon}`}
-                src={path.join('assets', 'cards', icon)}
+                src={`/assets/cards/${icon}`}
                 width={167}
                 height={249}
                 loading="eager"
