@@ -283,6 +283,13 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
                 disabled={!userCanEditRoom || themeOptions.length <= 1}
               />
 
+              <div className="text-[0.6rem] sm:text-[0.65rem] text-gray-500 dark:text-gray-400 leading-relaxed">
+                <p>
+                  A mudança de tema zera as votações em andamento e redefine as cartas disponíveis
+                  de acordo com o novo tema.
+                </p>
+              </div>
+
               {/* Toggle para permissões automáticas */}
               <div className="flex items-center justify-between gap-2 sm:gap-3">
                 <label
