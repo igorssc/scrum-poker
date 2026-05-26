@@ -60,7 +60,7 @@ export const iconsData = {
     icons: [
       'deadline/0.png',
       'deadline/1.png',
-      // 'deadline/2.png',
+      'deadline/2.png',
       'deadline/3.png',
       'deadline/5.png',
       'deadline/8.png',
@@ -74,10 +74,11 @@ export const iconsData = {
       'deadline/377.png',
       'deadline/610.png',
       'deadline/987.png',
-      'deadline/∞.png',
-      'deadline/☕.png',
-      'deadline/🏓.png',
+      'deadline/∞.png'
     ],
-    latterIcons: [],
+    latterIcons: [
+      'deadline/☕.png',
+      'deadline/🏓.png'
+    ],
   },
 };
