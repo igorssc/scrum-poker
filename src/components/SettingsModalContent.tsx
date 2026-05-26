@@ -76,6 +76,7 @@ export const SettingsModalContent = ({ onClose }: SettingsModalContentProps) => 
     { value: 'nature', label: 'Natureza (Padrão)' },
     { value: 'simple', label: 'Simples' },
     { value: 'cheap', label: 'Baralho' },
+    { value: 'deadline', label: 'Deadline' },
   ];
 
   // Opções dos membros para os MultiSelects

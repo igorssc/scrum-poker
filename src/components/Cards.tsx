@@ -175,7 +175,11 @@ export const Cards = () => {
     if (cardCount === 12) {
       // 12 cartas: 3 linhas de 4 (mobile) / 2 linhas de 6 (desktop) - espaçamentos reduzidos
       return 'relative grid grid-cols-4 md:grid-cols-6 gap-x-1.5 gap-y-2 sm:gap-x-2 sm:gap-y-2.5 md:gap-x-2.5 md:gap-y-3 justify-items-center w-full h-fit overflow-visible';
-    } else {
+    } else if (cardCount === 18) {
+      // 18 cartas: 3 linhas de 6 (mobile) / 2 linhas de 9 (desktop) - espaçamentos reduzidos
+      return 'relative grid grid-cols-6 md:grid-cols-9 gap-x-1 gap-y-1.5 sm:gap-x-2 sm:gap-y-2.5 md:gap-x-2.5 md:gap-y-3 justify-items-center w-full h-fit overflow-visible';
+    }
+    else {
       // 10 cartas: layout original (5 colunas) - espaçamentos reduzidos
       return 'relative grid grid-cols-5 gap-x-1.5 gap-y-2 sm:gap-x-2 sm:gap-y-2.5 md:gap-x-2.5 md:gap-y-3 justify-items-center w-full h-fit overflow-visible';
     }
