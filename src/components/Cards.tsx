@@ -214,7 +214,7 @@ export const Cards = () => {
                 width={167}
                 height={249}
                 loading="eager"
-                className="w-12 h-18 sm:w-14 sm:h-20 md:w-16 md:h-24 lg:w-20 lg:h-30 xl:w-24 xl:h-36"
+                className="w-12 h-18 sm:w-14 sm:h-20 md:w-16 md:h-24 lg:w-20 lg:h-30 xl:w-24 xl:h-36 object-contain"
               />
 
               {/* Coroa para carta vencedora */}
