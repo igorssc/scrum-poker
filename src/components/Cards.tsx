@@ -189,10 +189,9 @@ export const Cards = () => {
     <div ref={containerRef} className={getGridClasses()}>
       {Children.toArray(
         allCards.map(icon => {
+          const isEighteenCardsLayout = allCards.length === 18;
           const isSelected = selectedCard === icon;
           const isWinning = winningCard === icon;
-
-          console.log({ icon });
 
           return (
             <button
@@ -200,7 +199,7 @@ export const Cards = () => {
               onClick={() => !cardsOpen && handleCardClick(icon)}
               disabled={isVoting}
               className={twMerge(
-                'relative transition-all duration-200 rounded-lg cursor-pointer h-fit p-1 overflow-visible',
+                'relative transition-all duration-200 rounded-lg cursor-pointer h-fit overflow-visible p-1 leading-none',
                 isSelected &&
                   'ring-2 ring-purple-500 dark:ring-purple-700 bg-purple-100 dark:bg-purple-900/30 scale-105',
                 !isSelected && !cardsOpen && 'hover:scale-105 hover:shadow-xs',
@@ -214,7 +213,12 @@ export const Cards = () => {
                 width={167}
                 height={249}
                 loading="eager"
-                className="w-12 h-18 sm:w-14 sm:h-20 md:w-16 md:h-24 lg:w-20 lg:h-30 xl:w-24 xl:h-36 object-contain"
+                className={twMerge(
+                  'block w-12 sm:w-14 md:w-16 lg:w-20 xl:w-24',
+                  isEighteenCardsLayout
+                    ? 'h-auto'
+                    : 'h-18 sm:h-20 md:h-24 lg:h-30 xl:h-36 object-contain'
+                )}
               />
 
               {/* Coroa para carta vencedora */}
